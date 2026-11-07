@@ -1,0 +1,8 @@
+House Display — modified font, 2026
+Derived from Oswald, licensed under SIL Open Font License 1.1.
+See Oswald-OFL.txt for original copyright and the license applying to this work.
+Modifications: instantiate weight 650; scale glyph outlines, advances and side
+bearings horizontally to 70%; remove obsolete hint tables; rename family and
+PostScript names to House Display / HouseDisplay-Regular; export TTF and WOFF2.
+The modification does not claim endorsement by the original font authors.
+Rebuild with tools/build-fonts.py (fonttools + brotli).

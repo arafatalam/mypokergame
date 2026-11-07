@@ -1,0 +1,165 @@
+@font-face {
+    font-family: 'House Serif';
+    src: url('../assets/casino/fonts/bree-serif.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+:root {
+    --vegas-body: 'House Serif', Georgia, serif;
+    --vegas-wine: #650b1c;
+    --vegas-background: #fce7cd;
+    --vegas-red: #b52514;
+    --vegas-gold: #ffb52e;
+    --vegas-ticket-line: #743620;
+    --vegas-ticket-edge: #ffecc5;
+    --vegas-gold-fill: linear-gradient(
+        100deg,
+        #ffbd3b,
+        #ffb125,
+        #ffd063
+    );
+    /*--vegas-focus: #2ad7c9;*/
+    --vegas-focus: #b52514;
+    --vegas-button-fill: linear-gradient(
+        #e74b22 0%,
+        #bc210e 30%,
+        #970c06 68%,
+        #5d0a08 100%
+    );
+}
+
+body {
+    margin: 0;
+    /* Safari can tint its toolbar from this outer background; paper keeps its own cream. */
+    background: #fff;
+    color: var(--vegas-wine);
+    font-family: var(--vegas-body);
+    line-height: 1.3;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+/* Shared scenery belongs to App; individual screens choose whether to blur it. */
+.casino-scenery {
+    position: relative;
+    isolation: isolate;
+    background-image: url('../assets/casino/casino-scene-portrait.png');
+}
+
+/* Only Sign In adds this layer, leaving shared scenery sharp on other screens. */
+.sign-in-screen {
+    position: relative;
+    isolation: isolate;
+}
+
+.sign-in-screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    backdrop-filter: blur(2px);
+}
+
+@media (min-width: 768px) {
+    .casino-scenery {
+        background-image: url('../assets/casino/casino-scene.png');
+    }
+}
+
+.casino-button {
+    background: var(--vegas-button-fill);
+    color: var(--vegas-background);
+    border: 2px solid var(--vegas-background);
+    outline: 2px solid var(--vegas-red);
+    cursor: pointer;
+}
+
+@font-face {
+    font-family: 'House Display';
+    src: url('../assets/casino/fonts/house-display.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+.casino-heading {
+    font-family: 'House Display', 'Arial Narrow', sans-serif;
+}
+
+.casino-panel {
+    position: relative;
+    isolation: isolate;
+    min-width: 0;
+    filter: drop-shadow(0 4px 3px rgb(35 5 8 / 40%));
+}
+
+.casino-ticket-skin {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.casino-ticket-surface {
+    width: 100%;
+    height: 100%;
+    background-color: var(--vegas-background);
+    background-image: linear-gradient(115deg, #fff5df66, #fff2d455), url('../assets/casino/ticket-paper.png');
+    background-size: 100% 100%, cover;
+}
+
+.casino-ticket-rim {
+    fill: none;
+    stroke: var(--vegas-ticket-edge);
+    stroke-width: 7;
+    opacity: 0.75;
+}
+
+.casino-ticket-border {
+    fill: none;
+    stroke: var(--vegas-ticket-line);
+    stroke-width: 1.3;
+}
+
+@media (forced-colors: active) {
+    .casino-panel {
+        background: Canvas;
+        border: 2px solid CanvasText;
+    }
+
+    .casino-ticket-skin {
+        display: none;
+    }
+}
+
+.casino-title-band {
+    background: var(--vegas-gold-fill);
+}
+
+.casino-input {
+    background:
+        radial-gradient(ellipse at 60% 30%, #fff5dfaa, transparent),
+        linear-gradient(110deg, #fae4ba77, #fff0cfbb);
+    box-shadow: inset 0 1px 2px #7f633b26;
+}
+
+input:focus-visible,
+button:focus-visible {
+    outline: 3px solid var(--vegas-focus);
+    outline-offset: 4px;
+}
+
+.casino-button:hover {
+    filter: brightness(1.13);
+}

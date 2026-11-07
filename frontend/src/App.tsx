@@ -1,122 +1,90 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import SignIn from "./pages/auth/sign-in"
+import Home from './pages/home'
+import axios from 'axios'
+import { useEffect, useState } from 'react'
+
+// Keep the possible session outcomes explicit.
+type SessionStatus = 'checking' | 'signed-in' | 'guest' | 'error'
 
 function App() {
-  const [count, setCount] = useState(0)
 
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    const [sessionStatus, setSessionStatus] = useState<SessionStatus>('checking')
 
-      <div className="ticks"></div>
+    // Observe React's current state without changing the displayed screen.
+    console.log('Session status:', sessionStatus)
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+    // Check the existing session when App opens.
+    useEffect(function () {
+        let ignoreResult = false
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+        async function checkSession() {
+            try {
+                await axios.get('/api/v1/user')
+
+                if (ignoreResult) {
+                    return
+                }
+
+                setSessionStatus('signed-in')
+            } catch (error) {
+                if (ignoreResult) {
+                    return
+                }
+
+                // Only 401 confirms that Sam has no authenticated session.
+                if (axios.isAxiosError(error)) {
+                    if (error.response?.status === 401) {
+                        // Move guests to the Sign In URL before displaying the form.
+                        if (window.location.pathname !== '/sign-in') {
+                            window.location.replace('/sign-in')
+                            return
+                        }
+
+                        setSessionStatus('guest')
+                        return
+                    }
+                }
+
+                // A server or connection problem does not mean Sam is a guest.
+                setSessionStatus('error')
+            }
+        }
+
+        // Start the request without returning its promise to React.
+        void checkSession()
+
+        // Ignore a late response after React stops using this Effect.
+        return function cleanup() {
+            ignoreResult = true
+        }
+    }, [])
+
+
+    // Show a status message until Laravel answers.
+    let content = <p role="status">Checking your session…</p>
+
+    if (sessionStatus === 'signed-in') {
+        content = <Home />
+    }
+
+    if (sessionStatus === 'guest') {
+        content = <SignIn />
+    }
+
+    if (sessionStatus === 'error') {
+        content = (
+            <p role="status">
+                Could not check your session. Refresh to try again.
+            </p>
+        )
+    }
+
+    return (
+        <main className="casino-scenery min-h-screen bg-cover bg-top">
+            {/* Display the content selected from the session result. */}
+            {content}
+        </main>
+    )
 }
 
 export default App

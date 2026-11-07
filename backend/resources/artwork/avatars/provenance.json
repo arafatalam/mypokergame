@@ -1,0 +1,51 @@
+{
+  "created": "2026-11-07",
+  "tool": "Built-in image generation",
+  "style_reference": "Approved casino reference artwork, visually inspected; new portraits generated from written descriptions.",
+  "images": [
+    {
+      "file": "public/images/avatars/avatar_01.png",
+      "intended_role": "super-admin",
+      "prompt": "Use case: stylized-concept. Create ONE finished square profile avatar image for a retro casino poker web app. Cohesive 1950s Las Vegas illustrated advertising portrait, warm ivory parchment background, burgundy, mustard gold and muted turquoise accents, confident dark ink shapes with subtle painterly shading and printed paper grain. Elegant friendly fictional adult, close head-and-shoulders portrait centered, eyes at upper-middle, ample room above head, entire face and shoulders inside central 80 percent so a circular UI crop works. Flat plain warm ivory background reaching all square edges. Soft warm lighting. Match a premium vintage casino poster, readable at 48 pixels, rich but restrained colors. Not photorealistic, not 3D, not anime. No text, letters, numbers, role labels, logos, borders, circular frames, playing cards, crowns or watermark. Square 1024 by 1024 image. Subject: a friendly middle-aged man with neatly combed dark hair with a little silver at the temples, subtle rectangular spectacles, short tidy beard, burgundy waistcoat over a cream shirt. Calm thoughtful expression, slight three-quarter turn."
+    },
+    {
+      "file": "public/images/avatars/avatar_02.png",
+      "intended_role": "admin",
+      "prompt": "Use case: stylized-concept. Create ONE finished square profile avatar image for a retro casino poker web app. Cohesive 1950s Las Vegas illustrated advertising portrait, warm ivory parchment background, burgundy, mustard gold and muted turquoise accents, confident dark ink shapes with subtle painterly shading and printed paper grain. Elegant friendly fictional adult, close head-and-shoulders portrait centered, eyes at upper-middle, ample room above head, entire face and shoulders inside central 80 percent so a circular UI crop works. Flat plain warm ivory background reaching all square edges. Soft warm lighting. Match a premium vintage casino poster, readable at 48 pixels, rich but restrained colors. Not photorealistic, not 3D, not anime. No text, letters, numbers, role labels, logos, borders, circular frames, playing cards, crowns or watermark. Square 1024 by 1024 image. Subject: a poised smiling middle-aged woman with dark softly waved shoulder-length hair, mustard-gold blazer over a burgundy blouse and tiny gold earrings. Warm confident expression, slight three-quarter turn."
+    },
+    {
+      "file": "public/images/avatars/avatar_03.png",
+      "intended_role": "manager",
+      "prompt": "Use case: stylized-concept. Create ONE finished square profile avatar image for a retro casino poker web app. Cohesive 1950s Las Vegas illustrated advertising portrait, warm ivory parchment background, burgundy, mustard gold and muted turquoise accents, confident dark ink shapes with subtle painterly shading and printed paper grain. Elegant friendly fictional adult, close head-and-shoulders portrait centered, eyes at upper-middle, ample room above head, entire face and shoulders inside central 80 percent so a circular UI crop works. Flat plain warm ivory background reaching all square edges. Soft warm lighting. Match a premium vintage casino poster, readable at 48 pixels, rich but restrained colors. Not photorealistic, not 3D, not anime. No text, letters, numbers, role labels, logos, borders, circular frames, playing cards, crowns or watermark. Square 1024 by 1024 image. Subject: a friendly adult man with warm brown skin, neatly cropped black hair, clean-shaven, turquoise collared shirt with rolled collar and dark burgundy waistcoat. Attentive composed smile, slight three-quarter turn."
+    },
+    {
+      "file": "public/images/avatars/avatar_04.png",
+      "intended_role": "player",
+      "prompt": "Use case: stylized-concept. Create ONE finished square profile avatar image for a retro casino poker web app. Cohesive 1950s Las Vegas illustrated advertising portrait, warm ivory parchment background, burgundy, mustard gold and muted turquoise accents, confident dark ink shapes with subtle painterly shading and printed paper grain. Elegant friendly fictional adult, close head-and-shoulders portrait centered, eyes at upper-middle, ample room above head, entire face and shoulders inside central 80 percent so a circular UI crop works. Flat plain warm ivory background reaching all square edges. Soft warm lighting. Match a premium vintage casino poster, readable at 48 pixels, rich but restrained colors. Not photorealistic, not 3D, not anime. No text, letters, numbers, role labels, logos, borders, circular frames, playing cards, crowns or watermark. Square 1024 by 1024 image. Subject: a cheerful adult woman with chestnut hair tied back with a burgundy bandana and a casual cream shirt with turquoise collar. Relaxed warm smile, slight three-quarter turn."
+    },
+    {
+      "file": "public/images/avatars/avatar_05.png",
+      "intended_role": "super-admin",
+      "concept": "The Ace Architect",
+      "tool": "Built-in image generation",
+      "created": "2026-11-07",
+      "prompt": "Use case: stylized-concept. Asset: ONE square profile avatar for the SuperAdmin of a retro casino poker app. Creative concept: 'The Ace Architect', a wise charismatic owl who runs the casino behind the scenes. A beautifully illustrated owl head and upper shoulders, ivory and warm chestnut feathers, expressive intelligent amber eyes behind elegant small round gold spectacles, a burgundy velvet waistcoat with a muted turquoise bow tie, and a small stylish gold crown whose central point is a spade silhouette. Friendly knowing half-smile, dignified and slightly mischievous, not sinister. Premium 1950s Las Vegas poster illustration, bold sophisticated ink contours, hand-painted warm shading, subtle vintage screenprint and parchment grain; deep burgundy, warm cream, muted turquoise, antique gold palette matching the project's casino artwork. Clean warm cream square background with a restrained turquoise circular halo behind the character, very simple. Centered close portrait, balanced symmetrical silhouette with a slight three-quarter turn. Entire crown, face and bow tie comfortably within central 75% for circular avatar cropping, head large enough to read at 48px. Character-led artwork, not an emblem or logo. No words, letters, labels, numbers, watermark, UI, outer frame, extra characters, props or scenery. No photorealism, no 3D render, no neon cyberpunk. Square 1024x1024."
+    },
+    {
+      "file": "public/images/avatars/avatar_06.png",
+      "intended_role": "super-admin",
+      "concept": "Modern human SuperAdmin with retro casino background",
+      "tool": "Built-in image generation",
+      "created": "2026-11-07",
+      "prompt": "Use case: stylized-concept. Create ONE square premium profile avatar for a modern human SuperAdmin of a poker web app. The user rejected an owl mascot and wants a MODERN SUPERADMIN with a RETRO BACKGROUND. Subject is a stylish contemporary adult male technology administrator, human, early 30s, neat dark textured hair with a modern fade, short well-groomed beard, clear modern thin-frame glasses, confident calm intelligent expression, wearing a clean charcoal black crew-neck shirt and a modern dark jacket. Contemporary professional technology aesthetic, approachable and capable, no costume, no crown, no owl, no animal, no vintage clothing. Crisp sophisticated digitally painted editorial portrait with convincing facial detail, subtle warm edge lighting, sharp face and modern clothing. Head and upper shoulders centered, slight three-quarter view, direct engaging gaze. Background ONLY is retro 1950s Las Vegas: aged cream paper grain, a large muted turquoise circular disc behind head, restrained burgundy and antique gold geometric starbursts and subtle distant casino-marquee glow near edges. Keep background quiet and uncluttered, no buildings or legible signs, face dominates. Cohesive cream/turquoise/burgundy/gold palette from vintage casino posters but contemporary human subject. Entire hair/head and shoulders framed with generous margin for circular profile cropping; clearly readable at small size. Square 1024x1024. No text, letters, numbers, labels, logo, watermark, UI, heavy borders, crowns, masks, playing cards in hands, weapons or mascot characters."
+    },
+    {
+      "file": "public/images/avatars/super_admin.png",
+      "intended_role": "super-admin",
+      "concept": "Abstract modern geometric spade with retro casino background",
+      "tool": "Built-in image generation",
+      "created": "2026-11-07",
+      "prompt": "Use case: stylized-concept. ONE square abstract SuperAdmin profile avatar for a premium poker app. Strictly NONFIGURATIVE: no human, face, head, eyes, body, animal, mascot or character. Central modern sculptural geometric spade symbol made of elegant interlocking brushed antique-gold planes, with a small luminous turquoise diamond-shaped core and restrained burgundy inset details. A sophisticated visual metaphor for the system architect: precise symmetry, intelligent layered geometry, commanding but minimal. The spade floats as a compact three-dimensional art object with subtle depth and refined soft shadows, not a flat generic clipart icon. Strong instantly recognizable silhouette at 48px. Background contrasts modern geometry with vintage 1950s Las Vegas: warm aged cream paper grain, muted turquoise circular disc, a few very restrained burgundy and gold midcentury starburst accents near edges. Premium editorial artwork, subtle screenprint grain, warm cinematic highlights, rich burgundy/cream/turquoise/antique-gold palette. Central symbol fully inside central 65% of square with generous clean space for circular avatar cropping. Polished, creative, minimal. No crown, shields, padlocks, literal circuitry, letters, numbers, text, role labels, logos, watermark, outer border or UI. Square 1024x1024."
+    }
+  ]
+}

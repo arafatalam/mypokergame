@@ -6,16 +6,26 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+
+            $table->string('first_name', 100);
+            $table->string('last_name', 100);
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
+            $table->string('phone', 16)->nullable();
+            $table->string('username')->unique();
+
+            // New accounts are players unless another role is assigned.
+            $table->string('role', 32)->default('player');
+
+            $table->boolean('is_active')->default(true);
+            $table->boolean('must_change_password')->default(false);
+
+            // Remember the assigned avatar or uploaded photo.
+            $table->string('profile_image_path');
+
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
@@ -37,13 +47,10 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('users');
     }
 };

@@ -1,0 +1,11 @@
+{
+    "mcpServers": {
+        "laravel-boost": {
+            "command": "/opt/homebrew/Cellar/php/8.5.11_1/bin/php",
+            "args": [
+                "/Users/arafat/Projects/Herd/mypokergame/backend/artisan",
+                "boost:mcp"
+            ]
+        }
+    }
+}
