@@ -5,7 +5,8 @@ import App from './App.tsx'
 import axios from 'axios'
 
 // Prepare browser requests before React displays the app.
-axios.defaults.baseURL = 'http://localhost:8000'
+// Use the current website for API and CSRF requests.
+axios.defaults.baseURL = '/'
 axios.defaults.withCredentials = true
 axios.defaults.withXSRFToken = true
 axios.defaults.headers.common.Accept = 'application/json'
