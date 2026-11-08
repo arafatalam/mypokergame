@@ -47,5 +47,126 @@
       "created": "2026-11-07",
       "prompt": "Use case: stylized-concept. ONE square abstract SuperAdmin profile avatar for a premium poker app. Strictly NONFIGURATIVE: no human, face, head, eyes, body, animal, mascot or character. Central modern sculptural geometric spade symbol made of elegant interlocking brushed antique-gold planes, with a small luminous turquoise diamond-shaped core and restrained burgundy inset details. A sophisticated visual metaphor for the system architect: precise symmetry, intelligent layered geometry, commanding but minimal. The spade floats as a compact three-dimensional art object with subtle depth and refined soft shadows, not a flat generic clipart icon. Strong instantly recognizable silhouette at 48px. Background contrasts modern geometry with vintage 1950s Las Vegas: warm aged cream paper grain, muted turquoise circular disc, a few very restrained burgundy and gold midcentury starburst accents near edges. Premium editorial artwork, subtle screenprint grain, warm cinematic highlights, rich burgundy/cream/turquoise/antique-gold palette. Central symbol fully inside central 65% of square with generous clean space for circular avatar cropping. Polished, creative, minimal. No crown, shields, padlocks, literal circuitry, letters, numbers, text, role labels, logos, watermark, outer border or UI. Square 1024x1024."
     }
+  ],
+  "additional_batches": [
+    {
+      "created": "2026-11-07",
+      "tool": "Built-in image generation",
+      "request": "20 ordinary avatars total: preserve 01–04 and add 05–20; Super Admin separate.",
+      "images": [
+        {
+          "number": 5,
+          "source": "/Users/arafat/.codex/generated_images/01a1b5f2-c5bb-7271-ab05-70966cdda38b/exec-80eff644-2e89-49a1-aa56-62e98fcfbfc0.png",
+          "prompt": "Use case: stylized-concept. Generate ONE square individual profile avatar for a retro casino poker app, matching the inspected existing set: premium 1950s Las Vegas advertising illustration, warm ivory parchment background extending to edges, confident dark ink brush shapes, realistic painterly facial shading, subtle printed paper grain, burgundy/mustard-gold/muted turquoise accents. Friendly fictional adult head and shoulders centered, face large readable at 48px, slight three-quarter view, full hair with generous headroom, all essential features within central 75 percent for circular crop. Warm lighting, elegant approachable expression, simple solid background. Not photorealistic, not 3D, not anime. No text, numerals, labels, role symbols, crowns, logos, border, circular frame, playing cards, props or watermark. Square 1024x1024. Subject: a smiling Black woman in her thirties with short natural curls, muted turquoise blouse and small gold earrings.",
+          "gender": "female",
+          "file": "public/images/avatars/avatar_05.png"
+        },
+        {
+          "number": 6,
+          "source": "/Users/arafat/.codex/generated_images/01a1b5f2-c5bb-7271-ab05-70966cdda38b/exec-2895c9f2-285f-4745-b5b7-bfb97cedd677.png",
+          "prompt": "Use case: stylized-concept. Generate ONE square individual profile avatar for a retro casino poker app, matching the inspected existing set: premium 1950s Las Vegas advertising illustration, warm ivory parchment background extending to edges, confident dark ink brush shapes, realistic painterly facial shading, subtle printed paper grain, burgundy/mustard-gold/muted turquoise accents. Friendly fictional adult head and shoulders centered, face large readable at 48px, slight three-quarter view, full hair with generous headroom, all essential features within central 75 percent for circular crop. Warm lighting, elegant approachable expression, simple solid background. Not photorealistic, not 3D, not anime. No text, numerals, labels, role symbols, crowns, logos, border, circular frame, playing cards, props or watermark. Square 1024x1024. Subject: a friendly East Asian man in his forties with neatly side-parted black hair, cream shirt and mustard waistcoat.",
+          "gender": "male",
+          "file": "public/images/avatars/avatar_06.png"
+        },
+        {
+          "number": 7,
+          "source": "/Users/arafat/.codex/generated_images/01a1b5f2-c5bb-7271-ab05-70966cdda38b/exec-94246dbf-2937-46a4-8163-2573f5183b30.png",
+          "prompt": "Use case: stylized-concept. Generate ONE square individual profile avatar for a retro casino poker app, matching the inspected existing set: premium 1950s Las Vegas advertising illustration, warm ivory parchment background extending to edges, confident dark ink brush shapes, realistic painterly facial shading, subtle printed paper grain, burgundy/mustard-gold/muted turquoise accents. Friendly fictional adult head and shoulders centered, face large readable at 48px, slight three-quarter view, full hair with generous headroom, all essential features within central 75 percent for circular crop. Warm lighting, elegant approachable expression, simple solid background. Not photorealistic, not 3D, not anime. No text, numerals, labels, role symbols, crowns, logos, border, circular frame, playing cards, props or watermark. Square 1024x1024. Subject: an older woman with silver bobbed hair, elegant burgundy blouse and a knowing gentle smile.",
+          "gender": "female",
+          "file": "public/images/avatars/avatar_07.png"
+        },
+        {
+          "number": 8,
+          "source": "/Users/arafat/.codex/generated_images/01a1b5f2-c5bb-7271-ab05-70966cdda38b/exec-2dec4696-7bcc-4910-9ede-5605a01473e5.png",
+          "prompt": "Use case: stylized-concept. Generate ONE square individual profile avatar for a retro casino poker app, matching the inspected existing set: premium 1950s Las Vegas advertising illustration, warm ivory parchment background extending to edges, confident dark ink brush shapes, realistic painterly facial shading, subtle printed paper grain, burgundy/mustard-gold/muted turquoise accents. Friendly fictional adult head and shoulders centered, face large readable at 48px, slight three-quarter view, full hair with generous headroom, all essential features within central 75 percent for circular crop. Warm lighting, elegant approachable expression, simple solid background. Not photorealistic, not 3D, not anime. No text, numerals, labels, role symbols, crowns, logos, border, circular frame, playing cards, props or watermark. Square 1024x1024. Subject: a cheerful young adult man with warm brown skin, wavy dark hair, clean shaven and mustard collared shirt.",
+          "gender": "male",
+          "file": "public/images/avatars/avatar_08.png"
+        },
+        {
+          "number": 9,
+          "source": "/Users/arafat/.codex/generated_images/01a1b5f2-c5bb-7271-ab05-70966cdda38b/exec-7cb4d711-bc73-4851-b541-6ca8d81c3764.png",
+          "prompt": "Use case: stylized-concept. Generate ONE square individual profile avatar for a retro casino poker app, matching the inspected existing set: premium 1950s Las Vegas advertising illustration, warm ivory parchment background extending to edges, confident dark ink brush shapes, realistic painterly facial shading, subtle printed paper grain, burgundy/mustard-gold/muted turquoise accents. Friendly fictional adult head and shoulders centered, face large readable at 48px, slight three-quarter view, full hair with generous headroom, all essential features within central 75 percent for circular crop. Warm lighting, elegant approachable expression, simple solid background. Not photorealistic, not 3D, not anime. No text, numerals, labels, role symbols, crowns, logos, border, circular frame, playing cards, props or watermark. Square 1024x1024. Subject: a poised South Asian woman with long dark hair over one shoulder, burgundy blouse and turquoise scarf.",
+          "gender": "female",
+          "file": "public/images/avatars/avatar_09.png"
+        },
+        {
+          "number": 10,
+          "source": "/Users/arafat/.codex/generated_images/01a1b5f2-c5bb-7271-ab05-70966cdda38b/exec-7381c937-8428-49b0-b541-99613df46343.png",
+          "prompt": "Use case: stylized-concept. Generate ONE square individual profile avatar for a retro casino poker app, matching the inspected existing set: premium 1950s Las Vegas advertising illustration, warm ivory parchment background extending to edges, confident dark ink brush shapes, realistic painterly facial shading, subtle printed paper grain, burgundy/mustard-gold/muted turquoise accents. Friendly fictional adult head and shoulders centered, face large readable at 48px, slight three-quarter view, full hair with generous headroom, all essential features within central 75 percent for circular crop. Warm lighting, elegant approachable expression, simple solid background. Not photorealistic, not 3D, not anime. No text, numerals, labels, role symbols, crowns, logos, border, circular frame, playing cards, props or watermark. Square 1024x1024. Subject: a friendly older Black man with close cropped silver hair, short silver beard and cream shirt with turquoise waistcoat.",
+          "gender": "male",
+          "file": "public/images/avatars/avatar_10.png"
+        },
+        {
+          "number": 11,
+          "source": "/Users/arafat/.codex/generated_images/01a1b5f2-c5bb-7271-ab05-70966cdda38b/exec-f07d6ee4-21ce-4996-b1d4-8abf9c858c2f.png",
+          "prompt": "Use case: stylized-concept. Generate ONE square individual male profile avatar for a retro casino poker app: premium 1950s Las Vegas advertising illustration, warm ivory parchment background extending to edges, confident dark ink brush shapes, realistic painterly facial shading, subtle printed paper grain, burgundy/mustard-gold/muted turquoise accents. Friendly fictional adult head and shoulders centered, face large readable at 48px, slight three-quarter view, full hair with generous headroom, essential features within central 75 percent for circular crop. Warm lighting, approachable expression, simple plain background. Not photorealistic, not 3D, not anime. No text, numerals, labels, role symbols, crowns, logos, border, circular frame, playing cards, props or watermark. Square 1024x1024. Subject: a friendly adult man with warm brown skin, short dark curls, rectangular glasses and a burgundy cardigan over cream shirt.",
+          "gender": "male",
+          "file": "public/images/avatars/avatar_11.png"
+        },
+        {
+          "number": 12,
+          "source": "/Users/arafat/.codex/generated_images/01a1b5f2-c5bb-7271-ab05-70966cdda38b/exec-acd7e0ca-68d7-4c4a-8e08-3756eaa97fab.png",
+          "prompt": "Use case: stylized-concept. Generate ONE square individual profile avatar for a retro casino poker app, matching the inspected existing set: premium 1950s Las Vegas advertising illustration, warm ivory parchment background extending to edges, confident dark ink brush shapes, realistic painterly facial shading, subtle printed paper grain, burgundy/mustard-gold/muted turquoise accents. Friendly fictional adult head and shoulders centered, face large readable at 48px, slight three-quarter view, full hair with generous headroom, all essential features within central 75 percent for circular crop. Warm lighting, elegant approachable expression, simple solid background. Not photorealistic, not 3D, not anime. No text, numerals, labels, role symbols, crowns, logos, border, circular frame, playing cards, props or watermark. Square 1024x1024. Subject: a confident adult man with olive skin, curly dark hair, neatly trimmed moustache and burgundy collared shirt.",
+          "gender": "male",
+          "file": "public/images/avatars/avatar_12.png"
+        },
+        {
+          "number": 13,
+          "source": "/Users/arafat/.codex/generated_images/01a1b5f2-c5bb-7271-ab05-70966cdda38b/exec-6a6305ac-a400-425e-b41c-aec0726a51f6.png",
+          "prompt": "Use case: stylized-concept. Generate ONE square individual male profile avatar for a retro casino poker app: premium 1950s Las Vegas advertising illustration, warm ivory parchment background extending to edges, confident dark ink brush shapes, realistic painterly facial shading, subtle printed paper grain, burgundy/mustard-gold/muted turquoise accents. Friendly fictional adult head and shoulders centered, face large readable at 48px, slight three-quarter view, full hair with generous headroom, essential features within central 75 percent for circular crop. Warm lighting, approachable expression, simple plain background. Not photorealistic, not 3D, not anime. No text, numerals, labels, role symbols, crowns, logos, border, circular frame, playing cards, props or watermark. Square 1024x1024. Subject: a smiling middle-aged man with East Asian features, short salt-and-pepper hair and a turquoise collared shirt.",
+          "gender": "male",
+          "file": "public/images/avatars/avatar_13.png"
+        },
+        {
+          "number": 14,
+          "source": "/Users/arafat/.codex/generated_images/01a1b5f2-c5bb-7271-ab05-70966cdda38b/exec-67a76284-87a5-4c6b-8b12-fe810d864d2c.png",
+          "prompt": "Use case: stylized-concept. Generate ONE square individual profile avatar for a retro casino poker app, matching the inspected existing set: premium 1950s Las Vegas advertising illustration, warm ivory parchment background extending to edges, confident dark ink brush shapes, realistic painterly facial shading, subtle printed paper grain, burgundy/mustard-gold/muted turquoise accents. Friendly fictional adult head and shoulders centered, face large readable at 48px, slight three-quarter view, full hair with generous headroom, all essential features within central 75 percent for circular crop. Warm lighting, elegant approachable expression, simple solid background. Not photorealistic, not 3D, not anime. No text, numerals, labels, role symbols, crowns, logos, border, circular frame, playing cards, props or watermark. Square 1024x1024. Subject: a relaxed adult man with deep brown skin, shaved head, clean shaven and mustard jacket over cream shirt.",
+          "gender": "male",
+          "file": "public/images/avatars/avatar_14.png"
+        },
+        {
+          "number": 15,
+          "source": "/Users/arafat/.codex/generated_images/01a1b5f2-c5bb-7271-ab05-70966cdda38b/exec-4d5c5183-fd27-4cb5-a640-39e4629cf897.png",
+          "prompt": "Use case: stylized-concept. Generate ONE square individual male profile avatar for a retro casino poker app: premium 1950s Las Vegas advertising illustration, warm ivory parchment background extending to edges, confident dark ink brush shapes, realistic painterly facial shading, subtle printed paper grain, burgundy/mustard-gold/muted turquoise accents. Friendly fictional adult head and shoulders centered, face large readable at 48px, slight three-quarter view, full hair with generous headroom, essential features within central 75 percent for circular crop. Warm lighting, approachable expression, simple plain background. Not photorealistic, not 3D, not anime. No text, numerals, labels, role symbols, crowns, logos, border, circular frame, playing cards, props or watermark. Square 1024x1024. Subject: a confident adult man with olive skin, thick dark wavy hair, clean shaven and a mustard jacket.",
+          "gender": "male",
+          "file": "public/images/avatars/avatar_15.png"
+        },
+        {
+          "number": 16,
+          "source": "/Users/arafat/.codex/generated_images/01a1b5f2-c5bb-7271-ab05-70966cdda38b/exec-950bfd67-53f9-448d-8fb5-e34e2300cff4.png",
+          "prompt": "Use case: stylized-concept. Generate ONE square individual profile avatar for a retro casino poker app, matching the inspected existing set: premium 1950s Las Vegas advertising illustration, warm ivory parchment background extending to edges, confident dark ink brush shapes, realistic painterly facial shading, subtle printed paper grain, burgundy/mustard-gold/muted turquoise accents. Friendly fictional adult head and shoulders centered, face large readable at 48px, slight three-quarter view, full hair with generous headroom, all essential features within central 75 percent for circular crop. Warm lighting, elegant approachable expression, simple solid background. Not photorealistic, not 3D, not anime. No text, numerals, labels, role symbols, crowns, logos, border, circular frame, playing cards, props or watermark. Square 1024x1024. Subject: a distinguished older man with silver hair and moustache, turquoise shirt and burgundy waistcoat, no glasses.",
+          "gender": "male",
+          "file": "public/images/avatars/avatar_16.png"
+        },
+        {
+          "number": 17,
+          "source": "/Users/arafat/.codex/generated_images/01a1b5f2-c5bb-7271-ab05-70966cdda38b/exec-c28bd304-7bb4-45c9-b095-93cf89812c7c.png",
+          "prompt": "Use case: stylized-concept. Generate ONE square individual male profile avatar for a retro casino poker app: premium 1950s Las Vegas advertising illustration, warm ivory parchment background extending to edges, confident dark ink brush shapes, realistic painterly facial shading, subtle printed paper grain, burgundy/mustard-gold/muted turquoise accents. Friendly fictional adult head and shoulders centered, face large readable at 48px, slight three-quarter view, full hair with generous headroom, essential features within central 75 percent for circular crop. Warm lighting, approachable expression, simple plain background. Not photorealistic, not 3D, not anime. No text, numerals, labels, role symbols, crowns, logos, border, circular frame, playing cards, props or watermark. Square 1024x1024. Subject: a cheerful adult man with deep brown skin, short natural hair, neatly trimmed beard and burgundy shirt.",
+          "gender": "male",
+          "file": "public/images/avatars/avatar_17.png"
+        },
+        {
+          "number": 18,
+          "source": "/Users/arafat/.codex/generated_images/01a1b5f2-c5bb-7271-ab05-70966cdda38b/exec-7e3fdacf-e080-4b30-aaa1-d133959ad21d.png",
+          "prompt": "Use case: stylized-concept. Generate ONE square individual profile avatar for a retro casino poker app, matching the inspected existing set: premium 1950s Las Vegas advertising illustration, warm ivory parchment background extending to edges, confident dark ink brush shapes, realistic painterly facial shading, subtle printed paper grain, burgundy/mustard-gold/muted turquoise accents. Friendly fictional adult head and shoulders centered, face large readable at 48px, slight three-quarter view, full hair with generous headroom, all essential features within central 75 percent for circular crop. Warm lighting, elegant approachable expression, simple solid background. Not photorealistic, not 3D, not anime. No text, numerals, labels, role symbols, crowns, logos, border, circular frame, playing cards, props or watermark. Square 1024x1024. Subject: a cheerful fair skinned adult man with reddish brown hair, freckles and cream shirt with turquoise collar.",
+          "gender": "male",
+          "file": "public/images/avatars/avatar_18.png"
+        },
+        {
+          "number": 19,
+          "source": "/Users/arafat/.codex/generated_images/01a1b5f2-c5bb-7271-ab05-70966cdda38b/exec-7380a5b8-763a-4616-a11e-4f607fc97318.png",
+          "prompt": "Use case: stylized-concept. Generate ONE square individual male profile avatar for a retro casino poker app: premium 1950s Las Vegas advertising illustration, warm ivory parchment background extending to edges, confident dark ink brush shapes, realistic painterly facial shading, subtle printed paper grain, burgundy/mustard-gold/muted turquoise accents. Friendly fictional adult head and shoulders centered, face large readable at 48px, slight three-quarter view, full hair with generous headroom, essential features within central 75 percent for circular crop. Warm lighting, approachable expression, simple plain background. Not photorealistic, not 3D, not anime. No text, numerals, labels, role symbols, crowns, logos, border, circular frame, playing cards, props or watermark. Square 1024x1024. Subject: a friendly older fair skinned man with thinning silver hair, round gold spectacles and a cream shirt with mustard waistcoat.",
+          "gender": "male",
+          "file": "public/images/avatars/avatar_19.png"
+        },
+        {
+          "number": 20,
+          "source": "/Users/arafat/.codex/generated_images/01a1b5f2-c5bb-7271-ab05-70966cdda38b/exec-9de51b67-8441-4ddb-bce6-208cf87a4a02.png",
+          "prompt": "Use case: stylized-concept. Generate ONE square individual profile avatar for a retro casino poker app, matching the inspected existing set: premium 1950s Las Vegas advertising illustration, warm ivory parchment background extending to edges, confident dark ink brush shapes, realistic painterly facial shading, subtle printed paper grain, burgundy/mustard-gold/muted turquoise accents. Friendly fictional adult head and shoulders centered, face large readable at 48px, slight three-quarter view, full hair with generous headroom, all essential features within central 75 percent for circular crop. Warm lighting, elegant approachable expression, simple solid background. Not photorealistic, not 3D, not anime. No text, numerals, labels, role symbols, crowns, logos, border, circular frame, playing cards, props or watermark. Square 1024x1024. Subject: a friendly middle aged man with tan skin, dark slicked back hair, short dark beard and turquoise shirt with cream waistcoat.",
+          "gender": "male",
+          "file": "public/images/avatars/avatar_20.png"
+        }
+      ]
+    }
   ]
 }

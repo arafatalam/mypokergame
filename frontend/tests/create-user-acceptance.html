@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Create User acceptance checks</title>
+<style>body{margin:16px;font:14px system-ui;background:#f5f5f5;color:#171717}button,select{font:inherit;padding:8px;margin:4px}iframe{display:block;background:white;border:1px solid #777;margin-top:12px}pre{white-space:pre-wrap}table{border-collapse:collapse}td,th{padding:6px;border:1px solid #bbb;text-align:left}</style>
+<h1>Create User isolated acceptance checks</h1>
+<p>Actual React app and Axios errors; all API responses are local test doubles. No account writes or session changes.</p>
+<button id="run">Run all checks</button>
+<label>Preview <select id="viewport"><option>1440x900</option><option>1366x650</option><option>1280x600</option><option>1024x768</option><option>768x1024</option><option>390x844</option><option>320x568</option></select></label>
+<label>State <select id="mode"><option>errors</option><option>success</option><option>blank</option><option>roles</option><option>photos</option><option>submissions</option></select></label>
+<button id="preview">Show preview</button>
+<iframe id="app" title="Actual Create User app under test" width="1440" height="900"></iframe><pre id="results">Ready</pre>
+<script type="module">
+const frame=document.querySelector('#app'), results=document.querySelector('#results');
+let waiting;
+function show(entries,done=false){results.replaceChildren();const heading=document.createElement('div');heading.textContent=(done?'FINISHED: ':'Running: ')+entries.length+' viewport/state combinations';results.append(heading);for(const item of entries){const line=document.createElement('div');line.textContent=JSON.stringify(item);results.append(line)}}
+window.addEventListener('message',event=>{if(event.source!==frame.contentWindow||event.data?.kind!=='acceptance')return; if(waiting){const resolve=waiting;waiting=null;resolve(event.data)}else show([event.data],true)});
+function open(width,height,mode){frame.width=width;frame.height=height;frame.src='./create-user-acceptance-frame.html?view=users&task=create&mode='+mode+'&run='+Date.now();}
+document.querySelector('#preview').onclick=()=>{const [w,h]=document.querySelector('#viewport').value.split('x');open(w,h,document.querySelector('#mode').value)};
+document.querySelector('#run').onclick=async()=>{
+ const entries=[];
+ for(const size of ['1440x900','1366x650','1280x600','1024x768','768x1024','390x844','320x568']){
+  for(const mode of ['blank','errors','success']){
+   const [w,h]=size.split('x');const result=new Promise(resolve=>{waiting=resolve});open(w,h,mode);
+   const item=await result;entries.push(item);show(entries);
+  }
+ }
+ show(entries,true);
+};
+</script></html>

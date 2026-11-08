@@ -17,6 +17,9 @@ class SignOutUser
             // Laravel also rotates the account's Remember me token.
             Auth::guard('web')->logout();
 
+            // Prevent the new guest session from retaining this account's user ID.
+            Auth::guard('sanctum')->forgetUser();
+
             // Ordinary logout ends this account's sessions on every device.
             DB::connection(config('session.connection'))
                 ->table(config('session.table', 'sessions'))
