@@ -6,9 +6,9 @@ const { File } = require('node:buffer')
 
 // Execute the application's handlers unchanged except for their TypeScript types.
 // Browser doubles make late decoding/encoding and encoder failures deterministic.
-const source = fs.readFileSync(require('node:path').join(__dirname, '../src/pages/users/use-profile-photo.ts'), 'utf8')
-const pageSource = fs.readFileSync(require('node:path').join(__dirname, '../src/pages/users/create-user.tsx'), 'utf8')
-const submissionSource = fs.readFileSync(require('node:path').join(__dirname, '../src/pages/users/use-create-user-submission.ts'), 'utf8')
+const source = fs.readFileSync(require('node:path').join(__dirname, '../src/pages/users/shared-resources/use-profile-photo.ts'), 'utf8')
+const pageSource = fs.readFileSync(require('node:path').join(__dirname, '../src/pages/users/create-user/create-user.tsx'), 'utf8')
+const submissionSource = fs.readFileSync(require('node:path').join(__dirname, '../src/pages/users/create-user/use-create-user-submission.ts'), 'utf8')
 function section(start, end, sourceText = source) {
     assert.ok(sourceText.includes(start) && sourceText.includes(end), 'handler boundaries exist')
     return sourceText.slice(sourceText.indexOf(start), sourceText.indexOf(end))
@@ -27,9 +27,11 @@ function harness(options = {}) {
     const c = {
         File, Blob, console: { log() {} }, samplePortrait: 'sample',
         photo: null, photoPreview: 'sample', photoMessage: '', isCheckingPhoto: false,
-        isSubmitting: false, roleChoices: { isLoadingRoles: false, roles: [{}] },
+        isSubmitting: false, isLoadingRoles: false, roleOptions: [{}], isBlocked: false,
         firstName: 'Test', lastName: 'Photo', email: 'test@example.com', phone: '', selectedRole: 'player',
         photoCheckRef: { current: 0 }, submissionRef: { current: 0 }, photoInputRef: { current: { value: 'old' } },
+        requestInFlight: { current: false },
+        callbacks: options.callbacks,
         clearSubmissionFeedback() { calls.push('clearFeedback') },
         FormData,
         axios: { async get() { calls.push('csrf') }, async post(url, data) { calls.push(data); return { data: { username: 'test.photo', generated_password: 'test-only' } } }, isAxiosError() { return false } },
@@ -53,18 +55,18 @@ function harness(options = {}) {
             return canvas
         } },
     }
-    for (const name of ['Photo', 'PhotoPreview', 'PhotoMessage', 'IsCheckingPhoto', 'IsSubmitting', 'SubmitMessage', 'CreatedAccount', 'FieldErrors']) {
+    for (const name of ['Photo', 'PhotoName', 'PhotoPreview', 'PhotoMessage', 'IsCheckingPhoto', 'IsSubmitting', 'SubmitMessage', 'CreatedAccount', 'FieldErrors']) {
         const key = name[0].toLowerCase() + name.slice(1)
         c['set' + name] = value => { c[key] = value }
     }
-    c.profilePhoto = c
+    c.setIsConfirmationOpen = value => { c.confirmationOpen = value }
     c.submission = c
     vm.createContext(c)
-    vm.runInContext(section('    async function handlePhotoChange', '    return {') + '\n' + section('    async function submitAccount', '    return {', submissionSource) + '\n' + section('    async function handleSubmit', '    // Show credentials only', pageSource), c)
+    vm.runInContext(section('    function updateChecking', '    return {') + '\n' + section('    async function submitAccount', '    return {', submissionSource) + '\n' + section('    function handleSubmit', '\n    return (', pageSource), c)
     return {
         c, pending, decoded, canvases, urls, calls,
-        choose(type = 'image/jpeg', size = 100) {
-            const input = { value: 'chosen', files: { item() { return { type, size } } } }
+        choose(type = 'image/jpeg', size = 100, name = 'original.jpg') {
+            const input = { value: 'chosen', files: { item() { return { type, size, name } } } }
             return c.handlePhotoChange({ currentTarget: input }).then(() => { assert.equal(input.value, '') })
         },
         encode(blob = new Blob(['encoded'], { type: 'image/webp' }), index = pending.length - 1) { pending[index](blob) },
@@ -108,12 +110,96 @@ test('unmount cleanup invalidates a pending encoding', async () => {
 })
 test('picker cancellation preserves selection', async () => { const h=harness(); const old=await accepted(h); await h.c.handlePhotoChange({currentTarget:{files:{item(){return null}}}}); retained(h,old) })
 test('submission sends no requests during compression then uses accepted File', async () => {
-    const h=harness(); await h.choose(); await h.c.handleSubmit({preventDefault(){}}); assert.equal(h.calls.length,0)
-    h.encode(); await h.c.handleSubmit({preventDefault(){}})
+    const h = harness()
+    const event = { preventDefault() {} }
+    const evaluateBlocking = () => vm.runInContext(section('    const isBlocked', '    function handleSubmit', pageSource).replace('const isBlocked', 'isBlocked'), h.c)
+    await h.choose()
+    evaluateBlocking()
+    h.c.handleSubmit(event)
+    assert.equal(h.c.confirmationOpen, undefined)
+    assert.equal(h.calls.length, 0)
+    h.encode()
+    evaluateBlocking()
+    h.c.handleSubmit(event)
+    assert.equal(h.c.confirmationOpen, true)
+    await h.c.handleConfirmCreation()
     const data=h.calls.find(x=>x instanceof FormData); assert.ok(data); assert.equal(data.get('photo'),h.c.photo)
 })
 test('preview effect releases replaced/unmounted object URLs', () => {
     const effect=source.match(/return function cleanup\(\) \{\s*if \(photoPreview !== samplePortrait\) \{\s*URL.revokeObjectURL\(photoPreview\)\s*\}\s*\}/)
     assert.ok(effect); const revoked=[]; const c={photoPreview:'blob:previous',samplePortrait:'sample',URL:{revokeObjectURL(url){revoked.push(url)}}}; vm.createContext(c)
     vm.runInContext('('+effect[0].replace('return ','')+')()',c); c.photoPreview='sample'; vm.runInContext('('+effect[0].replace('return ','')+')()',c); assert.deepEqual(revoked,['blob:previous'])
+})
+
+test('preview keeps the original filename and reports only accepted files or Clear to its parent', async () => {
+    const changes = []
+    const checking = []
+    const h = harness({
+        callbacks: {
+            onPhotoChange(photo) { changes.push(photo) },
+            onPhotoCheckingChange(isChecking) { checking.push(isChecking) },
+        },
+    })
+    await h.choose('image/png', 100, 'selected portrait.png')
+    assert.deepEqual(checking, [true])
+    assert.deepEqual(changes, [])
+    h.encode()
+    const acceptedPhoto = h.c.photo
+    assert.deepEqual(changes, [acceptedPhoto])
+    assert.deepEqual(checking, [true, false])
+    assert.equal(h.c.photoName, 'selected portrait.png')
+    assert.equal(h.c.photoMessage, '')
+    assert.equal(h.urls[0], acceptedPhoto)
+
+    await h.choose('image/gif', 100, 'rejected.gif')
+    assert.deepEqual(changes, [acceptedPhoto])
+    assert.equal(h.c.photoName, 'selected portrait.png')
+    assert.match(h.c.photoMessage, /Choose a JPG, PNG or WebP image/)
+
+    h.c.handleClearPhotoClick()
+    assert.deepEqual(changes, [acceptedPhoto, null])
+    assert.equal(h.c.photoName, '')
+    assert.equal(h.c.photoMessage, '')
+    assert.equal(h.c.photoPreview, 'sample')
+})
+
+test('Create User asks before submitting and preserves the same details after cancellation', async () => {
+    let confirmationOpen = false
+    let prevented = 0
+    const submissions = []
+    const context = vm.createContext({
+        firstName: 'Test',
+        lastName: 'User',
+        email: 'test@example.com',
+        phone: '',
+        selectedRole: 'player',
+        photo: null,
+        isBlocked: false,
+        submission: {
+            isSubmitting: false,
+            async submitAccount(details) { submissions.push(details) },
+        },
+        setIsConfirmationOpen(value) { confirmationOpen = value },
+    })
+    vm.runInContext(section('    function handleSubmit', '\n    return (', pageSource), context)
+    const event = { preventDefault() { prevented += 1 } }
+
+    await context.handleSubmit(event)
+    assert.equal(confirmationOpen, true)
+    context.handleCancelConfirmation()
+    assert.equal(confirmationOpen, false)
+    assert.equal(submissions.length, 0)
+
+    await context.handleSubmit(event)
+    assert.equal(confirmationOpen, true)
+    await context.handleConfirmCreation()
+    assert.equal(confirmationOpen, false)
+    assert.equal(prevented, 2)
+    assert.equal(submissions.length, 1)
+    assert.equal(submissions[0].email, 'test@example.com')
+
+    context.isBlocked = true
+    await context.handleSubmit(event)
+    assert.equal(confirmationOpen, false)
+    assert.equal(submissions.length, 1)
 })

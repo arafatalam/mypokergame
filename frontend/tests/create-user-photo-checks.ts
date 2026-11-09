@@ -12,10 +12,10 @@ type PhotoChecks = {
 export async function runPhotoChecks(test: PhotoChecks) {
     const wait = (ms = 80) => new Promise(resolve => setTimeout(resolve, ms))
     const input = () => document.querySelector<HTMLInputElement>('input[type=file]')!
-    const portrait = () => document.querySelector<HTMLImageElement>('.create-account-portrait')!
+    const portrait = () => document.querySelector<HTMLImageElement>('.player-tab img')!
     const button = (label: string) => [...document.querySelectorAll('button')].find(b => b.textContent?.trim() === label)!
     const submitButton = () => document.querySelector<HTMLButtonElement>('button[type=submit]')!
-    const message = () => document.getElementById('photo-message')!.textContent ?? ''
+    const message = () => document.querySelector('.player-tab section > p')!.textContent ?? ''
     const sample = portrait().src
     const nativeEncode = HTMLCanvasElement.prototype.toBlob
     const nativeRevoke = URL.revokeObjectURL
@@ -36,8 +36,8 @@ export async function runPhotoChecks(test: PhotoChecks) {
         await wait()
     }
     async function ready() {
-        for (let i = 0; i < 100 && !message().includes('Compressed photo ready.'); i++) await wait()
-        test.check(message().includes('Compressed photo ready.'), 'photo accepted')
+        for (let i = 0; i < 100 && !message().includes('original.png'); i++) await wait()
+        test.check(message().includes('original.png'), 'photo accepted')
         await portrait().decode()
     }
     async function pendingCount(count: number) {
@@ -58,11 +58,11 @@ export async function runPhotoChecks(test: PhotoChecks) {
         test.check(button('Clear photo').disabled, 'Clear initially disabled')
         await test.fill('first-name', 'Photo'); await test.fill('last-name', 'Check'); await test.fill('email', 'photo.check@example.com')
         await test.submit('success')
-        test.check(document.getElementById('created-account-title'), 'credentials visible before photo change')
+        test.check(document.querySelector('.create-user-credential'), 'credentials visible before photo change')
         await choose(file); await ready()
-        test.check(!document.getElementById('created-account-title'), 'accepted photo clears old credentials')
+        test.check(!document.querySelector('.create-user-credential'), 'accepted photo clears old credentials')
         test.check(portrait().naturalWidth === 1200 && portrait().naturalHeight === 600, 'native compression preserves proportions at 1200 pixels')
-        test.check(portrait().alt === 'Selected profile photo preview', 'selected portrait description')
+        test.check(portrait().alt === 'Selected profile photo', 'selected portrait description')
         test.check(input().value === '', 'native picker resets for same-file reselection')
         const first = portrait().src
         await choose(null)
@@ -88,10 +88,10 @@ export async function runPhotoChecks(test: PhotoChecks) {
         test.check(test.requests.length === requestsBefore, 'submit handler sends no requests during compression')
         button('Clear photo').click(); await wait()
         test.check(portrait().src === sample && button('Clear photo').disabled, 'Clear restores sample during pending compression')
-        test.check(!document.getElementById('created-account-title'), 'Clear removes old credentials')
+        test.check(!document.querySelector('.create-user-credential'), 'Clear removes old credentials')
         test.check(revoked.includes(accepted), 'Clear releases accepted preview URL')
         await finish(0)
-        test.check(portrait().src === sample && message().includes('Photo cleared.'), 'cleared encoder result stays ignored')
+        test.check(portrait().src === sample && message().includes('Original photo up to 10 MB'), 'cleared encoder result stays ignored')
 
         await choose(file); await pendingCount(2)
         await choose(file); await pendingCount(3)
@@ -108,7 +108,7 @@ export async function runPhotoChecks(test: PhotoChecks) {
         await test.remount()
         test.check(revoked.includes(newest), 'unmount releases accepted preview')
         await finish(4)
-        test.check(portrait().src === sample && message() === '', 'unmounted encoder cannot update reopened form')
+        test.check(portrait().src === sample && message().includes('Original photo up to 10 MB'), 'unmounted encoder cannot update reopened form')
         HTMLCanvasElement.prototype.toBlob = nativeEncode
         await choose(file); await ready()
         test.check(!submitButton().disabled, 'same file works after reopening')
@@ -116,7 +116,7 @@ export async function runPhotoChecks(test: PhotoChecks) {
         await test.fill('first-name', 'No'); await test.fill('last-name', 'Photo'); await test.fill('email', 'no.photo@example.com')
         await test.submit('success')
         test.check(!test.lastSubmission()!.has('photo'), 'submission after Clear omits photo')
-        test.check(document.getElementById('created-account-title'), 'submission after Clear succeeds')
+        test.check(document.querySelector('.create-user-credential'), 'submission after Clear succeeds')
         test.check(revoked.length === new Set(revoked).size, 'each accepted preview URL released once')
     } finally {
         HTMLCanvasElement.prototype.toBlob = nativeEncode

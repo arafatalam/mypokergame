@@ -13,7 +13,11 @@
     container-type: inline-size;
     flex: 1;
     min-height: 0;
-    padding-bottom: 16px;
+}
+
+/* Only the banner keeps the original dashboard scale. */
+.home-banner {
+    container-type: inline-size;
 }
 
 .home-screen .home-header {
@@ -22,7 +26,8 @@
     width: 100vw;
     transform: translateX(-50%);
     justify-content: space-between;
-    height: 9.4cqw;
+    /* End the header at the light strip's lower edge. */
+    height: calc(8.4cqw + 3px);
     padding: 0.6cqw clamp(12px, 2cqw, 32px);
     gap: 3cqw;
 }
@@ -52,16 +57,19 @@
 
 .home-screen .home-navigation > .home-link,
 .home-screen .home-navigation-group > summary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: relative;
     flex: 1;
     min-width: 0;
-    min-height: 44px;
-    padding: 1cqw 0.5cqw;
+    min-height: 36px;
+    padding: 0.65cqw 0.75cqw;
     border: 0;
     border-radius: 0.55cqw;
     background: var(--home-paper-wash);
     color: var(--vegas-wine);
-    font: 2.5cqw/0.95 'House Display', 'Arial Narrow', sans-serif;
+    font: clamp(18px, 2cqw, 26px)/1.05 'House Display', 'Arial Narrow', sans-serif;
     text-align: center;
     transform: skew(-12deg);
     box-shadow: 0 2px 3px #31050b44;
@@ -73,10 +81,12 @@
 .home-screen .home-navigation-group > summary span { display: block; text-transform: uppercase; transform: skew(12deg); }
 .home-navigation-group > summary { list-style: none; }
 .home-navigation-group > summary::-webkit-details-marker { display: none; }
+/* Main buttons share the dropdown's gold feedback for mouse and keyboard navigation. */
+.home-screen .home-navigation > .home-link:hover,
+.home-screen .home-navigation > .home-link:focus-visible,
+.home-screen .home-navigation-group > summary:hover,
+.home-screen .home-navigation-group > summary:focus-visible,
 .home-screen .home-navigation-group[open] > summary { background: var(--vegas-gold-fill); }
-.home-screen .home-navigation-group::before {
-    content: '✦'; position: absolute; left: -2.2cqw; top: 0.6cqw; font-size: 2.5cqw; color: var(--vegas-gold);
-}
 
 /* An empty live region takes no space, but existing sign-out feedback remains readable. */
 .home-screen .home-status { color: var(--home-cream); }
@@ -85,39 +95,55 @@
 /* Menus float beside their button; opening a group does not add a content panel. */
 .home-submenu { --menu-angle: -12deg; --menu-text-angle: 12deg; position: absolute; top: calc(100% + 10px); right: 0; z-index: 10; width: max(220px, 100%); max-width: calc(100vw - 32px); margin: 0; padding: 0; list-style: none; }
 /* Angle each choice like its button; reverse the angle only on the label. */
-.home-submenu a { display: flex; align-items: center; min-height: 44px; padding: 10px 18px; border: 1px solid var(--vegas-ticket-line); border-radius: 5px; background: var(--home-paper-wash); box-shadow: 0 3px 6px #31050b55; color: var(--vegas-wine); font: 21px/1.2 'House Display', 'Arial Narrow', sans-serif; text-decoration: none; transform: skew(var(--menu-angle)); }
-.home-submenu a span { display: block; transform: skew(var(--menu-text-angle)); }
-.home-submenu a:hover,
-.home-submenu a:focus-visible { background: var(--vegas-gold-fill); }
+.home-submenu button { display: flex; align-items: center; width: 100%; text-align: left; cursor: pointer; min-height: 36px; padding: 7px 18px; border: 1px solid var(--vegas-ticket-line); border-radius: 5px; background: var(--home-paper-wash); box-shadow: 0 3px 6px #31050b55; color: var(--vegas-wine); font: 18px/1.2 'House Display', 'Arial Narrow', sans-serif; text-decoration: none; transform: skew(var(--menu-angle)); }
+.home-submenu button span { display: block; transform: skew(var(--menu-text-angle)); }
+.home-submenu button:hover,
+.home-submenu button:focus-visible { background: var(--vegas-gold-fill); }
 .home-submenu li + li { margin-top: 4px; }
 
-.home-content { padding: 28px clamp(16px, 3cqw, 40px) 12px; }
+/* Keep every existing gradient and colour; add only paper grain above the background. */
+.home-screen .home-navigation > .home-link,
+.home-screen .home-navigation-group > summary,
+.home-submenu button {
+    position: relative;
+    isolation: isolate;
+}
+
+.home-screen .home-navigation > .home-link::after,
+.home-screen .home-navigation-group > summary::after,
+.home-submenu button::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: url('../assets/casino/ticket-paper.png') center / cover;
+    /* Blend texture brightness without introducing the image's yellow colour. */
+    mix-blend-mode: luminosity;
+    opacity: 0.18;
+    pointer-events: none;
+}
+
+/* The shared sign starts below the header; keep side and bottom spacing. */
+.home-content {
+    --content-side-spacing: 16px;
+    padding: 0 var(--content-side-spacing) var(--content-side-spacing);
+}
 .home-content:empty { padding: 0; }
 
-/* Follow the page content, so the footer scrolls away instead of covering the tickets. */
-.home-account-navigation { position: relative; z-index: 20; align-self: flex-start; margin: 16px max(18px, env(safe-area-inset-left)) max(16px, env(safe-area-inset-bottom)); }
-.home-account-navigation .home-navigation-group { position: relative; }
-.home-account-navigation summary,
-.home-account-navigation button { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 12px 22px; border: 1px solid var(--vegas-ticket-line); border-radius: 6px; background: var(--home-paper-wash); color: var(--vegas-wine); box-shadow: 0 2px 4px #31050b44; font: 23px/1 'House Display', 'Arial Narrow', sans-serif; text-decoration: none; transform: skew(-8deg); cursor: pointer; }
-.home-account-navigation summary span,
-.home-account-navigation button span { display: block; transform: skew(8deg); text-transform: uppercase; }
-.home-account-navigation .home-navigation-group[open] > summary { background: var(--vegas-gold-fill); }
-.home-account-navigation .home-submenu { --menu-angle: -8deg; --menu-text-angle: 8deg; top: auto; right: auto; bottom: calc(100% + 10px); left: 0; }
-.home-account-navigation button:disabled { opacity: 0.6; cursor: wait; }
 .home-viewport a:focus-visible,
 .home-viewport summary:focus-visible { outline: 3px solid var(--vegas-focus); outline-offset: 4px; }
 .home-skip-link { position: absolute; top: -100px; left: 20px; z-index: 10; padding: 10px 16px; background: var(--home-cream); color: var(--vegas-wine); }
 .home-skip-link:focus { top: 12px; }
 
 /* Nest the existing Create User presentation inside this frame without a second logo. */
-.home-content .create-user-screen { min-height: 0; padding: 24px 0 0; }
+.home-content .create-user-screen { min-height: 0; padding: 0; }
 .home-content .create-user-screen > h1 { display: none; }
 
-/* Fit the complete desktop composition to the browser's available height. */
+/* Preserve the banner's laptop sizing without narrowing the task area. */
 @media (min-width: 900px) {
-    .home-screen {
+    .home-banner {
         max-width: min(1536px, 128svh);
-        padding-bottom: 16px;
     }
 }
 
@@ -129,22 +155,21 @@
     .home-screen .home-navigation > .home-link,
     .home-screen .home-navigation-group { flex: 1 1 25%; }
     .home-screen .home-navigation > .home-link,
-    .home-screen .home-navigation-group > summary { font-size: 20px; padding: 10px 8px; transform: skew(-8deg); }
+    .home-screen .home-navigation-group > summary { min-height: 44px; font-size: 17px; padding: 8px; transform: skew(-8deg); }
     .home-screen .home-navigation > .home-link span,
     .home-screen .home-navigation-group > summary span { transform: skew(8deg); }
-    .home-screen .home-navigation-group::before { display: none; }
     .home-screen .home-navigation-group { position: static; }
     .home-screen .home-submenu { --menu-angle: -8deg; --menu-text-angle: 8deg; top: calc(100% + 8px); left: 0; right: 0; width: 100%; }
-    .home-account-navigation { margin-left: 15px; margin-right: 15px; }
-    .home-account-navigation summary,
-    .home-account-navigation button { font-size: 21px; padding: 12px 18px; }
-    .home-content { padding-top: 22px; }
+    .home-submenu button { min-height: 44px; padding: 8px 14px; }
 
 }
 
 @media (forced-colors: active) {
+    .home-screen .home-navigation > .home-link::after,
+    .home-screen .home-navigation-group > summary::after,
+    .home-submenu button::after { display: none; }
+
     .home-screen .home-link,
     .home-viewport summary,
-    .home-account-navigation button,
-    .home-submenu a { border: 1px solid ButtonText; }
+    .home-submenu button { border: 1px solid ButtonText; }
 }

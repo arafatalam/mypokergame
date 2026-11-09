@@ -31,6 +31,7 @@ function useCreateUserSubmission() {
     })
     // Only the request belonging to this displayed screen may update its feedback.
     const submissionRef = useRef(0)
+    const requestInFlight = useRef(false)
 
     useEffect(function () {
         return function cleanup() {
@@ -39,7 +40,6 @@ function useCreateUserSubmission() {
     }, [])
 
     function clearSubmissionFeedback() {
-        // A changed form is no longer the form described by the last response.
         setCreatedAccount(null)
         setSubmitMessage('')
         setFieldErrors({
@@ -52,12 +52,34 @@ function useCreateUserSubmission() {
         })
     }
 
-    async function submitAccount(details: CreateUserDetails, isBlocked: boolean) {
-        // Ignore another submission while this request is running.
-        if (isSubmitting || isBlocked) {
+    function clearFeedbackAfterEdit(field: keyof typeof fieldErrors) {
+        if (isSubmitting) {
             return
         }
 
+        setCreatedAccount(null)
+
+        // Preserve messages for fields the user has yet to edit.
+        const nextErrors = { ...fieldErrors }
+        nextErrors[field] = ''
+        setFieldErrors(nextErrors)
+
+        const hasErrors = Object.values(nextErrors).some(function (message) {
+            return message !== ''
+        })
+
+        if (!hasErrors) {
+            setSubmitMessage('')
+        }
+    }
+
+    async function submitAccount(details: CreateUserDetails, isBlocked: boolean) {
+        // Lock immediately, including before React redraws the disabled controls.
+        if (requestInFlight.current || isBlocked) {
+            return
+        }
+
+        requestInFlight.current = true
         submissionRef.current += 1
         const currentSubmission = submissionRef.current
         clearSubmissionFeedback()
@@ -132,6 +154,7 @@ function useCreateUserSubmission() {
                 setSubmitMessage('An unexpected error occurred. Check whether the account exists before trying again.')
             }
         } finally {
+            requestInFlight.current = false
             // Allow another attempt after either success or failure.
             if (currentSubmission === submissionRef.current) {
                 setIsSubmitting(false)
@@ -145,6 +168,7 @@ function useCreateUserSubmission() {
         submitMessage,
         fieldErrors,
         clearSubmissionFeedback,
+        clearFeedbackAfterEdit,
         submitAccount,
     }
 }

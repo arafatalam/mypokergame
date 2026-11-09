@@ -1,20 +1,36 @@
-import type { KeyboardEvent } from 'react'
-import { homeUrl } from '../navigation'
+import type { KeyboardEvent, MouseEvent } from 'react'
 import type { HomeView, NavigationItem } from '../navigation'
 
 type NavigationGroupProps = {
     label: string
     view: HomeView
     items: NavigationItem[]
+    onSelect?: (task: string) => void
 }
 
 function NavigationGroup(props: NavigationGroupProps) {
     const links = []
 
     for (const item of props.items) {
+        function handleClick(event: MouseEvent<HTMLButtonElement>) {
+            // Tell Home which screen to display, then close its navigation menu.
+            if (props.onSelect) {
+                props.onSelect(item.task)
+
+                const menu = event.currentTarget.closest('details')
+                if (menu) {
+                    menu.open = false
+                    // Keep keyboard focus on a visible control after hiding the choices.
+                    menu.querySelector('summary')?.focus()
+                }
+            }
+        }
+
         links.push(
             <li key={item.task}>
-                <a href={homeUrl(props.view, item.task)}><span>{item.label}</span></a>
+                <button type="button" onClick={handleClick}>
+                    <span>{item.label}</span>
+                </button>
             </li>,
         )
     }

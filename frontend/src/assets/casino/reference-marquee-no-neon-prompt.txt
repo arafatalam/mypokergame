@@ -1,0 +1,7 @@
+Edited using built-in image generation on 2026-11-08 after developer requested removing and recreating all neon tubes because extension joins remained visible.
+Source: reference-marquee-frame.png.
+Generated original: /Users/arafat/.codex/generated_images/01a1bc7f-c8ef-7613-9e59-d5672e631e9f/exec-ecb5d17b-6d08-4cac-aaae-25db3870b66e.png
+Application: The shared sign uses this transparent foreground over actual ticket-paper.png. All six side tubes are now complete CSS shapes with cyan shading, white core, rounded ends and glow, painted behind the foreground frame; no tube fragments remain baked into the active artwork.
+
+Prompt:
+Use case: precise-object-edit / object removal. Edit this transparent casino marquee foreground image. REMOVE ALL SIX turquoise horizontal neon tubes and ALL their cyan glow from the left and right sides outside the bulb frame. Replace removed tubes/glow with genuine alpha transparency. There must be NO horizontal neon tubes remaining anywhere. Keep the central bulb-lined copper/red sign frame, all bulbs, gold starburst and its turquoise outline/glow, dark teal spade, red heart and their exact positions/scale unchanged. The paper interior is already transparent: KEEP it transparent, do not add paper or fill. Preserve outside transparency as well. Keep the exact source canvas and all central artwork size and position: 2084x754. Do not crop, resize, shift or redesign the frame/star/suits/bulbs. No text. Change ONLY removal of six horizontal side tubes and their glow. All central artwork must remain unchanged.

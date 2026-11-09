@@ -1,0 +1,39 @@
+@font-face {
+    font-family: 'House UI';
+    src: url('../assets/casino/fonts/Oswald-source.ttf') format('truetype');
+    font-weight: 200 700;
+    font-display: swap;
+}
+
+/* Keep the approved turquoise finish independent of the screen using this card. */
+.player-tab { --casino-ticket-edge-fill: #6cada0; --casino-ticket-edge-texture-opacity: 0.35; padding: 16px; color: #fff0cf; }
+.player-tab .casino-ticket-surface {
+    background-color: #075152;
+    background-image: url('../assets/casino/home-turquoise-paper.png');
+    background-size: cover;
+}
+.player-tab .casino-ticket-border { stroke: #244c45; }
+.player-tab h3 { margin: 0; padding: 10px 6px; border-radius: 5px; background: url('../assets/casino/ticket-paper.png') center / cover; color: var(--vegas-wine); font: 600 22px/1.2 'House UI', sans-serif; text-align: center; text-transform: uppercase; }
+/* Cut inward at the top to echo the ticket outline; keep the bottom corners rounded. */
+.player-tab h3 {
+    border-radius: 0 0 5px 5px;
+    mask:
+        radial-gradient(circle at top left, transparent 10px, #000 10.5px) left / 51% 100% no-repeat,
+        radial-gradient(circle at top right, transparent 10px, #000 10.5px) right / 51% 100% no-repeat;
+}
+.player-tab dl { margin: 0; }
+.player-tab dl > div { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 0; border-bottom: 1px solid #fff0cf66; }
+.player-tab dl > div:last-child { border-bottom: 0; }
+.player-tab dt { font: 400 16px/1.25 'House UI', sans-serif; }
+.player-tab dd { margin: 0; color: #ffe6b1; font: 500 18px/1.2 'House UI', sans-serif; text-align: right; }
+.player-tab-portrait { display: block; width: 68px; aspect-ratio: 1; border-radius: 50%; border: 2px solid #ffe9b8; background-image: url('../assets/casino/home-reference-art.png'); background-repeat: no-repeat; background-size: 1347.368421% 898.245614%; background-position: 23.066104% 90.989011%; }
+.player-tab-name { margin: 0; font: 600 24px/1.2 'House UI', sans-serif; text-align: center; }
+.player-tab-since { margin: 0; font-size: 12px; text-align: center; }
+.player-tab-balance { padding: 16px 0; border-top: 1px dashed #fff0cf80; border-bottom: 1px dashed #fff0cf80; text-align: center; }
+.player-tab-balance p { margin: 0; font: 400 18px/1.2 'House UI', sans-serif; }
+.player-tab-balance strong { color: #ffe6b1; font: 600 48px/1 'House UI', sans-serif; }
+.player-tab .player-tab-payment { background: url('../assets/casino/ticket-paper.png') center / cover; color: #075152; border-color: #ffe6b1; outline: none; box-shadow: none; font: 22px/1.2 'House Display', sans-serif; text-transform: uppercase; }
+/* Button decoration and future keyboard focus stay inside the shared content boundary. */
+.player-tab button:focus-visible { outline: 3px solid var(--vegas-focus); outline-offset: -3px; }
+.player-tab-history { border: 0; background: transparent; color: #fff0cf; font: 18px/1.2 'House UI', sans-serif; text-decoration: underline; text-underline-offset: 3px; }
+.player-tab button:disabled { opacity: 1; cursor: default; -webkit-text-fill-color: currentColor; }

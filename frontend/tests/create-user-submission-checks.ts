@@ -13,10 +13,10 @@ type SubmissionChecks = {
 // Run the real page and submission hook in StrictMode. Only Axios transport is replaced.
 export async function runSubmissionChecks(test: SubmissionChecks) {
     const wait = (ms = 80) => new Promise(resolve => setTimeout(resolve, ms))
-    const field = (id: string) => document.getElementById(id) as HTMLInputElement
-    const title = () => document.getElementById('created-account-title')
+    const field = (id: string) => document.getElementById('preview-' + id) as HTMLInputElement
+    const title = () => document.querySelector('.create-user-credential')
     const text = () => document.body.textContent ?? ''
-    const controls = () => [...document.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLButtonElement>('.create-user-screen input,.create-user-screen select,.create-user-screen button')]
+    const controls = () => [...document.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLButtonElement>('.create-user-form input, .create-user-form select, .create-user-form button, .player-tab input, .player-tab button')]
     const postCount = () => test.requests.filter(r => r === 'post /api/v1/users').length
     const csrfCount = () => test.requests.filter(r => r === 'get /sanctum/csrf-cookie').length
     async function fillForm() {
@@ -27,9 +27,14 @@ export async function runSubmissionChecks(test: SubmissionChecks) {
         for (let i = 0; i < 100 && !test.pendingCount(); i++) await wait()
         test.check(test.pendingCount() === 1, 'exactly one transport request pending')
     }
+    async function confirm() {
+        document.querySelector('form')!.requestSubmit()
+        await wait()
+        document.querySelectorAll<HTMLButtonElement>('dialog[open] button')[1].click()
+    }
     async function start(stage: 'csrf' | 'post') {
         test.hold(stage)
-        document.querySelector('form')!.requestSubmit()
+        await confirm()
         await pending()
     }
     async function changeRole() {
@@ -39,12 +44,13 @@ export async function runSubmissionChecks(test: SubmissionChecks) {
     const errors = ['first-name', 'last-name', 'email', 'phone', 'role', 'photo']
     await fillForm()
     await test.submit('all-errors')
+    const message = (id: string) => document.querySelectorAll('.create-user-error-messages li')[errors.indexOf(id)]?.textContent
     for (const id of errors) {
-        test.check(document.getElementById(id + '-error')?.textContent === id + ' issue one. ' + id + ' issue two.', 'all server messages rendered for ' + id)
+        test.check(message(id) === id + ' issue one. ' + id + ' issue two.', 'all server messages rendered for ' + id)
     }
     test.check(field('first-name').value === 'Submit' && field('phone').value === '+1 506-555-0123', 'validation preserves controlled values and formatted phone')
     await changeRole()
-    test.check(errors.every(id => document.getElementById(id + '-error')?.textContent === ''), 'role edit clears all field feedback')
+    test.check(message('role') === '' && message('email')?.includes('email issue one.'), 'role edit clears only its own feedback')
     await test.submit('success')
     const data = test.lastSubmission()!
     test.check(['first_name', 'last_name', 'email', 'phone', 'role'].map(key => data.get(key)).join('|') === 'Submit|Check|submit.check@example.com|+1 506-555-0123|manager', 'request contains current controlled values')
@@ -59,7 +65,7 @@ export async function runSubmissionChecks(test: SubmissionChecks) {
     await test.submit('unexpected')
     test.check(text().includes('An unexpected error occurred. Check whether the account exists before trying again.'), 'non-Axios failure has cautious feedback')
     await test.submit('empty-errors')
-    test.check(errors.every(id => document.getElementById(id + '-error')?.textContent === ''), 'missing validation fields produce empty messages')
+    test.check(errors.every(id => message(id) === ''), 'missing validation fields produce empty messages')
     test.check(text().includes('Check the highlighted fields and try again.'), 'missing validation fields retain summary')
     await test.submit('success')
     const postsBefore = postCount(), csrfBefore = csrfCount()
@@ -90,7 +96,7 @@ export async function runSubmissionChecks(test: SubmissionChecks) {
     for (const reject of [false, true]) {
         await start('post')
         await test.remount(); await fillForm()
-        document.querySelector('form')!.requestSubmit(); await wait()
+        await confirm(); await wait()
         test.check(test.pendingCount() === 2, 'old and new POSTs are independently pending')
         test.release('success', reject); await wait()
         test.check(!title() && field('email').disabled && text().includes('Creating account…'), 'abandoned POST leaves new submission pending, rejection=' + reject)

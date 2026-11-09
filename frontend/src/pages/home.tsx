@@ -1,66 +1,70 @@
 import casinoLogo from '../assets/casino/skanders-game-logo.png'
-import axios from 'axios'
-import { useState } from 'react'
-import { homeUrl, readHomeView } from '../navigation'
 import NavigationGroup from '../components/navigation-group'
-import CreateUser from './users/create-user'
+import CasinoMarquee from '../components/casino-marquee'
 import './home.css'
+import CreateUser from './users/create-user/create-user.tsx'
+import { signOut } from './auth/sign-out'
+import { useState } from 'react'
+import UserList from "./users/user-list/user-list.tsx";
 
 function Home() {
-    const [isSigningOut, setIsSigningOut] = useState(false)
-    const [statusMessage, setStatusMessage] = useState('')
-    const view = readHomeView()
-    const task = new URLSearchParams(window.location.search).get('task') ?? ''
 
-    // Only the existing Create User form fills the content area at this checkpoint.
+    const [selectedPage, setSelectedPage] = useState('home')
+    const [isSigningOut, setIsSigningOut] = useState(false)
+    const [signOutMessage, setSignOutMessage] = useState('')
+
+    // Choose which screen appears inside Home.
     let content = null
 
-    if (view === 'users' && task === 'create') {
+    if (selectedPage === 'create') {
         content = <CreateUser />
+    } else if (selectedPage === 'list') {
+        content = <UserList />
     }
 
-    async function handleSignOut() {
-        if (isSigningOut) {
+    function handleUserSelection(task: string) {
+        setSelectedPage(task)
+
+    }
+
+    async function handleAccountSelection(task: string) {
+        if (task !== 'sign-out' || isSigningOut) {
             return
         }
 
         setIsSigningOut(true)
-        setStatusMessage('Signing out…')
+        setSignOutMessage('Signing out…')
 
         try {
-            await axios.post('/api/v1/logout')
-
-            // Reload React only after Laravel has ended the session.
-            window.location.replace('/sign-in')
-        } catch (error) {
-            // An expired session already means Sam is signed out.
-            if (axios.isAxiosError(error)) {
-                if (error.response?.status === 401) {
-                    window.location.replace('/sign-in')
-                    return
-                }
-            }
-
-            setStatusMessage('Could not sign out. Please try again.')
+            await signOut()
+        } catch {
+            setSignOutMessage('Could not sign out. Please try again.')
             setIsSigningOut(false)
         }
     }
 
     return (
         <div className="home-viewport overflow-x-clip">
-            <div className="home-screen relative mx-auto min-h-screen w-full max-w-[1536px]">
+            <div className="home-screen relative min-h-screen w-full has-[.user-list-screen]:flex has-[.user-list-screen]:flex-col">
                 <a className="home-skip-link" href="#task-content">Skip to content</a>
+                {/* Keep banner sizing separate from the full-width task area. */}
+                <div className="home-banner mx-auto w-full max-w-[1536px] shrink-0">
                 {/* Group buttons expand choices without replacing the current page. */}
                 <header className="home-header relative flex items-start">
                     <h1 className="home-brand shrink-0">
                         <img src={casinoLogo} alt="Skander’s Game" className="block h-auto w-full" />
                     </h1>
                     <nav className="home-navigation flex min-w-0 flex-1 items-center" aria-label="Main tasks">
-                        <a className="home-link" href={homeUrl('home')}><span>Home</span></a>
-                        <NavigationGroup label="Users" view="users" items={[
-                            { task: 'create', label: 'Create User' },
-                            { task: 'list', label: 'User List' },
-                        ]} />
+                        <button type="button" className="home-link"><span>Home</span></button>
+                        <NavigationGroup
+                            label="Users"
+                            view="users"
+                            onSelect={handleUserSelection}
+                            items={[
+                                { task: 'create', label: 'Create User' },
+                                { task: 'list', label: 'User List' },
+                            ]}
+                        />
                         <NavigationGroup label="Games" view="games" items={[
                             { task: 'create', label: 'Create Game' },
                             { task: 'list', label: 'Game List' },
@@ -79,23 +83,24 @@ function Home() {
                             { task: 'missing', label: 'Missing Activity' },
                             { task: 'history', label: 'Correction History' },
                         ]} />
+                        <NavigationGroup label="Accounts" view="my-account" onSelect={handleAccountSelection} items={[
+                            { task: 'profile', label: 'My Account' },
+                            { task: 'sign-out', label: 'Sign Out' },
+                        ]} />
                     </nav>
                 </header>
+                </div>
 
-                <p role="status" className="home-status text-center text-sm">{statusMessage}</p>
+                <p className="home-status text-center text-sm">{signOutMessage}</p>
 
-                {/* Each future page will own its design; no default panels or lists. */}
-                <div id="task-content" className="home-content" tabIndex={-1}>{content}</div>
+                {/* Keep one shared sign above whichever screen is selected. */}
+                {/* On User List, fill the space below the header so auto margin can push the ticket down. */}
+                <div id="task-content" className="home-content has-[>.user-list-screen]:flex has-[>.user-list-screen]:flex-1 has-[>.user-list-screen]:flex-col [&>.casino-marquee]:shrink-0" tabIndex={-1}>
+                    <CasinoMarquee text="users" id="user-list-title" />
+                    {content}
+                </div>
             </div>
 
-            {/* Account actions stay at the bottom left without covering the task content. */}
-            <nav className="home-account-navigation flex items-center gap-3" aria-label="Account actions">
-                <NavigationGroup label="My Account" view="my-account" items={[
-                    { task: 'profile', label: 'My Profile' },
-                    { task: 'password', label: 'Change Password' },
-                ]} />
-                <button type="button" onClick={handleSignOut} disabled={isSigningOut}><span>Sign Out</span></button>
-            </nav>
         </div>
     )
 }

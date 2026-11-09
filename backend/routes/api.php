@@ -36,3 +36,9 @@ Route::get('/users/{user}/photo', UserPhotoController::class)
     ->middleware('auth:sanctum')
     ->can('view', 'user')
     ->name('api.v1.users.photo');
+
+// Check list permission before the controller retrieves accounts.
+Route::get('/users', [UserController::class, 'index'])
+    ->middleware('auth:sanctum')
+    ->can('viewAny', User::class)
+    ->name('api.v1.users.index');

@@ -1,0 +1,54 @@
+@font-face {
+    font-family: 'House UI';
+    src: url('../assets/casino/fonts/Oswald-source.ttf') format('truetype');
+    font-weight: 200 700;
+    font-display: swap;
+}
+
+/* Keep the approved footer proportions independent of any particular screen. */
+.casino-pagination {
+    --pagination-unit: min(11.2px, 1svh, 1cqw);
+    gap: calc(2 * var(--pagination-unit));
+    padding: calc(1.5 * var(--pagination-unit)) calc(3 * var(--pagination-unit)) 0;
+    font: 500 calc(2.6 * var(--pagination-unit)) 'House UI', sans-serif;
+    color: var(--vegas-wine);
+}
+
+.casino-pagination-rule {
+    height: 1px;
+    flex: 1;
+    background: #9d865f;
+}
+
+.casino-pagination button {
+    padding: calc(.4 * var(--pagination-unit)) calc(1.6 * var(--pagination-unit));
+    border-radius: calc(.8 * var(--pagination-unit));
+    font: 400 calc(2.5 * var(--pagination-unit)) 'House UI', sans-serif;
+    white-space: nowrap;
+}
+
+/* React supplies the disabled state; CSS gives that state its appearance. */
+.casino-pagination button:enabled {
+    color: #fff0c7;
+    border: 2px solid #fff1c9;
+    outline: 1px solid #99240e;
+    background: var(--vegas-button-fill);
+    box-shadow: inset 0 0 0 1px #f9a96e, 0 3px 2px #52220866;
+    cursor: pointer;
+}
+
+.casino-pagination button:disabled {
+    border: 1px solid #b48c60;
+    background: #fce3b6;
+    color: #9b815f;
+    outline: none;
+    box-shadow: none;
+    opacity: 1;
+    cursor: default;
+    -webkit-text-fill-color: currentColor;
+}
+
+@media (max-width: 650px) {
+    .casino-pagination { font-size: 16px; }
+    .casino-pagination button { font-size: 16px; padding: 5px 10px; }
+}

@@ -13,7 +13,12 @@ class UserPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        $role = $user->role;
+
+        // Only staff may request the account list.
+        return $role === RoleCode::SUPERADMIN
+            || $role === RoleCode::ADMIN
+            || $role === RoleCode::MANAGER;
     }
 
     /**

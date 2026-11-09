@@ -11,7 +11,7 @@ function App() {
     const [sessionStatus, setSessionStatus] = useState<SessionStatus>('checking')
 
     // Observe React's current state without changing the displayed screen.
-    console.log('Session status:', sessionStatus)
+    // console.log('Session status:', sessionStatus)
 
     // Check the existing session when App opens.
     useEffect(function () {
@@ -80,7 +80,7 @@ function App() {
     }
 
     return (
-        <main className="casino-scenery min-h-screen bg-cover bg-top">
+        <main className="casino-scenery min-h-screen">
             {/* Display the content selected from the session result. */}
             {content}
         </main>

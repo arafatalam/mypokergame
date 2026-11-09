@@ -1,11 +1,17 @@
 import { useEffect, useRef, useState } from 'react'
 import type { ChangeEvent } from 'react'
-import samplePortrait from '../../assets/casino/sample-account-portrait.png'
+import samplePortrait from '../../../assets/casino/sample-account-portrait.png'
 
-function useProfilePhoto(clearSubmissionFeedback: () => void) {
+type PhotoCallbacks = {
+    onPhotoChange?: (photo: File | null) => void
+    onPhotoCheckingChange?: (isChecking: boolean) => void
+}
+
+function useProfilePhoto(clearSubmissionFeedback?: () => void, callbacks?: PhotoCallbacks) {
     // Keep the chosen file for later submission and a local address for the portrait.
     const [photo, setPhoto] = useState<File | null>(null)
     const [photoPreview, setPhotoPreview] = useState(samplePortrait)
+    const [photoName, setPhotoName] = useState('')
     const [photoMessage, setPhotoMessage] = useState('')
     const [isCheckingPhoto, setIsCheckingPhoto] = useState(false)
     const photoInputRef = useRef<HTMLInputElement>(null)
@@ -27,6 +33,11 @@ function useProfilePhoto(clearSubmissionFeedback: () => void) {
             photoCheckRef.current += 1
         }
     }, [])
+
+    function updateChecking(isChecking: boolean) {
+        setIsCheckingPhoto(isChecking)
+        callbacks?.onPhotoCheckingChange?.(isChecking)
+    }
 
     function handleChoosePhotoClick() {
         const photoInput = photoInputRef.current
@@ -54,23 +65,25 @@ function useProfilePhoto(clearSubmissionFeedback: () => void) {
         event.currentTarget.value = ''
         photoCheckRef.current += 1
         const currentCheck = photoCheckRef.current
-        setIsCheckingPhoto(false)
 
         const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
 
         if (!allowedTypes.includes(selectedPhoto.type)) {
+            updateChecking(false)
             setPhotoMessage('Choose a JPG, PNG or WebP image. Your current photo has not changed.')
             return
         }
 
         // Limit the original file before the browser processes it.
         if (selectedPhoto.size > 10 * 1024 * 1024) {
+            updateChecking(false)
             setPhotoMessage('Choose an original image up to 10 MB. Your current photo has not changed.')
             return
         }
 
-        setIsCheckingPhoto(true)
-        setPhotoMessage('Checking photo…')
+        const originalName = selectedPhoto.name
+        updateChecking(true)
+        setPhotoMessage('')
 
         try {
             const image = await createImageBitmap(selectedPhoto)
@@ -114,7 +127,7 @@ function useProfilePhoto(clearSubmissionFeedback: () => void) {
 
                     if (blob === null || blob.type !== 'image/webp') {
                         setPhotoMessage('Could not compress this photo. Your current photo has not changed.')
-                        setIsCheckingPhoto(false)
+                        updateChecking(false)
                         return
                     }
 
@@ -125,17 +138,19 @@ function useProfilePhoto(clearSubmissionFeedback: () => void) {
                     // Reject the processed file before changing the saved selection.
                     if (compressedPhoto.size > 2 * 1024 * 1024) {
                         setPhotoMessage('The compressed photo exceeds 2 MB. Choose another photo. Your current photo has not changed.')
-                        setIsCheckingPhoto(false)
+                        updateChecking(false)
                         return
                     }
 
                     const compressedPreview = URL.createObjectURL(compressedPhoto)
 
-                    clearSubmissionFeedback()
+                    clearSubmissionFeedback?.()
                     setPhoto(compressedPhoto)
+                    setPhotoName(originalName)
+                    callbacks?.onPhotoChange?.(compressedPhoto)
                     setPhotoPreview(compressedPreview)
-                    setPhotoMessage('Compressed photo ready. Preview only; not uploaded.')
-                    setIsCheckingPhoto(false)
+                    setPhotoMessage('')
+                    updateChecking(false)
 
                 }
                 canvas.toBlob(handleEncodedPhoto, 'image/webp', 0.8)
@@ -148,7 +163,7 @@ function useProfilePhoto(clearSubmissionFeedback: () => void) {
         } catch {
             if (currentCheck === photoCheckRef.current) {
                 setPhotoMessage('This image could not be read. Choose another photo. Your current photo has not changed.')
-                setIsCheckingPhoto(false)
+                updateChecking(false)
             }
             return
         }
@@ -156,12 +171,14 @@ function useProfilePhoto(clearSubmissionFeedback: () => void) {
     }
 
     function handleClearPhotoClick() {
-        clearSubmissionFeedback()
+        clearSubmissionFeedback?.()
         photoCheckRef.current += 1
         setPhoto(null)
+        setPhotoName('')
+        callbacks?.onPhotoChange?.(null)
         setPhotoPreview(samplePortrait)
-        setPhotoMessage('Photo cleared. No personal photo selected.')
-        setIsCheckingPhoto(false)
+        setPhotoMessage('')
+        updateChecking(false)
 
         const photoInput = photoInputRef.current
 
@@ -173,6 +190,7 @@ function useProfilePhoto(clearSubmissionFeedback: () => void) {
     return {
         photo,
         photoPreview,
+        photoName,
         photoMessage,
         isCheckingPhoto,
         photoInputRef,

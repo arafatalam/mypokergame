@@ -1,19 +1,28 @@
 import { useId, useLayoutEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
+import edgePaper from '../assets/casino/home-turquoise-paper.png';
 
 type CasinoTicketProps = {
     children: ReactNode;
     className?: string;
+    compactEdges?: boolean;
+    borderInset?: number;
 };
 
 /** Adapted from the demo geometry, with concentric inset centre cut-outs. */
-function ticketPath(w: number, h: number, inset = 0, waves = true): string {
+function ticketPath(w: number, h: number, inset = 0, waves = true, compactEdges = false): string {
     const x = inset;
     const y = inset;
     const right = w - inset;
     const bottom = h - inset;
-    const corner = Math.min(w * 0.04, h * 0.14, 34);
-    const notch = Math.min(w * 0.026, h * 0.07, 24);
+    let cornerLimit = 34;
+    let notchLimit = 24;
+    if (compactEdges) {
+        cornerLimit = 18;
+        notchLimit = 7;
+    }
+    const corner = Math.min(w * 0.04, h * 0.14, cornerLimit);
+    const notch = Math.min(w * 0.026, h * 0.07, notchLimit);
     const notchRadius = notch + inset;
     const notchHalfHeight = Math.sqrt(notchRadius ** 2 - inset ** 2);
     const mid = h * 0.5;
@@ -54,6 +63,7 @@ function ticketPath(w: number, h: number, inset = 0, waves = true): string {
 function CasinoTicket(props: CasinoTicketProps) {
     const element = useRef<HTMLDivElement>(null);
     const clipId = useId();
+    const edgeTextureId = useId();
     const [size, setSize] = useState({ width: 0, height: 0 });
 
     // Fit the decorative SVG to the content when the ticket or viewport changes size.
@@ -87,8 +97,9 @@ function CasinoTicket(props: CasinoTicketProps) {
         };
     }, []);
 
-    const outer = ticketPath(size.width, size.height);
-    const inner = ticketPath(size.width, size.height, Math.min(12, size.width * 0.016), false);
+    const outer = ticketPath(size.width, size.height, 0, true, props.compactEdges);
+    const borderInset = props.borderInset ?? 12;
+    const inner = ticketPath(size.width, size.height, borderInset, false, props.compactEdges);
 
     return (
         <div ref={element} className={'casino-panel ' + (props.className ?? '')}>
@@ -104,12 +115,24 @@ function CasinoTicket(props: CasinoTicketProps) {
                         <clipPath id={clipId}>
                             <path d={outer} />
                         </clipPath>
+                        {/* Tint stays separate from paper brightness so the edge keeps its chosen colour. */}
+                        <pattern id={edgeTextureId} width={size.width} height={size.height} patternUnits="userSpaceOnUse">
+                            <rect width={size.width} height={size.height} fill="var(--casino-ticket-edge-fill, none)" />
+                            <image
+                                href={edgePaper}
+                                width={size.width}
+                                height={size.height}
+                                preserveAspectRatio="xMidYMid slice"
+                                style={{ mixBlendMode: 'luminosity', opacity: 'var(--casino-ticket-edge-texture-opacity, 0)' }}
+                            />
+                        </pattern>
                     </defs>
                     <g clipPath={`url(#${clipId})`}>
                         <foreignObject width={size.width} height={size.height}>
                             <div className="casino-ticket-surface" />
                         </foreignObject>
-                        <path className="casino-ticket-rim" d={outer} />
+                        {/* Fill only the strip outside the inset border when a ticket supplies an edge colour. */}
+                        <path d={outer + ' ' + inner} fill={'url(#' + edgeTextureId + ')'} fillRule="evenodd" />
                         <path className="casino-ticket-border" d={inner} />
                     </g>
                 </svg>

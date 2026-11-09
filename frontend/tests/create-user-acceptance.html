@@ -4,8 +4,9 @@
 <h1>Create User isolated acceptance checks</h1>
 <p>Actual React app and Axios errors; all API responses are local test doubles. No account writes or session changes.</p>
 <button id="run">Run all checks</button>
+<button id="run-active">Run active Create User checks</button>
 <label>Preview <select id="viewport"><option>1440x900</option><option>1366x650</option><option>1280x600</option><option>1024x768</option><option>768x1024</option><option>390x844</option><option>320x568</option></select></label>
-<label>State <select id="mode"><option>errors</option><option>success</option><option>blank</option><option>roles</option><option>photos</option><option>submissions</option></select></label>
+<label>State <select id="mode"><option>errors</option><option>success</option><option>blank</option><option>roles</option><option>photos</option><option>submissions</option><option>active-errors</option><option>active-success</option><option>active-confirmation</option><option>active-submissions</option></select></label>
 <button id="preview">Show preview</button>
 <iframe id="app" title="Actual Create User app under test" width="1440" height="900"></iframe><pre id="results">Ready</pre>
 <script type="module">
@@ -13,16 +14,25 @@ const frame=document.querySelector('#app'), results=document.querySelector('#res
 let waiting;
 function show(entries,done=false){results.replaceChildren();const heading=document.createElement('div');heading.textContent=(done?'FINISHED: ':'Running: ')+entries.length+' viewport/state combinations';results.append(heading);for(const item of entries){const line=document.createElement('div');line.textContent=JSON.stringify(item);results.append(line)}}
 window.addEventListener('message',event=>{if(event.source!==frame.contentWindow||event.data?.kind!=='acceptance')return; if(waiting){const resolve=waiting;waiting=null;resolve(event.data)}else show([event.data],true)});
-function open(width,height,mode){frame.width=width;frame.height=height;frame.src='./create-user-acceptance-frame.html?view=users&task=create&mode='+mode+'&run='+Date.now();}
+function open(width,height,mode){frame.width=width;frame.height=height;frame.src='./create-user-acceptance-frame.html?mode='+mode+'&run='+Date.now();}
 document.querySelector('#preview').onclick=()=>{const [w,h]=document.querySelector('#viewport').value.split('x');open(w,h,document.querySelector('#mode').value)};
-document.querySelector('#run').onclick=async()=>{
+async function runMatrix(modes, sizes){
  const entries=[];
- for(const size of ['1440x900','1366x650','1280x600','1024x768','768x1024','390x844','320x568']){
-  for(const mode of ['blank','errors','success']){
+ for(const size of sizes){
+  for(const mode of modes){
+   if(['roles','photos','submissions','active-submissions'].includes(mode)&&size!==sizes[0])continue;
    const [w,h]=size.split('x');const result=new Promise(resolve=>{waiting=resolve});open(w,h,mode);
    const item=await result;entries.push(item);show(entries);
   }
  }
  show(entries,true);
+}
+const sizes=['1440x900','1366x650','1280x600','1024x768','768x1024','390x844','320x568'];
+document.querySelector('#run').onclick=()=>runMatrix(['blank','errors','success','roles','photos','submissions'],sizes);
+document.querySelector('#run-active').onclick=async()=>{
+ await runMatrix(['active-submissions'],['1440x900']);
+ const submissionResult=results.lastElementChild?.textContent;
+ await runMatrix(['active-errors','active-success','active-confirmation'],sizes);
+ if(submissionResult) results.append(document.createTextNode(submissionResult));
 };
 </script></html>

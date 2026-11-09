@@ -1,0 +1,3 @@
+Built-in image_gen; 2026-11-08.
+Edit target: accounts-laptop-scene-v2.png.
+Translate only the casino building, roof, entrance, vertical CASINO sign and star down by5% of image height (about47px on the941px image). Keep exact size and far-right horizontal position. Star should start around y13% instead of y8% to clear website light bar. Reconstruct vacated sky/mountains. Keep both palms in their exact positions, same horizon, mountains, texture, colors, lighting and16:9 dimensions. Do not scale/zoom/crop or add objects/UI. Building continues naturally off right edge. Preserve everything else.

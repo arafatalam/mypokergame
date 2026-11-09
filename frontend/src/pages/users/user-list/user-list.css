@@ -1,0 +1,162 @@
+/* Reuse the casino account-table treatment without changing the shared Home frame. */
+.user-list-screen {
+    --user-list-rule: #ad8d5c;
+    --user-list-teal: #075152;
+}
+
+/* Only this screen stretches the card's content and gives spare height to the space before actions. */
+.user-list-player-sidebar > .player-tab { display: flex; flex-direction: column; }
+.user-list-player-sidebar > .player-tab > section { flex: 1; }
+.user-list-player-sidebar > .player-tab > section > div:last-child { flex: 1; justify-content: space-between; }
+
+.user-list-screen .user-list-feedback {
+    color: var(--user-list-teal);
+    font-size: 14px;
+}
+
+.user-list-screen .user-list-scroll {
+    scrollbar-color: #926d42 #ffe6b1;
+    border-radius: 8px 8px 0 0;
+}
+
+.user-list-screen .user-list-scroll:focus-visible {
+    outline: 3px solid var(--vegas-focus);
+    outline-offset: 4px;
+}
+
+.user-list-screen .user-list-table {
+    min-width: 960px;
+    border-collapse: collapse;
+    color: var(--vegas-wine);
+    font-family: 'House Display', 'Arial Narrow', sans-serif;
+    font-size: 23px;
+    line-height: 1.25;
+}
+
+/* The gold strip belongs to the column headings, as in the approved reference. */
+.user-list-screen .user-list-table thead {
+    background: var(--vegas-gold-fill);
+}
+
+.user-list-screen .user-list-table th {
+    padding: 10px 14px;
+    font-size: 24px;
+    font-weight: 400;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.user-list-screen .user-list-table td {
+    position: relative;
+    padding: 18px 14px;
+    border-bottom: 1px solid var(--user-list-rule);
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.user-list-screen .user-list-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+/* Short dividers keep the rows open instead of enclosing every cell in a box. */
+.user-list-screen .user-list-table td + td::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    height: 24px;
+    border-left: 1px solid var(--user-list-rule);
+    transform: translateY(-50%);
+}
+
+.user-list-screen .user-list-person {
+    min-height: 32px;
+}
+
+.user-list-screen .user-list-photo {
+    border-color: #ffe9b8;
+    box-shadow: 0 1px 2px #36190b55;
+}
+
+@media (forced-colors: active) {
+    .user-list-screen .user-list-table thead {
+        border-bottom: 2px solid CanvasText;
+    }
+
+    .user-list-screen .user-list-table td,
+    .user-list-screen .user-list-table td + td::before {
+        border-color: CanvasText;
+    }
+}
+
+@font-face {
+    font-family: 'House UI';
+    src: url('../../../assets/casino/fonts/Oswald-source.ttf') format('truetype');
+    font-weight: 200 700;
+    font-display: swap;
+}
+
+/* Match the reference as one composition, rather than enlarging its parts independently. */
+:is(.sample-accounts, .user-list-layout) { max-width: min(1120px, 100svh); container-type: inline-size; padding-bottom: 3%; color: #650b1c; }
+/* The tickets supply their own inner space; avoid an empty scrolling tail below this screen. */
+/* Keep the former content scale while allowing the paper to fill Home's width. */
+.user-list-layout.user-list-screen { --account-unit: min(11.2px, 1svh, 1cqw); max-width: none; padding-bottom: 0; }
+.user-list-screen .user-list-ticket { padding: calc(3.3 * var(--account-unit, 1cqw)) calc(3.6 * var(--account-unit, 1cqw)) calc(3 * var(--account-unit, 1cqw)); }
+.user-list-screen .user-list-filters { gap: calc(2 * var(--account-unit, 1cqw)); margin-bottom: calc(3 * var(--account-unit, 1cqw)); }
+.user-list-search { position: relative; width: 37%; }
+.user-list-screen .user-list-search svg { position: absolute; width: calc(2.6 * var(--account-unit, 1cqw)); height: calc(2.6 * var(--account-unit, 1cqw)); left: calc(1.1 * var(--account-unit, 1cqw)); top: 50%; transform: translateY(-50%); stroke: #075152; stroke-width: 2.5; fill: none; }
+.user-list-screen .user-list-search input, .user-list-screen .user-list-role-filter select { width: 100%; min-height: calc(4.8 * var(--account-unit, 1cqw)); border: 1px solid #275b55; border-radius: calc(1 * var(--account-unit, 1cqw)); background: linear-gradient(110deg,#fae4ba77,#fff0cfbb); color: #075152; opacity: 1; }
+.user-list-screen .user-list-search input { font: 400 calc(2 * var(--account-unit, 1cqw)) 'House UI', sans-serif; padding: calc(.5 * var(--account-unit, 1cqw)) calc(1 * var(--account-unit, 1cqw)) calc(.5 * var(--account-unit, 1cqw)) calc(4.3 * var(--account-unit, 1cqw)); }
+.user-list-search input::placeholder { color: #39544b; opacity: 1; }
+.user-list-screen :is(.user-list-search, .user-list-role-filter) { font: 500 calc(2.5 * var(--account-unit, 1cqw))/1.25 'House UI', sans-serif; }
+.user-list-screen .user-list-role-filter { width: 15%; }
+.user-list-screen :is(.user-list-search-field, .user-list-role-filter select) { margin-top: calc(.4 * var(--account-unit, 1cqw)); }
+.user-list-screen .user-list-search-field input { display: block; }
+.user-list-screen .user-list-role-filter select { display: block; font: 400 calc(2.2 * var(--account-unit, 1cqw)) 'House UI', sans-serif; padding: calc(.2 * var(--account-unit, 1cqw)) calc(1.1 * var(--account-unit, 1cqw)); color: #501622; }
+@supports (appearance: base-select) {
+    .user-list-screen .user-list-role-filter select.casino-select { display: flex; align-items: center; }
+}
+.user-list-create { color: #fff0c7; border: 2px solid #fff1c9; outline: 1px solid #99240e; background: var(--vegas-button-fill); box-shadow: inset 0 0 0 1px #f9a96e, 0 3px 2px #52220866; }
+.user-list-screen .user-list-create { flex: 0 0 auto; margin-inline-start: auto; white-space: nowrap; border-radius: calc(4 * var(--account-unit, 1cqw)); min-height: calc(4.8 * var(--account-unit, 1cqw)); padding: calc(.5 * var(--account-unit, 1cqw)) calc(2.2 * var(--account-unit, 1cqw)); font: 400 calc(2.7 * var(--account-unit, 1cqw))/1 'House Display', sans-serif; text-transform: uppercase; }
+:is(.sample-accounts, .user-list-layout) button:disabled, :is(.sample-accounts, .user-list-layout) input:disabled, :is(.sample-accounts, .user-list-layout) select:disabled { opacity: 1; cursor: default; -webkit-text-fill-color: currentColor; }
+.sample-account-scroll:focus-visible { outline: 3px solid var(--vegas-focus); outline-offset: 4px; }
+.user-list-screen .sample-account-table { border-collapse: separate; border-spacing: 0; font: 500 calc(2.6 * var(--account-unit, 1cqw))/1.25 'House UI', sans-serif; }
+.user-list-screen .sample-account-table thead { background: var(--vegas-gold-fill); clip-path: inset(0 round calc(1 * var(--account-unit, 1cqw))); }
+.user-list-screen .sample-account-table th { padding: calc(.7 * var(--account-unit, 1cqw)) calc(1.5 * var(--account-unit, 1cqw)); font: 600 calc(2.6 * var(--account-unit, 1cqw))/1.1 'House UI', sans-serif; text-transform: uppercase; }
+.user-list-screen .sample-account-table th:first-child { border-radius: calc(1 * var(--account-unit, 1cqw)) 0 0 calc(1 * var(--account-unit, 1cqw)); text-align: center; }
+.user-list-screen .sample-account-table th:last-child { border-radius: 0 calc(1 * var(--account-unit, 1cqw)) calc(1 * var(--account-unit, 1cqw)) 0; }
+.user-list-screen .sample-account-table td { position: relative; padding: calc(1.4 * var(--account-unit, 1cqw)) calc(1.5 * var(--account-unit, 1cqw)); white-space: nowrap; border-bottom: 1px solid #9a9069; }
+.user-list-screen .sample-account-table td:first-child { padding-left: calc(2 * var(--account-unit, 1cqw)); }
+.sample-account-table td + td::before { content: ''; position: absolute; left: 0; top: 34%; height: 32%; border-left: 1px solid #8e7852; }
+.user-list-screen .sample-account-person { gap: calc(2.5 * var(--account-unit, 1cqw)); }
+.user-list-screen .sample-account-portrait { display: block; flex: none; width: calc(8.7 * var(--account-unit, 1cqw)); aspect-ratio: 1; border-radius: 50%; border: 2px solid #ffe9b8; background-image: url('../../../assets/casino/home-reference-art.png'); background-repeat: no-repeat; background-size: 1347.368421% 898.245614%; }
+.portrait-alex { background-position: 23.066104% 90.989011%; }
+.portrait-sam { background-position: 34.880450% 90.989011%; }
+.portrait-taylor { background-position: 60.689170% 90.989011%; }
+.user-list-screen .sample-account-status { display: block; min-width: calc(11 * var(--account-unit, 1cqw)); padding: calc(.3 * var(--account-unit, 1cqw)) calc(1.2 * var(--account-unit, 1cqw)); border-radius: calc(3 * var(--account-unit, 1cqw)); text-align: center; font-weight: 400; font-size: calc(2.5 * var(--account-unit, 1cqw)); box-shadow: inset 0 0 0 1px #5b7a64; }
+.sample-account-status.active { color: #fff0cf; background: linear-gradient(#25796f,#075152); }
+.sample-account-status.inactive { color: #fff0cf; background: linear-gradient(#b76851,#943c29); }
+.user-list-screen .user-list-action { background: transparent; border: 0; padding: 0; font: inherit; color: #075152; text-decoration: underline; text-underline-offset: calc(.4 * var(--account-unit, 1cqw)); }
+/* Fit the real table into the approved sample composition. */
+.user-list-layout.user-list-screen .user-list-table { min-width: 760px; table-layout: fixed; font-family: 'House UI', sans-serif; font-size: 18px; }
+.user-list-layout.user-list-screen .user-list-table th { padding: 10px 16px; text-align: center; font-family: 'House UI', sans-serif; font-size: 18px; font-weight: 600; white-space: normal; }
+.user-list-layout.user-list-screen .user-list-table td { padding: 14px 16px; text-align: center; white-space: normal; overflow-wrap: anywhere; }
+/* Align portraits and names consistently while keeping the heading centred. */
+.user-list-layout.user-list-screen .user-list-person { gap: 8px; justify-content: flex-start; text-align: left; }
+.user-list-layout.user-list-screen .user-list-table td:last-child > div { justify-content: center; }
+
+@media (max-width: 650px) {
+    .user-list-screen :is(.user-list-search, .user-list-role-filter) { font-size: 16px; }
+    .user-list-filters { flex-wrap: wrap; gap: 12px; }
+    .user-list-search { width: 100%; }
+    .user-list-search input { min-height: 44px; font-size: 16px; padding-left: 38px; }
+    .user-list-search svg { width: 21px; height: 21px; left: 10px; }
+    .user-list-role-filter { width: 24%; font-size: 16px; }
+    .user-list-role-filter select { min-height: 40px; font-size: 16px; }
+    .user-list-create { font-size: 20px; min-height: 40px; }
+    .sample-account-table { min-width: 650px; font-size: 18px; }
+    .sample-account-table th { font-size: 18px; padding: 8px; }
+    .sample-account-table td { padding: 12px 8px; }
+    .sample-account-portrait { width: 54px; }
+    .sample-account-status { min-width: 80px; font-size: 17px; }
+}

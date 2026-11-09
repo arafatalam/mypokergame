@@ -1,0 +1,6 @@
+Edited with built-in image generation on 2026-11-08 at the developer's request to remove horizontal panel rules.
+Source: reference-marquee.png (approved sign artwork).
+Generated original: /Users/arafat/.codex/generated_images/01a1bc7f-c8ef-7613-9e59-d5672e631e9f/exec-d7b4ef24-39a4-46eb-a6fb-6b0f08bf3c85.png
+
+Prompt:
+Use case: precise-object-edit. Edit target: attached approved transparent casino marquee asset. Make ONE change only: remove ALL three thin horizontal golden ruled lines from the cream paper inset, seamlessly filling their narrow areas with the surrounding warm cream textured paper. The entire cream panel must have no horizontal rules or stripes. Preserve every other detail, exact composition, aspect ratio and framing: eight-point long gold star, its cream/teal outline and cyan glow, copper/red thick frame, every bulb and glow, cream paper texture/shading, teal spade, red heart, all three horizontal turquoise neon tubes outside the panel, transparent alpha background. Do NOT remove or change the neon tubes; only remove the ruled lines ON the cream panel. Do not add text. Do not redraw, resize, reposition or restyle any part of the sign. Same full canvas and proportions as source, 2083 by 755 if possible; preserve existing transparency.
