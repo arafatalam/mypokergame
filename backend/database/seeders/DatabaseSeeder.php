@@ -14,9 +14,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Keep account creation in its dedicated seeder.
-        $this->call([
-            SuperAdminSeeder::class,
-        ]);
+        $this->call(SuperAdminSeeder::class);
+
+        if (app()->environment(['local', 'testing'])) {
+            $this->call(DemoUserSeeder::class);
+        }
     }
 }

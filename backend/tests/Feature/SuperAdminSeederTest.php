@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use Database\Seeders\SuperAdminSeeder;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -13,14 +14,14 @@ class SuperAdminSeederTest extends TestCase
 {
     use LazilyRefreshDatabase;
 
-    public function test_database_seeder_creates_the_super_admin(): void
+    public function test_seeder_creates_the_super_admin(): void
     {
         // Use a test password instead of the installation's real password.
         config([
             'superadmin.password' => 'test-password-123',
         ]);
 
-        $this->seed();
+        $this->seed(SuperAdminSeeder::class);
 
         $this->assertDatabaseCount('users', 1);
         $this->assertDatabaseHas('users', [
@@ -42,7 +43,7 @@ class SuperAdminSeederTest extends TestCase
     public function test_repeated_seeding_preserves_existing_super_admin_even_without_a_password(): void
     {
         config(['superadmin.password' => 'original-password']);
-        $this->seed();
+        $this->seed(SuperAdminSeeder::class);
         $user = User::query()->sole();
 
         // Simulate details changed by the account owner after installation.
@@ -60,7 +61,7 @@ class SuperAdminSeederTest extends TestCase
         $original = $user->fresh()->getAttributes();
         config(['superadmin.password' => null]);
 
-        $this->seed();
+        $this->seed(SuperAdminSeeder::class);
 
         $this->assertDatabaseCount('users', 1);
         $this->assertSame($original, $user->fresh()->getAttributes());
@@ -69,12 +70,12 @@ class SuperAdminSeederTest extends TestCase
     public function test_repeated_seeding_does_not_replace_password_with_new_configured_password(): void
     {
         config(['superadmin.password' => 'original-password']);
-        $this->seed();
+        $this->seed(SuperAdminSeeder::class);
         $user = User::query()->sole();
         $original = $user->getAttributes();
         config(['superadmin.password' => 'replacement-password']);
 
-        $this->seed();
+        $this->seed(SuperAdminSeeder::class);
 
         $this->assertDatabaseCount('users', 1);
         $this->assertSame($original, $user->fresh()->getAttributes());
@@ -86,7 +87,7 @@ class SuperAdminSeederTest extends TestCase
         config(['superadmin.password' => $password]);
 
         try {
-            $this->seed();
+            $this->seed(SuperAdminSeeder::class);
             $this->fail('The seeder accepted an unsuitable password.');
         } catch (RuntimeException $exception) {
             $this->assertSame(
@@ -117,7 +118,7 @@ class SuperAdminSeederTest extends TestCase
     {
         config(['superadmin.password' => $password]);
 
-        $this->seed();
+        $this->seed(SuperAdminSeeder::class);
 
         $this->assertDatabaseCount('users', 1);
         $user = User::query()->sole();
@@ -146,7 +147,7 @@ class SuperAdminSeederTest extends TestCase
             'superadmin.password' => 'installation-password',
         ]);
 
-        $this->seed();
+        $this->seed(SuperAdminSeeder::class);
 
         $this->assertDatabaseHas('users', [
             'first_name' => 'Installation',
@@ -161,7 +162,7 @@ class SuperAdminSeederTest extends TestCase
     public function test_other_roles_do_not_prevent_super_admin_creation(string $role): void
     {
         config(['superadmin.password' => 'test-password-123']);
-        $this->seed();
+        $this->seed(SuperAdminSeeder::class);
         $existingUser = User::query()->sole();
         $existingUser->forceFill([
             'role' => $role,
@@ -170,7 +171,7 @@ class SuperAdminSeederTest extends TestCase
         ])->save();
         $original = $existingUser->fresh()->getAttributes();
 
-        $this->seed();
+        $this->seed(SuperAdminSeeder::class);
 
         $this->assertDatabaseCount('users', 2);
         $this->assertDatabaseHas('users', [
