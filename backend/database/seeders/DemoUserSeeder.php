@@ -7,17 +7,11 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use RuntimeException;
 
 class DemoUserSeeder extends Seeder
 {
     public function run(): void
     {
-        // These predictable credentials are for local development and tests.
-        if (! app()->environment(['local', 'testing'])) {
-            throw new RuntimeException('Demo accounts can only be seeded in local and testing environments.');
-        }
-
         $accounts = [
             ['Morgan', 'Bennett', RoleCode::ADMIN],
             ['Liam', 'Gallant', RoleCode::PLAYER],

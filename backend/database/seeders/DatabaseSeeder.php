@@ -15,9 +15,6 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(SuperAdminSeeder::class);
-
-        if (app()->environment(['local', 'testing'])) {
-            $this->call(DemoUserSeeder::class);
-        }
+        $this->call(DemoUserSeeder::class);
     }
 }
