@@ -2,14 +2,6 @@
     color: var(--vegas-wine);
 }
 
-.create-user-confirmation-dialog {
-    color: var(--vegas-wine);
-}
-
-.create-user-confirmation-dialog::backdrop {
-    background: rgb(35 5 8 / 65%);
-}
-
 .create-user-form label,
 .create-user-photo-button {
     font-weight: 700;
@@ -66,23 +58,6 @@
 
 .create-user-margin-art {
     display: none;
-}
-
-@media (min-width: 768px) {
-    .home-screen:has(> .home-content > .create-user-tickets),
-    .home-content:has(> .create-user-tickets) {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .home-content:has(> .create-user-tickets) {
-        flex: 1;
-    }
-
-    .create-user-tickets {
-        flex-shrink: 0;
-        margin-top: auto;
-    }
 }
 
 @media (768px <= width < 1200px) {
@@ -143,3 +118,46 @@
     }
 }
 
+
+.create-user-entry-slot {
+    position: relative;
+}
+
+.create-user-entry-actions {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0.75rem 0.5rem 0;
+}
+
+.create-user-entry-action {
+    min-height: 44px;
+    padding: 0.4rem 0.75rem;
+    border: 1px solid var(--vegas-ticket-line);
+    border-radius: 5px;
+    background: linear-gradient(to bottom, #fff3d4, #f5d691);
+    color: var(--vegas-wine);
+    cursor: pointer;
+    transform: skew(-12deg);
+}
+
+.create-user-entry-action:hover {
+    background: linear-gradient(to bottom, #ffe19b, #ffbe3b);
+    box-shadow: 0 3px 8px #31050b66;
+}
+
+.create-user-entry-action span {
+    display: block;
+    transform: skew(12deg);
+}
+
+@media (min-width: 1280px) {
+    .create-user-entry-actions {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: calc(100% + 1.5rem);
+        align-content: space-between;
+        width: 11rem;
+        margin: 0;
+    }
+}

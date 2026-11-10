@@ -1,4 +1,4 @@
-import './pagination.css'
+import './pagination.css';
 
 // Each screen supplies its feedback, button availability and navigation handlers.
 type PaginationProps = {
@@ -7,7 +7,7 @@ type PaginationProps = {
     nextDisabled: boolean;
     onPrevious: () => void;
     onNext: () => void;
-}
+};
 
 function Pagination(props: PaginationProps) {
     return (
@@ -32,7 +32,7 @@ function Pagination(props: PaginationProps) {
                 Next ›
             </button>
         </div>
-    )
+    );
 }
 
-export default Pagination
+export default Pagination;

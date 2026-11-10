@@ -3,13 +3,45 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Users\GetProfilePhotoPath;
+use App\Actions\Users\ReplaceProfilePhoto;
+use App\Http\Requests\Users\ReplaceUserPhotoRequest;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class UserPhotoController extends Controller
 {
+    public function replace(ReplaceUserPhotoRequest $request, User $user, ReplaceProfilePhoto $replaceProfilePhoto): JsonResponse
+    {
+        $path = $replaceProfilePhoto->replace($user, $request->file('photo'));
+
+        return $this->photoResponse($user, $path);
+    }
+
+    public function remove(User $user, ReplaceProfilePhoto $replaceProfilePhoto): JsonResponse
+    {
+        $path = $replaceProfilePhoto->remove($user);
+
+        return $this->photoResponse($user, $path);
+    }
+
+    private function photoResponse(User $user, string $path): JsonResponse
+    {
+        // The new URL makes the browser request the replacement even if the account ID stays the same.
+        $photoUrl = route('api.v1.users.photo', [
+            'user' => $user->id,
+            'version' => hash('sha256', $path),
+        ], false);
+        $responseData = [
+            'photo_url' => $photoUrl,
+            'has_uploaded_photo' => GetProfilePhotoPath::isUpload($path),
+        ];
+
+        return response()->json($responseData);
+    }
+
     public function __invoke(
         User $user,
         GetProfilePhotoPath $getProfilePhotoPath

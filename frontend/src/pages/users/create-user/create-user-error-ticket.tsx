@@ -1,26 +1,26 @@
-import CasinoTicket from '../../../components/casino-ticket'
+import CasinoTicket from '../../../components/casino-ticket';
 
 type CreateUserErrorTicketProps = {
     fieldErrors: {
-        first_name: string
-        last_name: string
-        email: string
-        phone: string
-        role: string
-        photo: string
-    }
-}
+        first_name: string;
+        last_name: string;
+        email: string;
+        phone: string;
+        role: string;
+        photo: string;
+    };
+};
 
 export default function CreateUserErrorTicket(props: CreateUserErrorTicketProps) {
-    const errors = props.fieldErrors
+    const errors = props.fieldErrors;
     const hasErrors = Object.values(errors).some(function (message) {
-        return message !== ''
-    })
+        return message !== '';
+    });
 
     return (
         <div className="create-user-error-slot" hidden={!hasErrors}>
             <CasinoTicket compactEdges className="p-6 text-center">
-                <h2 className="casino-heading casino-title-band mb-2 rounded-sm px-2 py-3 text-xl uppercase">
+                <h2 className="casino-heading casino-title-band mb-2 px-2 py-3 text-xl uppercase">
                     Hold the Deal
                 </h2>
                 <p className="mb-3 text-sm">Fix the details below, then try again.</p>
@@ -34,5 +34,5 @@ export default function CreateUserErrorTicket(props: CreateUserErrorTicketProps)
                 </ul>
             </CasinoTicket>
         </div>
-    )
+    );
 }

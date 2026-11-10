@@ -1,18 +1,18 @@
-import CasinoTicket from '../../../components/casino-ticket'
+import CasinoTicket from '../../../components/casino-ticket';
 
 type EntryTicketProps = {
     account: {
-        username: string
-        generated_password: string
-    } | null
-}
+        username: string;
+        generated_password: string;
+    } | null;
+};
 
 export default function EntryTicket(props: EntryTicketProps) {
     let content = (
         <p className="text-sm">
             A username and temporary password will appear after you create the account.
         </p>
-    )
+    );
 
     // Show credentials once Laravel returns a created account.
     if (props.account !== null) {
@@ -25,7 +25,7 @@ export default function EntryTicket(props: EntryTicketProps) {
                     Temporary password: <span className="create-user-credential select-all">{props.account.generated_password}</span>
                 </p>
             </div>
-        )
+        );
     }
 
     return (
@@ -33,5 +33,5 @@ export default function EntryTicket(props: EntryTicketProps) {
             <h2 className="casino-heading mb-2 text-2xl uppercase">Entry Ticket</h2>
             {content}
         </CasinoTicket>
-    )
+    );
 }

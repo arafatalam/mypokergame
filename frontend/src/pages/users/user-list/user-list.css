@@ -16,7 +16,6 @@
 
 .user-list-screen .user-list-scroll {
     scrollbar-color: #926d42 #ffe6b1;
-    border-radius: 8px 8px 0 0;
 }
 
 .user-list-screen .user-list-scroll:focus-visible {
@@ -36,6 +35,7 @@
 /* The gold strip belongs to the column headings, as in the approved reference. */
 .user-list-screen .user-list-table thead {
     background: var(--vegas-gold-fill);
+    clip-path: inset(0 round var(--vegas-title-radius));
 }
 
 .user-list-screen .user-list-table th {
@@ -138,6 +138,7 @@
 .sample-account-status.inactive { color: #fff0cf; background: linear-gradient(#b76851,#943c29); }
 .user-list-screen .user-list-action { background: transparent; border: 0; padding: 0; font: inherit; color: #075152; text-decoration: underline; text-underline-offset: calc(.4 * var(--account-unit, 1cqw)); }
 /* Fit the real table into the approved sample composition. */
+.user-list-layout.user-list-screen .user-list-action:hover { color: var(--vegas-wine); cursor: pointer; }
 .user-list-layout.user-list-screen .user-list-table { min-width: 760px; table-layout: fixed; font-family: 'House UI', sans-serif; font-size: 18px; }
 .user-list-layout.user-list-screen .user-list-table th { padding: 10px 16px; text-align: center; font-family: 'House UI', sans-serif; font-size: 18px; font-weight: 600; white-space: normal; }
 .user-list-layout.user-list-screen .user-list-table td { padding: 14px 16px; text-align: center; white-space: normal; overflow-wrap: anywhere; }

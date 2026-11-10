@@ -70,7 +70,18 @@ class UserPolicy
      */
     public function update(User $user, User $model): bool
     {
-        return false;
+        // Editing your own profile has separate rules.
+        if ($user->is($model)) {
+            return false;
+        }
+
+        // For another account, staff editing follows the same role hierarchy as viewing.
+        return $this->view($user, $model)->allowed();
+    }
+
+    public function updatePassword(User $user, User $model): bool
+    {
+        return $user->is($model) || $this->update($user, $model);
     }
 
     /**

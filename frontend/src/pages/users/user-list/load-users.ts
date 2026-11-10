@@ -1,5 +1,5 @@
-import axios from 'axios'
-import type { RoleOption } from '../shared-resources/role-option'
+import axios from 'axios';
+import type { RoleOption } from '../shared-resources/role-option';
 
 export type UserListItem = {
     id: number;
@@ -10,7 +10,7 @@ export type UserListItem = {
     role: {
         label: string;
     };
-}
+};
 
 type UserListResponse = {
     data: UserListItem[];
@@ -23,7 +23,7 @@ type UserListResponse = {
         to: number | null;
     };
 
-}
+};
 
 export async function loadUsers(
     apiPath: string,
@@ -32,11 +32,11 @@ export async function loadUsers(
     search: string = '',
 ): Promise<UserListResponse> {
 
-    const params: { page: number; role?: string; search?: string } = { page: page };
+    const params: { page: number; role?: string; search?: string; } = { page: page };
 
     // Only send a role when the user chooses a specific one.
     if (role !== 'all') {
-        params.role = role
+        params.role = role;
     }
     // Omit the search parameter when the field is blank.
     if (search.trim() !== '') {

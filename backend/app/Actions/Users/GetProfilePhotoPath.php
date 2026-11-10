@@ -8,12 +8,17 @@ use Illuminate\Support\Facades\Storage;
 
 class GetProfilePhotoPath
 {
+    public static function isUpload(string $path): bool
+    {
+        return preg_match('/\Aprofile-photos\/[a-zA-Z0-9]+\.(jpg|jpeg|png|webp)\z/', $path) === 1;
+    }
+
     public function get(User $user): string
     {
         $storedPath = $user->profile_image_path;
 
         // Only generated upload names may resolve inside private photo storage.
-        if (preg_match('/\Aprofile-photos\/[a-zA-Z0-9]+\.(jpg|jpeg|png|webp)\z/', $storedPath) === 1) {
+        if (self::isUpload($storedPath)) {
             // Bucket uploads keep their storage-relative path.
             abort_unless(Storage::disk()->exists($storedPath), 404);
 

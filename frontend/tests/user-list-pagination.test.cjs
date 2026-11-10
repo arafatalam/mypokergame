@@ -43,7 +43,7 @@ function startRequest(page, search = '', role = '') {
         },
     };
     for (const name of [
-        'setUsers', 'setRoleOptions', 'setUsersMessage', 'setCurrentPage', 'setLastPage',
+        'setUsers', 'setRoleOptions', 'setUsersMessage', 'setCurrentPage', 'setLastPage', 'setIsLoadingUsers',
     ]) {
         context[name] = function rememberState(value) {
             state[name] = value;
@@ -78,6 +78,7 @@ test('a live request sends the page and stores rows, range and page limits', asy
     const run = startRequest(2, 'Sam', 'player');
     assert.deepEqual(run.requests, [{ url: '/api/v1/users', page: 2, search: 'Sam', role: 'player' }]);
     assert.equal(run.state.setUsersMessage, 'Loading users…');
+    assert.equal(run.state.setIsLoadingUsers, true);
     const result = response(2);
     run.pending.resolve(result.data);
     await flushCallbacks();
@@ -86,6 +87,7 @@ test('a live request sends the page and stores rows, range and page limits', asy
     assert.equal(run.state.setUsersMessage, '6–10 of 10');
     assert.equal(run.state.setCurrentPage, 2);
     assert.equal(run.state.setLastPage, 2);
+    assert.equal(run.state.setIsLoadingUsers, false);
 });
 
 test('a live failure preserves confirmed page data and releases the waiting state', async function () {
@@ -93,6 +95,7 @@ test('a live failure preserves confirmed page data and releases the waiting stat
     run.pending.reject(new Error('Network unavailable'));
     await flushCallbacks();
     assert.equal(run.state.setUsersMessage, 'Could not load users.');
+    assert.equal(run.state.setIsLoadingUsers, false);
     assert.equal(Object.hasOwn(run.state, 'setUsers'), false);
     assert.equal(Object.hasOwn(run.state, 'setCurrentPage'), false);
     assert.equal(Object.hasOwn(run.state, 'setLastPage'), false);

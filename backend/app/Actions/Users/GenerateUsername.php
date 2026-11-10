@@ -8,7 +8,7 @@ use Illuminate\Validation\ValidationException;
 
 class GenerateUsername
 {
-    public function generate(string $firstName, string $lastName): string
+    public function generate(string $firstName, string $lastName, ?User $ignoreUser = null): string
     {
         // Check the original names before conversion can remove characters.
         $this->validateOriginalName($firstName, 'first_name');
@@ -22,7 +22,7 @@ class GenerateUsername
         $this->validateNormalizedName($lastName, 'last_name');
 
         $baseUsername = $firstName.'.'.$lastName;
-        $username = $this->findAvailableUsername($baseUsername);
+        $username = $this->findAvailableUsername($baseUsername, $ignoreUser);
 
         return $username;
     }
@@ -57,19 +57,27 @@ class GenerateUsername
         }
     }
 
-    private function findAvailableUsername(string $baseUsername): string
+    private function findAvailableUsername(string $baseUsername, ?User $ignoreUser): string
     {
         $username = $baseUsername;
         $suffix = 1;
 
-        // Try numbered endings while the current candidate is already taken.
-        while (User::query()->where('username', $username)->exists()) {
+        while (true) {
+            $query = User::query()->where('username', $username);
+
+            // An edit can reuse the username already held by this account.
+            if ($ignoreUser !== null) {
+                $query->whereKeyNot($ignoreUser->getKey());
+            }
+
+            if (! $query->exists()) {
+                return $username;
+            }
+
             $ending = '.'.str_pad((string) $suffix, 2, '0', STR_PAD_LEFT);
             $username = $baseUsername.$ending;
 
             $suffix++;
         }
-
-        return $username;
     }
 }

@@ -1,5 +1,9 @@
 # Reusable ticket styles
 
+## Bottom-aligned Home screens
+
+Home keeps the shared marquee below the header and places the selected screen against the bottom inset when space is available. Taller screens keep their natural height and scroll with the page. Render new screens directly after the marquee in Home to inherit this layout.
+
 ## Shared ticket edges
 
 All current and future CasinoTicket uses omit the pale outer rim, as requested on 8 November 2026. The paper reaches the scalloped cut edge; retain each ticket's inset outline and any intentional filled band. The shared component no longer renders a separate rim path.

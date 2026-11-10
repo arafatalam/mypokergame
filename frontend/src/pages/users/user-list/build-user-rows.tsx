@@ -1,9 +1,21 @@
-import type { UserListItem } from './load-users'
+import type { UserListItem } from './load-users';
 
-export function buildUserRows(users: UserListItem[]) {
-    const userRows = []
+type UserRowAction = 'edit' | 'game_history' | 'transactions';
+
+export function buildUserRows(
+    users: UserListItem[],
+    onOpenUserProfile: (userId: number) => void,
+) {
+    const userRows = [];
 
     for (const user of users) {
+
+        function handleClick(action: UserRowAction) {
+            if (action === 'edit') {
+                onOpenUserProfile(user.id);
+            }
+        }
+
         userRows.push(
             <tr key={user.id}>
                 <td>
@@ -20,14 +32,16 @@ export function buildUserRows(users: UserListItem[]) {
                 <td>{user.role.label}</td>
                 <td>
                     <div className="flex flex-wrap items-center gap-3">
-                        <button type="button" className="user-list-action" disabled>Edit</button>
+                        <button type="button" className="user-list-action" onClick={() => handleClick('edit')}>
+                            Edit
+                        </button>
                         <button type="button" className="user-list-action" disabled>Game history</button>
                         <button type="button" className="user-list-action" disabled>Transactions</button>
                     </div>
                 </td>
             </tr>
-        )
+        );
     }
 
-    return userRows
+    return userRows;
 }

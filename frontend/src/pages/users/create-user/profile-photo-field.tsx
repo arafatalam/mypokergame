@@ -1,25 +1,25 @@
-import CasinoTicket from '../../../components/casino-ticket'
-import useProfilePhoto from '../shared-resources/use-profile-photo'
+import CasinoTicket from '../../../components/casino-ticket';
+import useProfilePhoto from '../shared-resources/use-profile-photo';
 
 type ProfilePhotoFieldProps = {
-    onPhotoChange?: (photo: File | null) => void
-    onPhotoCheckingChange?: (isChecking: boolean) => void
-    isSubmitting?: boolean
-}
+    onPhotoChange?: (photo: File | null) => void;
+    onPhotoCheckingChange?: (isChecking: boolean) => void;
+    isLocked: boolean;
+};
 
 export default function ProfilePhotoField(props: ProfilePhotoFieldProps) {
-    const { photoInputRef, ...profilePhoto } = useProfilePhoto(undefined, props)
-    const canClear = profilePhoto.photo !== null || profilePhoto.isCheckingPhoto
-    let photoDescription = 'Sample profile portrait'
-    let photoLabel = 'JPG, PNG or WebP. Original photo up to 10 MB.'
+    const { photoInputRef, ...profilePhoto } = useProfilePhoto(undefined, props);
+    const canClear = profilePhoto.photo !== null || profilePhoto.isCheckingPhoto;
+    let photoDescription = 'Sample profile portrait';
+    let photoLabel = 'JPG, PNG or WebP. Original photo up to 10 MB.';
 
     if (profilePhoto.photo !== null) {
-        photoDescription = 'Selected profile photo'
-        photoLabel = profilePhoto.photoName
+        photoDescription = 'Selected profile photo';
+        photoLabel = profilePhoto.photoName;
     }
 
     if (profilePhoto.photoMessage !== '') {
-        photoLabel = profilePhoto.photoMessage
+        photoLabel = profilePhoto.photoMessage;
     }
 
     return (
@@ -30,7 +30,7 @@ export default function ProfilePhotoField(props: ProfilePhotoFieldProps) {
                 <img src={profilePhoto.photoPreview} alt={photoDescription} className="aspect-square w-full max-w-40 rounded-full border-4 border-[#ffe9b8] object-cover" />
                 <input
                     ref={photoInputRef}
-                    disabled={props.isSubmitting}
+                    disabled={props.isLocked}
                     type="file"
                     accept="image/jpeg,image/png,image/webp"
                     onChange={profilePhoto.handlePhotoChange}
@@ -39,17 +39,17 @@ export default function ProfilePhotoField(props: ProfilePhotoFieldProps) {
                 <div className="grid w-full grid-cols-2 gap-2 md:grid-cols-1">
                     <button
                         type="button"
-                        disabled={props.isSubmitting}
+                        disabled={props.isLocked}
                         onClick={profilePhoto.handleChoosePhotoClick}
                         className="create-user-photo-button min-h-11 rounded-full px-2 py-2"
                     >
                         Choose photo
                     </button>
-                    <button type="button" disabled={props.isSubmitting || !canClear} onClick={profilePhoto.handleClearPhotoClick} className="create-user-photo-button min-h-11 rounded-full px-2 py-2">Clear photo</button>
+                    <button type="button" disabled={props.isLocked || !canClear} onClick={profilePhoto.handleClearPhotoClick} className="create-user-photo-button min-h-11 rounded-full px-2 py-2">Clear photo</button>
                 </div>
                 <p className="max-w-full break-words text-sm">{photoLabel}</p>
 
             </section>
         </CasinoTicket>
-    )
+    );
 }

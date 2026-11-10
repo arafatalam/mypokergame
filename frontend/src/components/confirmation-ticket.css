@@ -1,0 +1,7 @@
+.confirmation-ticket-dialog {
+    color: var(--vegas-wine);
+}
+
+.confirmation-ticket-dialog::backdrop {
+    background: rgb(35 5 8 / 65%);
+}

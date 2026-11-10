@@ -1,0 +1,111 @@
+.show-user-layout {
+    color: var(--vegas-wine);
+}
+
+.show-user-portrait-ticket {
+    --casino-ticket-edge-fill: #6cada0;
+    --casino-ticket-edge-texture-opacity: 0.35;
+}
+
+.show-user-portrait-ticket .casino-ticket-surface {
+    background: #075152 url('../../../assets/casino/home-turquoise-paper.png') center / cover;
+}
+
+.show-user-portrait-ticket .casino-ticket-border {
+    stroke: #244c45;
+}
+
+.show-user-portrait {
+    border: 4px solid #ffe9b8;
+}
+
+.show-user-name,
+.show-user-photo-action {
+    background: #ffe9b8 url('../../../assets/casino/ticket-paper.png') center / cover;
+    box-shadow: 0 2px 4px #31050b66;
+}
+
+.show-user-photo-action {
+    color: #075152;
+    font-weight: 700;
+}
+
+.show-user-password-ticket .casino-ticket-surface {
+    background-image: linear-gradient(to bottom, #ffcc69b3, #f8a82cd9), url('../../../assets/casino/ticket-paper.png');
+}
+
+.show-user-password-label {
+    font-size: clamp(1.5rem, 3.5vw, 2rem);
+    line-height: 1.05;
+}
+
+.show-user-password-suit {
+    color: #075152;
+    font: 1.75rem/1 Georgia, serif;
+}
+
+.show-user-details-ticket label {
+    font-weight: 700;
+}
+
+.show-user-input {
+    width: 100%;
+    min-width: 0;
+    min-height: 2.75rem;
+    padding: 0.4rem 0.75rem;
+    border: 1px solid #244c45;
+    border-radius: 0.5rem;
+    font-weight: 400;
+}
+
+.show-user-input:read-write {
+    border-color: #075152;
+    background: #f1fbf7;
+    box-shadow: inset 0 0 0 1px #075152;
+}
+
+@media (min-width: 640px) {
+    .show-user-layout {
+        grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    }
+}
+
+@media (min-width: 1200px) {
+    .show-user-layout {
+        position: relative;
+    }
+
+    .show-user-layout::before,
+    .show-user-layout::after {
+        position: absolute;
+        bottom: 0;
+        width: min(23rem, calc(50vw - 400px - 2.5rem));
+        box-sizing: content-box;
+        padding-bottom: 1rem;
+        pointer-events: none;
+        content: '';
+    }
+
+    .show-user-layout::before {
+        right: calc(100% + 0.75rem);
+        aspect-ratio: 1299 / 1211;
+        --show-user-margin-art: url('../../../assets/casino/show-user-card-fan.png');
+        background:
+            var(--show-user-margin-art) center bottom 1rem / 100% auto no-repeat,
+            radial-gradient(ellipse, #210307ed, #2103078c 35%, transparent 72%) left 22% bottom calc(0.6rem + 6%) / 22% 0.8rem no-repeat,
+            radial-gradient(ellipse at 18% 42%, #250408b3, #25040859 43%, transparent 75%) right bottom calc(0.4rem + 4%) / 82% 2rem no-repeat;
+    }
+
+    .show-user-layout::after {
+        left: calc(100% + 0.75rem);
+        aspect-ratio: 1536 / 1024;
+        --show-user-margin-art: url('../../../assets/casino/show-user-chip-stacks.png');
+        background:
+            var(--show-user-margin-art) center bottom 1rem / 100% auto no-repeat,
+            /* The leaning chip sits closest, followed by the red and turquoise stacks. */
+            radial-gradient(ellipse, #170206f2, #21030794 35%, transparent 74%) left 64% bottom 0.65rem / 26% 1rem no-repeat,
+            radial-gradient(ellipse, #170206f0, #2103079e 42%, transparent 75%) left 22% bottom calc(0.65rem + 9%) / 43% 1.2rem no-repeat,
+            radial-gradient(ellipse, #170206f0, #210307a6 40%, transparent 75%) right 7% bottom calc(0.65rem + 18%) / 39% 1.35rem no-repeat,
+            radial-gradient(ellipse at 59% 40%, #250408a6, #25040859 42%, transparent 74%) right bottom / 91% 3.2rem no-repeat;
+    }
+}

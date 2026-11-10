@@ -1,10 +1,10 @@
-import { useId } from 'react'
-import CasinoTicket from './casino-ticket'
-import './player-tab.css'
+import { useId } from 'react';
+import CasinoTicket from './casino-ticket';
+import './player-tab.css';
 
 function PlayerTab() {
     // Each copy gets its own heading ID, even when two tabs share a screen.
-    const headingId = useId()
+    const headingId = useId();
 
     return (
         <CasinoTicket compactEdges borderInset={12} className="player-tab relative">
@@ -44,7 +44,7 @@ function PlayerTab() {
                 </div>
             </section>
         </CasinoTicket>
-    )
+    );
 }
 
-export default PlayerTab
+export default PlayerTab;

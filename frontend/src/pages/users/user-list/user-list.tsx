@@ -1,21 +1,21 @@
 
-import CasinoTicket from '../../../components/casino-ticket.tsx'
-import PlayerTab from '../../../components/player-tab.tsx'
-import '../../../components/pagination.css'
-import './user-list.css'
-import { useState, useEffect } from 'react'
-import { loadUsers } from './load-users'
-import type { UserListItem } from './load-users'
-import type { RoleOption } from '../shared-resources/role-option'
+import CasinoTicket from '../../../components/casino-ticket.tsx';
+import PlayerTab from '../../../components/player-tab.tsx';
+import '../../../components/pagination.css';
+import './user-list.css';
+import { useState, useEffect } from 'react';
+import { loadUsers } from './load-users';
+import type { UserListItem } from './load-users';
+import type { RoleOption } from '../shared-resources/role-option';
 import {buildUserRows} from './build-user-rows.tsx';
 import { buildRoleOptions } from '../shared-resources/build-role-options';
-import type { ChangeEvent } from 'react'
+import type { ChangeEvent } from 'react';
 
+type UserListProps = {
+    onOpenUserProfile: (userId: number) => void;
+};
 
-
-
-
-function UserList() {
+function UserList(props: UserListProps) {
 
     const [users, setUsers] = useState<UserListItem[]>([]);
 
@@ -30,6 +30,7 @@ function UserList() {
     const [requestedPage, setRequestedPage] = useState(1);
 
     const [usersMessage, setUsersMessage] = useState('Loading users…');
+    const [isLoadingUsers, setIsLoadingUsers] = useState(true);
 
     useEffect(function populateUserTable() {
 
@@ -62,10 +63,16 @@ function UserList() {
                     return;
                 }
                 setUsersMessage('Could not load users.');
+            } finally {
+                // Only the current request can unlock pagination.
+                if (!ignoreResult) {
+                    setIsLoadingUsers(false);
+                }
             }
         }
 
         // Show feedback while Laravel fetches the requested page.
+        setIsLoadingUsers(true);
         setUsersMessage('Loading users…');
         void fetchUsers(requestedPage, selectedRole, searchText);
 
@@ -81,8 +88,8 @@ function UserList() {
     }
 
     function handleRoleChange(event: ChangeEvent<HTMLSelectElement>) {
-        setSelectedRole(event.currentTarget.value)
-        setRequestedPage(1)
+        setSelectedRole(event.currentTarget.value);
+        setRequestedPage(1);
     }
 
     async function handleNext() {
@@ -95,7 +102,7 @@ function UserList() {
 
 
     return (
-        <section className="user-list-layout user-list-screen mt-auto w-full shrink-0" aria-labelledby="user-list-title">
+        <section className="user-list-layout user-list-screen w-full" aria-labelledby="user-list-title">
             {/* Let the taller ticket set the row height and stretch both tickets to match. */}
             <div className="grid grid-cols-6 items-stretch gap-4">
                 <CasinoTicket compactEdges className="user-list-ticket relative col-span-5 min-w-0">
@@ -137,7 +144,7 @@ function UserList() {
                             </thead>
 
                             <tbody>
-                                {buildUserRows(users)}
+                                {buildUserRows(users, props.onOpenUserProfile)}
                             </tbody>
 
                         </table>
@@ -151,14 +158,14 @@ function UserList() {
                         <button
                             type="button"
                             onClick={handlePrevious}
-                            disabled={currentPage <= 1}
+                            disabled={isLoadingUsers || currentPage <= 1}
                         >
                             ‹ Previous
                         </button>
                         <button
                             type="button"
                             onClick={handleNext}
-                            disabled={currentPage >= lastPage}
+                            disabled={isLoadingUsers || currentPage >= lastPage}
                         >
                             Next ›
                         </button>
@@ -170,7 +177,7 @@ function UserList() {
                 </aside>
             </div>
         </section>
-    )
+    );
 }
 
-export default UserList
+export default UserList;

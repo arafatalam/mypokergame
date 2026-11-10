@@ -11,6 +11,8 @@
 
 .home-screen {
     container-type: inline-size;
+    display: flex;
+    flex-direction: column;
     flex: 1;
     min-height: 0;
 }
@@ -127,9 +129,20 @@
 /* The shared sign starts below the header; keep side and bottom spacing. */
 .home-content {
     --content-side-spacing: 16px;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
     padding: 0 var(--content-side-spacing) var(--content-side-spacing);
 }
 .home-content:empty { padding: 0; }
+
+.home-content > .casino-marquee { flex-shrink: 0; }
+
+/* Use spare height above the selected screen. Tall screens keep their natural height. */
+.home-content > .casino-marquee + * {
+    flex-shrink: 0;
+    margin-top: auto;
+}
 
 .home-viewport a:focus-visible,
 .home-viewport summary:focus-visible { outline: 3px solid var(--vegas-focus); outline-offset: 4px; }

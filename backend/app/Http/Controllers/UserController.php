@@ -3,11 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Users\GetAssignableRoles;
+use App\Actions\Users\GetProfilePhotoPath;
 use App\Actions\Users\ListUsers;
 use App\Actions\Users\SaveUser;
+use App\Actions\Users\UpdateUserDetails;
 use App\Http\Requests\Users\IndexUsersRequest;
 use App\Http\Requests\Users\StoreUserRequest;
+use App\Http\Requests\Users\UpdateUserRequest;
 use App\Http\Resources\UserListResource;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -89,17 +93,58 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request, User $user): JsonResponse
     {
-        //
+        // A profile can be viewable without being editable through staff tools.
+        $canEditAsStaff = $request->user()->can('update', $user);
+        $responseData = $this->profileData($user, $canEditAsStaff);
+
+        return response()->json($responseData);
+    }
+
+    /**
+     * Use the same profile fields for the initial load and the successful save.
+     *
+     * @return array{id: int, username: string, first_name: string, last_name: string, email: string, phone: string|null, photo_url: string, can_change_photo: bool, can_change_password: bool, has_uploaded_photo: bool}
+     */
+    private function profileData(User $user, bool $canEditAsStaff): array
+    {
+        // Use the same protected portrait route as User List.
+        $photoUrl = route(
+            'api.v1.users.photo',
+            ['user' => $user->id],
+            false
+        );
+
+        $responseData = [
+            'id' => $user->id,
+            'username' => $user->username,
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
+            'email' => $user->email,
+            'phone' => $user->phone,
+            'photo_url' => $photoUrl,
+            'can_change_photo' => $canEditAsStaff,
+            'can_change_password' => $canEditAsStaff,
+            'has_uploaded_photo' => GetProfilePhotoPath::isUpload($user->profile_image_path),
+        ];
+
+        return $responseData;
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateUserRequest $request, User $user, UpdateUserDetails $updateUserDetails): JsonResponse
     {
-        //
+        // Only fields accepted by UpdateUserRequest can reach the database.
+        $validated = $request->validated();
+        $savedUser = $updateUserDetails->save($user, $validated);
+
+        $responseData = $this->profileData($savedUser, true);
+        $responseData['message'] = 'Account details saved.';
+
+        return response()->json($responseData);
     }
 
     /**

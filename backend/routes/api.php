@@ -2,43 +2,67 @@
 
 use App\Http\Controllers\Auth\SessionController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserPasswordController;
 use App\Http\Controllers\UserPhotoController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
-
 Route::post('/login', [SessionController::class, 'store'])
     ->name('api.v1.login');
 
-Route::post('/logout', [SessionController::class, 'destroy'])
-    ->middleware('auth:sanctum')
-    ->name('api.v1.logout');
+Route::middleware('auth:sanctum')->group(function (): void {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
 
-// Check permission before returning account-creation choices.
-Route::get('/users/create-options', [UserController::class, 'createOptions'])
-    ->middleware('auth:sanctum')
-    ->can('create', User::class)
-    ->name('api.v1.users.create-options');
+    Route::post('/logout', [SessionController::class, 'destroy'])
+        ->name('api.v1.logout');
 
-// Check sign-in and creation permission before validating account details.
-Route::post('/users', [UserController::class, 'store'])
-    ->middleware('auth:sanctum')
-    ->can('create', User::class)
-    ->name('api.v1.users.store');
+    Route::prefix('users')->name('api.v1.users.')->group(function (): void {
+        // Check list permission before the controller retrieves accounts.
+        Route::get('/', [UserController::class, 'index'])
+            ->can('viewAny', User::class)
+            ->name('index');
 
-// Authorize the account before looking up its private photo or saved avatar.
-Route::get('/users/{user}/photo', UserPhotoController::class)
-    ->whereNumber('user')
-    ->middleware('auth:sanctum')
-    ->can('view', 'user')
-    ->name('api.v1.users.photo');
+        // Check permission before returning account-creation choices.
+        Route::get('/create-options', [UserController::class, 'createOptions'])
+            ->can('create', User::class)
+            ->name('create-options');
 
-// Check list permission before the controller retrieves accounts.
-Route::get('/users', [UserController::class, 'index'])
-    ->middleware('auth:sanctum')
-    ->can('viewAny', User::class)
-    ->name('api.v1.users.index');
+        // Check creation permission before validating account details.
+        Route::post('/', [UserController::class, 'store'])
+            ->can('create', User::class)
+            ->name('store');
+
+        // Check whether the signed-in person may view this account.
+        Route::get('/{user}', [UserController::class, 'show'])
+            ->whereNumber('user')
+            ->can('view', 'user')
+            ->name('show');
+
+        Route::patch('/{user}', [UserController::class, 'update'])
+            ->whereNumber('user')
+            ->name('update');
+
+        Route::patch('/{user}/password', UserPasswordController::class)
+            ->whereNumber('user')
+            ->name('password.update');
+
+        // Authorize the account before looking up its private photo or saved avatar.
+        Route::get('/{user}/photo', UserPhotoController::class)
+            ->whereNumber('user')
+            ->can('view', 'user')
+            ->name('photo');
+
+        Route::post('/{user}/photo', [UserPhotoController::class, 'replace'])
+            ->whereNumber('user')
+            ->can('update', 'user')
+            ->name('photo.replace');
+
+        Route::delete('/{user}/photo', [UserPhotoController::class, 'remove'])
+            ->whereNumber('user')
+            ->can('update', 'user')
+            ->name('photo.remove');
+    });
+});

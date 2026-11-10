@@ -14,6 +14,7 @@
     --vegas-gold: #ffb52e;
     --vegas-ticket-line: #743620;
     --vegas-ticket-edge: #ffecc5;
+    --vegas-title-radius: var(--radius-sm, 0.25rem);
     --vegas-gold-fill: linear-gradient(
         100deg,
         #ffbd3b,
@@ -142,6 +143,7 @@ textarea {
 
 .casino-title-band {
     background: var(--vegas-gold-fill);
+    border-radius: var(--vegas-title-radius);
 }
 
 .casino-input {

@@ -1,51 +1,55 @@
-import { useLayoutEffect, useRef } from 'react'
-import type { SyntheticEvent } from 'react'
-import CasinoTicket from '../../../components/casino-ticket'
+import { useLayoutEffect, useRef } from 'react';
+import type { SyntheticEvent } from 'react';
+import CasinoTicket from './casino-ticket';
+import './confirmation-ticket.css';
 
-type CreateUserConfirmationTicketProps = {
-    isOpen: boolean
-    onCancel: () => void
-    onConfirm: () => void
-}
+type ConfirmationTicketProps = {
+    isOpen: boolean;
+    title: string;
+    message: string;
+    confirmLabel: string;
+    onCancel: () => void;
+    onConfirm: () => void;
+};
 
-export default function CreateUserConfirmationTicket(props: CreateUserConfirmationTicketProps) {
-    const dialogRef = useRef<HTMLDialogElement>(null)
+export default function ConfirmationTicket(props: ConfirmationTicketProps) {
+    const dialogRef = useRef<HTMLDialogElement>(null);
 
     useLayoutEffect(function () {
-        const dialog = dialogRef.current
+        const dialog = dialogRef.current;
 
         if (dialog === null) {
-            return
+            return;
         }
 
         // Open as a modal so the form behind the ticket cannot be edited.
         if (props.isOpen && !dialog.open) {
-            dialog.showModal()
+            dialog.showModal();
         } else if (!props.isOpen && dialog.open) {
-            dialog.close()
+            dialog.close();
         }
-    }, [props.isOpen])
+    }, [props.isOpen]);
 
     function handleEscape(event: SyntheticEvent<HTMLDialogElement>) {
         // Let React close the ticket through the same path as the Cancel button.
-        event.preventDefault()
-        props.onCancel()
+        event.preventDefault();
+        props.onCancel();
     }
 
     return (
         <dialog
             ref={dialogRef}
             onCancel={handleEscape}
-            className="create-user-confirmation-dialog m-auto w-[calc(100%-2rem)] max-w-sm bg-transparent"
+            className="confirmation-ticket-dialog m-auto w-[calc(100%-2rem)] max-w-sm bg-transparent"
         >
             <CasinoTicket compactEdges className="grid gap-4 p-6 text-center">
                 {/* Confirmation prompt */}
-                <h2 className="casino-heading casino-title-band rounded-sm px-2 py-3 text-2xl uppercase">
-                    Confirm User Creation
+                <h2 className="casino-heading casino-title-band px-2 py-3 text-2xl uppercase">
+                    {props.title}
                 </h2>
-                <p>Create this user account?</p>
+                <p>{props.message}</p>
 
-                {/* Account creation decision */}
+                {/* Confirmation actions */}
                 <div className="flex flex-wrap justify-center gap-3">
                     <button
                         type="button"
@@ -59,10 +63,10 @@ export default function CreateUserConfirmationTicket(props: CreateUserConfirmati
                         onClick={props.onConfirm}
                         className="casino-button casino-heading min-h-11 rounded-full px-4 py-2 text-lg uppercase"
                     >
-                        Create User
+                        {props.confirmLabel}
                     </button>
                 </div>
             </CasinoTicket>
         </dialog>
-    )
+    );
 }

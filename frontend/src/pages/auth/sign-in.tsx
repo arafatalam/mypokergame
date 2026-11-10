@@ -1,50 +1,50 @@
-import casinoLogo from '../../assets/casino/skanders-game-logo.png'
-import CasinoTicket from '../../components/casino-ticket'
-import axios from 'axios'
-import type { ChangeEvent, SubmitEvent } from 'react'
-import { useState } from 'react'
+import casinoLogo from '../../assets/casino/skanders-game-logo.png';
+import CasinoTicket from '../../components/casino-ticket';
+import axios from 'axios';
+import type { ChangeEvent, SubmitEvent } from 'react';
+import { useState } from 'react';
 
 function SignIn() {
 
-    const [isPasswordVisible, setIsPasswordVisible] = useState(false)
-    const [submitMessage, setSubmitMessage] = useState('')
-    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+    const [submitMessage, setSubmitMessage] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const [login, setLogin] = useState('')
-    const [password, setPassword] = useState('')
-    const [remember, setRemember] = useState(false)
+    const [login, setLogin] = useState('');
+    const [password, setPassword] = useState('');
+    const [remember, setRemember] = useState(false);
 
     function handlePasswordToggle() {
-        setIsPasswordVisible(!isPasswordVisible)
+        setIsPasswordVisible(!isPasswordVisible);
     }
 
     // Keep React's stored values in step with Sam's typing.
     function handleLoginChange(event: ChangeEvent<HTMLInputElement>) {
-        setLogin(event.currentTarget.value)
+        setLogin(event.currentTarget.value);
     }
 
     function handlePasswordChange(event: ChangeEvent<HTMLInputElement>) {
-        setPassword(event.currentTarget.value)
+        setPassword(event.currentTarget.value);
     }
 
     function handleRememberChange(event: ChangeEvent<HTMLInputElement>) {
-        setRemember(event.currentTarget.checked)
+        setRemember(event.currentTarget.checked);
     }
 
     async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
-        event.preventDefault()
+        event.preventDefault();
 
         // Ignore another submission while the current request is running.
         if (isSubmitting) {
-            return
+            return;
         }
 
-        setIsSubmitting(true)
-        setSubmitMessage('Preparing sign in...')
+        setIsSubmitting(true);
+        setSubmitMessage('Preparing sign in...');
 
         try {
             // Prepare CSRF protection before submitting the form values.
-            await axios.get('/sanctum/csrf-cookie')
+            await axios.get('/sanctum/csrf-cookie');
 
             await axios.post(
                 '/api/v1/login',
@@ -53,34 +53,34 @@ function SignIn() {
                     password: password,
                     remember: remember,
                 }
-            )
+            );
 
             // Open Home only after Laravel accepts the sign-in.
-            window.location.replace('/home')
+            window.location.replace('/home');
 
         } catch (error) {
             // Show Laravel's explanation when form validation fails.
-            if (axios.isAxiosError<{ message: string }>(error)) {
+            if (axios.isAxiosError<{ message: string; }>(error)) {
                 if (error.response?.status === 422) {
-                    setSubmitMessage(error.response.data.message)
-                    return
+                    setSubmitMessage(error.response.data.message);
+                    return;
                 }
             }
 
-            setSubmitMessage('Could not submit sign in. Please try again.')
+            setSubmitMessage('Could not submit sign in. Please try again.');
         } finally {
             // Allow another attempt after success or failure, including early returns.
-            setIsSubmitting(false)
+            setIsSubmitting(false);
         }
     }
 
     // Keep the input and its button describing the same visibility state.
-    let passwordInputType = 'password'
-    let passwordButtonText = 'Show'
+    let passwordInputType = 'password';
+    let passwordButtonText = 'Show';
 
     if (isPasswordVisible) {
-        passwordInputType = 'text'
-        passwordButtonText = 'Hide'
+        passwordInputType = 'text';
+        passwordButtonText = 'Hide';
     }
 
     return (
@@ -173,7 +173,7 @@ function SignIn() {
 
             </CasinoTicket>
         </div>
-    )
+    );
 }
 
-export default SignIn
+export default SignIn;
