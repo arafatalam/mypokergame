@@ -19,22 +19,23 @@ class UserPasswordController extends Controller
 
     public function __invoke(UpdateUserPasswordRequest $request, User $user): JsonResponse
     {
-        $signedOut = $request->user()->is($user);
+        $isOwnAccount = $request->user()->is($user);
         $validated = $request->validated();
 
-        $this->updateUserPassword->update($user, $validated['password']);
+        $this->updateUserPassword->update(
+            $user,
+            $validated['password'],
+            revokeSessions: ! $isOwnAccount,
+        );
 
-        if ($signedOut) {
-            // The action already rotated the token for every remembered device.
-            Auth::guard('web')->logoutCurrentDevice();
-            Auth::guard('sanctum')->forgetUser();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
+        if ($isOwnAccount) {
+            // Give Laravel the updated user so it saves the new password check for this browser.
+            Auth::guard('web')->setUser($user);
         }
 
         $data = [
             'message' => 'Password updated successfully.',
-            'signed_out' => $signedOut,
+            'signed_out' => false,
         ];
 
         return response()->json($data);

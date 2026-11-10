@@ -9,19 +9,25 @@ use Illuminate\Support\Str;
 
 class UpdateUserPassword
 {
-    public function update(User $user, string $password): void
+    public function update(User $user, string $password, bool $revokeSessions = true): void
     {
         $passwordHash = Hash::make($password);
 
-        $user->getConnection()->transaction(function () use ($user, $passwordHash): void {
+        $user->getConnection()->transaction(function () use ($user, $passwordHash, $revokeSessions): void {
             $user->password = $passwordHash;
-            $user->setRememberToken(Str::random(60));
+
+            if ($revokeSessions) {
+                $user->setRememberToken(Str::random(60));
+            }
+
             $user->save();
 
-            DB::connection(config('session.connection'))
-                ->table(config('session.table', 'sessions'))
-                ->where('user_id', $user->getKey())
-                ->delete();
+            if ($revokeSessions) {
+                DB::connection(config('session.connection'))
+                    ->table(config('session.table', 'sessions'))
+                    ->where('user_id', $user->getKey())
+                    ->delete();
+            }
         });
     }
 }

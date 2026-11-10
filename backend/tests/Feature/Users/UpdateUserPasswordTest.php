@@ -118,36 +118,34 @@ test('a staff update revokes only the target account access', function (): void 
     $this->assertAuthenticatedAs($target, 'web');
 });
 
-test('a self-service update also signs out the current browser', function (): void {
+test('a self-service update keeps the current browser signed in', function (): void {
     $actor = User::factory()->create(['role' => RoleCode::PLAYER]);
     $previousToken = $actor->getRememberToken();
 
-    DB::table('sessions')->insert([
-        'id' => 'another-player-device',
-        'user_id' => $actor->id,
-        'payload' => base64_encode('{}'),
-        'last_activity' => time(),
-    ]);
+    $this->postJson(route('api.v1.login'), [
+        'login' => $actor->username,
+        'password' => 'password',
+    ])->assertOk();
 
-    $this->actingAs($actor, 'web');
-    $this->withSession(['private_marker' => 'remove me']);
     $previousSessionId = session()->getId();
+    // Reuse the sign-in cookie across requests, as the browser does.
+    $this->withCredentials()->withCookie(config('session.cookie'), $previousSessionId);
 
+    Auth::forgetGuards();
+    $this->getJson('/api/v1/user')->assertOk();
+
+    Auth::forgetGuards();
     $this->patchJson(route('api.v1.users.password.update', $actor), [
         'password' => 'new player password',
         'password_confirmation' => 'new player password',
     ])
         ->assertOk()
-        ->assertJsonPath('signed_out', true)
-        ->assertSessionMissing('private_marker');
+        ->assertJsonPath('signed_out', false);
 
     expect(Hash::check('new player password', $actor->fresh()->password))->toBeTrue()
-        ->and($actor->fresh()->getRememberToken())->not->toBe($previousToken)
-        ->and(session()->getId())->not->toBe($previousSessionId);
-
-    $this->assertGuest('web');
-    $this->assertDatabaseMissing('sessions', ['user_id' => $actor->id]);
+        ->and($actor->fresh()->getRememberToken())->toBe($previousToken)
+        ->and(session()->getId())->toBe($previousSessionId);
 
     Auth::forgetGuards();
-    $this->getJson('/api/v1/user')->assertUnauthorized();
+    $this->getJson('/api/v1/user')->assertOk()->assertJsonPath('id', $actor->id);
 });

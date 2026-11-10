@@ -2,14 +2,19 @@ import casinoLogo from '../assets/casino/skanders-game-logo.png';
 import NavigationGroup from '../components/navigation-group';
 import CasinoMarquee from '../components/casino-marquee';
 import PasswordTicket from './users/shared-resources/password-ticket';
-import './home.css';
+import './signed-in-layout.css';
+import Home from './home/home';
 import CreateUser from './users/create-user/create-user.tsx';
 import { signOut } from './auth/sign-out';
 import { useState } from 'react';
 import UserList from "./users/user-list/user-list.tsx";
 import ShowUser from './users/show-user/show-user';
 
-function Home() {
+type SignedInLayoutProps = {
+    signedInUserId: number;
+};
+
+function SignedInLayout(props: SignedInLayoutProps) {
 
     const [selectedPage, setSelectedPage] = useState('home');
     const [isSigningOut, setIsSigningOut] = useState(false);
@@ -26,8 +31,12 @@ function Home() {
         setSelectedPage('user-profile');
     }
 
-    // Choose which screen appears inside Home.
-    let content = null;
+    function handleOpenHome() {
+        setSelectedPage('home');
+    }
+
+    // Choose which screen appears below the shared navigation.
+    let content = <Home />;
     let marqueeText = 'users';
 
     if (selectedPage === 'create') {
@@ -37,9 +46,9 @@ function Home() {
     } else if (selectedPage === 'user-profile') {
         content = <ShowUser userId={selectedUserId} />;
         marqueeText = 'user profile';
-    } else if (selectedPage === 'show-user-preview') {
-        content = <ShowUser />;
-        marqueeText = 'my profile';
+    } else if (selectedPage === 'my-account') {
+        content = <ShowUser key="my-account" userId={props.signedInUserId}/>;
+        marqueeText = 'my account';
     } else if (selectedPage === 'password-ticket-preview') {
         // The visual preview uses a sample ID and never loads an account.
         content = <PasswordTicket userId={0} />;
@@ -59,9 +68,8 @@ function Home() {
     }
 
     async function handleAccountSelection(task: string) {
-        // Open the shared profile preview before checking for sign-out.
         if (task === 'profile') {
-            setSelectedPage('show-user-preview');
+            setSelectedPage('my-account');
             return;
         }
 
@@ -92,7 +100,7 @@ function Home() {
                         <img src={casinoLogo} alt="Skander’s Game" className="block h-auto w-full" />
                     </h1>
                     <nav className="home-navigation flex min-w-0 flex-1 items-center" aria-label="Main tasks">
-                        <button type="button" className="home-link"><span>Home</span></button>
+                        <button type="button" className="home-link" onClick={handleOpenHome}><span>Home</span></button>
                         <NavigationGroup
                             label="Users"
                             view="users"
@@ -141,4 +149,4 @@ function Home() {
     );
 }
 
-export default Home;
+export default SignedInLayout;

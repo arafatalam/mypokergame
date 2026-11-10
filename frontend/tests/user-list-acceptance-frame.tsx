@@ -2,7 +2,7 @@ import { createRoot } from 'react-dom/client';
 import axios, { AxiosError } from 'axios';
 import { useState } from 'react';
 import UserList from '../src/pages/users/user-list/user-list';
-import '../src/pages/home.css';
+import '../src/pages/signed-in-layout.css';
 import avatar from '../src/assets/casino/sample-account-portrait.png';
 import '../src/index.css';
 

@@ -1,5 +1,5 @@
 import SignIn from "./pages/auth/sign-in";
-import Home from './pages/home';
+import SignedInLayout from './pages/signed-in-layout';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
@@ -9,6 +9,7 @@ type SessionStatus = 'checking' | 'signed-in' | 'guest' | 'error';
 function App() {
 
     const [sessionStatus, setSessionStatus] = useState<SessionStatus>('checking');
+    const [signedInUserId, setSignedInUserId] = useState<number | null>(null);
 
     // Observe React's current state without changing the displayed screen.
     // console.log('Session status:', sessionStatus)
@@ -19,12 +20,12 @@ function App() {
 
         async function checkSession() {
             try {
-                await axios.get('/api/v1/user');
-
+                const response = await axios.get('/api/v1/user');
                 if (ignoreResult) {
                     return;
                 }
 
+                setSignedInUserId(response.data.id);
                 setSessionStatus('signed-in');
             } catch (error) {
                 if (ignoreResult) {
@@ -63,8 +64,8 @@ function App() {
     // Show a status message until Laravel answers.
     let content = <p role="status">Checking your session…</p>;
 
-    if (sessionStatus === 'signed-in') {
-        content = <Home />;
+    if (sessionStatus === 'signed-in' && signedInUserId !== null) {
+        content = <SignedInLayout signedInUserId={signedInUserId} />;
     }
 
     if (sessionStatus === 'guest') {

@@ -8,6 +8,7 @@ import PasswordTicket from '../shared-resources/password-ticket';
 
 type ShowUserProps = {
     userId?: number;
+    viewOnly?: boolean;
 };
 
 function ShowUser(props: ShowUserProps) {
@@ -39,7 +40,7 @@ function ShowUser(props: ShowUserProps) {
             saveMessage={details.saveMessage}
             fieldErrors={details.fieldErrors}
             username={profile?.username ?? ''}
-            areDetailsReadOnly={details.areDetailsReadOnly}
+            areDetailsReadOnly={props.viewOnly === true || details.areDetailsReadOnly}
             firstNameValue={details.firstNameValue}
             onFirstNameChange={details.handleFirstNameChange}
             lastNameValue={details.lastNameValue}
@@ -48,7 +49,7 @@ function ShowUser(props: ShowUserProps) {
             onEmailChange={details.handleEmailChange}
             phoneValue={details.phoneValue}
             onPhoneChange={details.handlePhoneChange}
-            isDetailsButtonDisabled={details.isDetailsButtonDisabled}
+            isDetailsButtonDisabled={props.viewOnly === true || details.isDetailsButtonDisabled}
             onDetailsButtonClick={details.detailsButtonHandler}
             detailsButtonLabel={details.detailsButtonLabel}
         />
@@ -57,7 +58,7 @@ function ShowUser(props: ShowUserProps) {
 
     // Open the password ticket once the target profile has loaded.
     if (isPasswordTicketOpen && canChangePassword && profile !== null) {
-        displayedTicket = <PasswordTicket key={profile.id} userId={profile.id} />;
+        displayedTicket = <PasswordTicket key={'password-' + profile.id} userId={profile.id} />;
     }
 
     return (

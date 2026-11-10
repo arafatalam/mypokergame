@@ -57,12 +57,12 @@ Route::middleware('auth:sanctum')->group(function (): void {
 
         Route::post('/{user}/photo', [UserPhotoController::class, 'replace'])
             ->whereNumber('user')
-            ->can('update', 'user')
+            ->can('updatePhoto', 'user')
             ->name('photo.replace');
 
         Route::delete('/{user}/photo', [UserPhotoController::class, 'remove'])
             ->whereNumber('user')
-            ->can('update', 'user')
+            ->can('updatePhoto', 'user')
             ->name('photo.remove');
     });
 });

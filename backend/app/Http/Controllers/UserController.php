@@ -95,9 +95,7 @@ class UserController extends Controller
      */
     public function show(Request $request, User $user): JsonResponse
     {
-        // A profile can be viewable without being editable through staff tools.
-        $canEditAsStaff = $request->user()->can('update', $user);
-        $responseData = $this->profileData($user, $canEditAsStaff);
+        $responseData = $this->profileData($user, $request->user());
 
         return response()->json($responseData);
     }
@@ -107,7 +105,7 @@ class UserController extends Controller
      *
      * @return array{id: int, username: string, first_name: string, last_name: string, email: string, phone: string|null, photo_url: string, can_change_photo: bool, can_change_password: bool, has_uploaded_photo: bool}
      */
-    private function profileData(User $user, bool $canEditAsStaff): array
+    private function profileData(User $user, User $actor): array
     {
         // Use the same protected portrait route as User List.
         $photoUrl = route(
@@ -124,8 +122,8 @@ class UserController extends Controller
             'email' => $user->email,
             'phone' => $user->phone,
             'photo_url' => $photoUrl,
-            'can_change_photo' => $canEditAsStaff,
-            'can_change_password' => $canEditAsStaff,
+            'can_change_photo' => $actor->can('updatePhoto', $user),
+            'can_change_password' => $actor->can('updatePassword', $user),
             'has_uploaded_photo' => GetProfilePhotoPath::isUpload($user->profile_image_path),
         ];
 
@@ -141,7 +139,7 @@ class UserController extends Controller
         $validated = $request->validated();
         $savedUser = $updateUserDetails->save($user, $validated);
 
-        $responseData = $this->profileData($savedUser, true);
+        $responseData = $this->profileData($savedUser, $request->user());
         $responseData['message'] = 'Account details saved.';
 
         return response()->json($responseData);

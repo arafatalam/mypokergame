@@ -22,6 +22,10 @@ class UpdateUserRequest extends FormRequest
             return false;
         }
 
+        if ($actor->is($targetUser)) {
+            return true;
+        }
+
         return $actor->can('update', $targetUser);
     }
 

@@ -9,7 +9,7 @@ export default function useLoadedUserProfile(userId: number | undefined) {
     const [profileLoadFailed, setProfileLoadFailed] = useState(false);
 
     useEffect(function loadSelectedUser() {
-        // Only the User List entry point supplies an account ID.
+        // A layout preview may open without an account ID.
         if (userId === undefined) {
             return;
         }

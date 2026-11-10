@@ -37,14 +37,14 @@ test('a manager can save a player name and see it on the reopened profile', func
         ->assertJsonPath('email', $player->email);
 });
 
-test('a staff member can view their own profile without being offered staff photo editing', function () {
+test('a staff member can view their own profile with photo and password editing available', function () {
     $manager = User::factory()->create(['role' => RoleCode::MANAGER]);
 
     $this->actingAs($manager, 'web')->withHeader('Origin', 'http://localhost:8000')
         ->getJson(route('api.v1.users.show', $manager))
         ->assertOk()
-        ->assertJsonPath('can_change_photo', false)
-        ->assertJsonPath('can_change_password', false);
+        ->assertJsonPath('can_change_photo', true)
+        ->assertJsonPath('can_change_password', true);
 });
 
 test('a renamed account gets an available suffix and can reuse it when the normalized name stays the same', function () {
@@ -105,13 +105,28 @@ test('staff details updates reject invalid fields and another account email', fu
     $this->assertDatabaseHas('users', ['id' => $player->id, 'email' => $player->email]);
 });
 
-test('a manager cannot use staff details updates on their own account', function () {
+test('each role can save their own details and keep photo editing available', function (RoleCode $role) {
+    $user = User::factory()->create(['role' => $role]);
+
+    $this->actingAs($user, 'web')->withHeader('Origin', 'http://localhost:8000')
+        ->patchJson(route('api.v1.users.update', $user), [
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
+            'email' => $user->email,
+            'phone' => '+1 506-555-0123',
+        ])->assertOk()
+        ->assertJsonPath('phone', '+1 506-555-0123')
+        ->assertJsonPath('can_change_photo', true)
+        ->assertJsonPath('can_change_password', true);
+
+    $this->assertDatabaseHas('users', ['id' => $user->id, 'phone' => '+1 506-555-0123']);
+})->with(RoleCode::cases());
+
+test('a manager cannot save details for an admin', function () {
     $manager = User::factory()->create(['role' => RoleCode::MANAGER]);
+    $admin = User::factory()->create(['role' => RoleCode::ADMIN]);
 
     $this->actingAs($manager, 'web')->withHeader('Origin', 'http://localhost:8000')
-        ->patchJson(route('api.v1.users.update', $manager), [
-            'first_name' => 'Sam',
-            'last_name' => $manager->last_name,
-            'email' => $manager->email,
-        ])->assertForbidden();
+        ->patchJson(route('api.v1.users.update', $admin), [])
+        ->assertForbidden();
 });

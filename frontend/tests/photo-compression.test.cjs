@@ -28,6 +28,7 @@ function harness(options = {}) {
         File, Blob, console: { log() {} }, samplePortrait: 'sample',
         photo: null, photoPreview: 'sample', photoMessage: '', isCheckingPhoto: false,
         isSubmitting: false, isLoadingRoles: false, roleOptions: [{}], isBlocked: false,
+        isSubmitDisabled: false, isCreationLocked: false,
         firstName: 'Test', lastName: 'Photo', email: 'test@example.com', phone: '', selectedRole: 'player',
         photoCheckRef: { current: 0 }, submissionRef: { current: 0 }, photoInputRef: { current: { value: 'old' } },
         requestInFlight: { current: false },
@@ -62,7 +63,7 @@ function harness(options = {}) {
     c.setIsConfirmationOpen = value => { c.confirmationOpen = value; };
     c.submission = c;
     vm.createContext(c);
-    vm.runInContext(section('    function updateChecking', '    return {') + '\n' + section('    async function submitAccount', '    return {', submissionSource) + '\n' + section('    function handleSubmit', '\n    return (', pageSource), c);
+    vm.runInContext(section('    function updateChecking', '    return {') + '\n' + section('    async function submitAccount', '    return {', submissionSource) + '\n' + section('    function handleSubmit', '    async function handleCopyCredentials', pageSource), c);
     return {
         c, pending, decoded, canvases, urls, calls,
         choose(type = 'image/jpeg', size = 100, name = 'original.jpg') {
@@ -104,7 +105,7 @@ test('Clear cancels pending encoding and same file can be reselected', async () 
 test('Clear cancels pending decoding and closes decoded bitmap', async () => { const h=harness({delayDecode:true}); const task=h.choose(); h.c.handleClearPhotoClick(); h.decoded[0].resolve(); await task; assert.equal(h.canvases.length,0); assert.equal(h.decoded[0].bitmap.closed,true); assert.equal(h.c.photo,null); });
 test('unmount cleanup invalidates a pending encoding', async () => {
     const h=harness(); await h.choose();
-    const cleanup=source.match(/return function cleanup\(\) \{\s*photoCheckRef.current \+= 1\s*\}/);
+    const cleanup=source.match(/return function cleanup\(\) \{\s*photoCheckRef\.current \+= 1;?\s*\}/);
     assert.ok(cleanup); vm.runInContext('(' + cleanup[0].replace('return ','') + ')()',h.c);
     h.encode(); assert.equal(h.urls.length,0); assert.equal(h.c.photo,null);
 });
@@ -112,7 +113,10 @@ test('picker cancellation preserves selection', async () => { const h=harness();
 test('submission sends no requests during compression then uses accepted File', async () => {
     const h = harness();
     const event = { preventDefault() {} };
-    const evaluateBlocking = () => vm.runInContext(section('    const isBlocked', '    function handleSubmit', pageSource).replace('const isBlocked', 'isBlocked'), h.c);
+    const blocking = section('    const isBlocked', '    function handleSubmit', pageSource)
+        .replace('const isBlocked', 'isBlocked')
+        .replace('const isSubmitDisabled', 'isSubmitDisabled');
+    const evaluateBlocking = () => vm.runInContext(blocking, h.c);
     await h.choose();
     evaluateBlocking();
     h.c.handleSubmit(event);
@@ -126,7 +130,7 @@ test('submission sends no requests during compression then uses accepted File', 
     const data=h.calls.find(x=>x instanceof FormData); assert.ok(data); assert.equal(data.get('photo'),h.c.photo);
 });
 test('preview effect releases replaced/unmounted object URLs', () => {
-    const effect=source.match(/return function cleanup\(\) \{\s*if \(photoPreview !== samplePortrait\) \{\s*URL.revokeObjectURL\(photoPreview\)\s*\}\s*\}/);
+    const effect=source.match(/return function cleanup\(\) \{\s*if \(photoPreview !== samplePortrait\) \{\s*URL.revokeObjectURL\(photoPreview\);?\s*\}\s*\}/);
     assert.ok(effect); const revoked=[]; const c={photoPreview:'blob:previous',samplePortrait:'sample',URL:{revokeObjectURL(url){revoked.push(url);}}}; vm.createContext(c);
     vm.runInContext('('+effect[0].replace('return ','')+')()',c); c.photoPreview='sample'; vm.runInContext('('+effect[0].replace('return ','')+')()',c); assert.deepEqual(revoked,['blob:previous']);
 });
@@ -174,14 +178,14 @@ test('Create User asks before submitting and preserves the same details after ca
         phone: '',
         selectedRole: 'player',
         photo: null,
-        isBlocked: false,
+        isSubmitDisabled: false,
         submission: {
             isSubmitting: false,
             async submitAccount(details) { submissions.push(details); },
         },
         setIsConfirmationOpen(value) { confirmationOpen = value; },
     });
-    vm.runInContext(section('    function handleSubmit', '\n    return (', pageSource), context);
+    vm.runInContext(section('    function handleSubmit', '    async function handleCopyCredentials', pageSource), context);
     const event = { preventDefault() { prevented += 1; } };
 
     await context.handleSubmit(event);
@@ -198,7 +202,7 @@ test('Create User asks before submitting and preserves the same details after ca
     assert.equal(submissions.length, 1);
     assert.equal(submissions[0].email, 'test@example.com');
 
-    context.isBlocked = true;
+    context.isSubmitDisabled = true;
     await context.handleSubmit(event);
     assert.equal(confirmationOpen, false);
     assert.equal(submissions.length, 1);

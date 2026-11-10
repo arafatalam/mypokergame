@@ -71,14 +71,34 @@ test('a rejected photo leaves the saved portrait untouched', function () {
     expect($disk->allFiles())->toBe([]);
 });
 
-test('staff photo replacement follows the account update hierarchy', function () {
+test('each role can upload and remove their own photo', function (RoleCode $role) {
+    $disk = Storage::fake(config('filesystems.default'));
+    $user = User::factory()->create(['role' => $role]);
+
+    $this->actingAs($user, 'web')->withHeader('Origin', 'http://localhost:8000');
+    $this->getJson(route('api.v1.users.show', $user))->assertOk()->assertJsonPath('can_change_photo', true);
+
+    $this->postJson(route('api.v1.users.photo.replace', $user), [
+        'photo' => UploadedFile::fake()->image('portrait.png'),
+    ])->assertOk()->assertJsonPath('has_uploaded_photo', true);
+
+    $uploadedPath = $user->fresh()->profile_image_path;
+    $disk->assertExists($uploadedPath);
+
+    $this->deleteJson(route('api.v1.users.photo.remove', $user))
+        ->assertOk()
+        ->assertJsonPath('has_uploaded_photo', false);
+
+    $disk->assertMissing($uploadedPath);
+    expect($user->fresh()->profile_image_path)->toStartWith('images/avatars/');
+})->with(RoleCode::cases());
+
+test('photo changes to another account follow the staff update hierarchy', function () {
     $manager = User::factory()->create(['role' => RoleCode::MANAGER]);
     $admin = User::factory()->create(['role' => RoleCode::ADMIN]);
 
     $this->actingAs($manager, 'web')->withHeader('Origin', 'http://localhost:8000');
 
-    foreach ([$manager, $admin] as $target) {
-        $this->postJson(route('api.v1.users.photo.replace', $target), [])->assertForbidden();
-        $this->deleteJson(route('api.v1.users.photo.remove', $target))->assertForbidden();
-    }
+    $this->postJson(route('api.v1.users.photo.replace', $admin), [])->assertForbidden();
+    $this->deleteJson(route('api.v1.users.photo.remove', $admin))->assertForbidden();
 });

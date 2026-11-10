@@ -8,7 +8,7 @@ class ReplaceUserPhotoRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        // The route checks staff edit permission before validating the upload.
+        // The route checks photo edit permission before validating the upload.
         return true;
     }
 

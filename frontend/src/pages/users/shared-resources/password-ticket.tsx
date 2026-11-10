@@ -15,6 +15,8 @@ export default function PasswordTicket(props: PasswordTicketProps) {
 
     const [password, setPassword] = useState('');
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+    const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
     const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
     const [confirmationMessage, setConfirmationMessage] = useState('');
     const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
@@ -27,6 +29,28 @@ export default function PasswordTicket(props: PasswordTicketProps) {
         setPasswordConfirmation(event.currentTarget.value);
     }
 
+    function handlePasswordToggle() {
+        setIsPasswordVisible(!isPasswordVisible);
+    }
+
+    function handleConfirmationToggle() {
+        setIsConfirmationVisible(!isConfirmationVisible);
+    }
+
+    let passwordInputType = 'password';
+    let passwordButtonText = 'Show';
+    if (isPasswordVisible) {
+        passwordInputType = 'text';
+        passwordButtonText = 'Hide';
+    }
+
+    let confirmationInputType = 'password';
+    let confirmationButtonText = 'Show';
+    if (isConfirmationVisible) {
+        confirmationInputType = 'text';
+        confirmationButtonText = 'Hide';
+    }
+
     let passwordMismatchMessage = null;
 
     if (passwordConfirmation !== '' && password !== passwordConfirmation) {
@@ -36,6 +60,9 @@ export default function PasswordTicket(props: PasswordTicketProps) {
     const canContinue = !isUpdatingPassword && password !== '' && password === passwordConfirmation;
 
     function handleUpdatePassword() {
+        // Mask both fields before opening the confirmation.
+        setIsPasswordVisible(false);
+        setIsConfirmationVisible(false);
         setConfirmationMessage('');
         setIsConfirmationOpen(true);
     }
@@ -89,32 +116,52 @@ export default function PasswordTicket(props: PasswordTicketProps) {
                     Update Password
                 </h2>
                 <p className="mt-3 text-center text-sm">
-                    A password update signs this account out on every device.
+                    Other browsers signed in to this account may be signed out.
                 </p>
 
                 <div className="mt-5 flex flex-col gap-2">
                     <label htmlFor={passwordId}>New password</label>
-                    <input
-                        id={passwordId}
-                        type="password"
-                        value={password}
-                        onChange={handlePasswordChange}
-                        autoComplete="new-password"
-                        readOnly={isUpdatingPassword}
-                        className="casino-input w-full rounded-lg border p-2"
-                    />
+                    <div className="relative">
+                        <input
+                            id={passwordId}
+                            type={passwordInputType}
+                            value={password}
+                            onChange={handlePasswordChange}
+                            autoComplete="new-password"
+                            readOnly={isUpdatingPassword}
+                            className="casino-input min-w-0 w-full rounded-lg border p-2 pr-20"
+                        />
+                        <button
+                            type="button"
+                            onClick={handlePasswordToggle}
+                            disabled={isUpdatingPassword}
+                            className="absolute inset-y-0 right-0 px-3 text-sm underline disabled:opacity-50"
+                        >
+                            {passwordButtonText}
+                        </button>
+                    </div>
                 </div>
                 <div className="mt-4 flex flex-col gap-2">
                     <label htmlFor={confirmationId}>Confirm new password</label>
-                    <input
-                        id={confirmationId}
-                        type="password"
-                        value={passwordConfirmation}
-                        onChange={handlePasswordConfirmationChange}
-                        autoComplete="new-password"
-                        readOnly={isUpdatingPassword}
-                        className="casino-input w-full rounded-lg border p-2"
-                    />
+                    <div className="relative">
+                        <input
+                            id={confirmationId}
+                            type={confirmationInputType}
+                            value={passwordConfirmation}
+                            onChange={handlePasswordConfirmationChange}
+                            autoComplete="new-password"
+                            readOnly={isUpdatingPassword}
+                            className="casino-input min-w-0 w-full rounded-lg border p-2 pr-20"
+                        />
+                        <button
+                            type="button"
+                            onClick={handleConfirmationToggle}
+                            disabled={isUpdatingPassword}
+                            className="absolute inset-y-0 right-0 px-3 text-sm underline disabled:opacity-50"
+                        >
+                            {confirmationButtonText}
+                        </button>
+                    </div>
                     {passwordMismatchMessage}
                 </div>
 
@@ -132,7 +179,7 @@ export default function PasswordTicket(props: PasswordTicketProps) {
             <ConfirmationTicket
                 isOpen={isConfirmationOpen}
                 title="Confirm Password Update"
-                message="Update this password and sign this account out on every device?"
+                message="Update the password for this account?"
                 confirmLabel="Update password"
                 onCancel={handleCancelConfirmation}
                 onConfirm={handleConfirmPasswordUpdate}
