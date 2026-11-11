@@ -50,7 +50,7 @@ function SignedInLayout(props: SignedInLayoutProps) {
         content = <ShowUser key="my-account" userId={props.signedInUserId}/>;
         marqueeText = 'my account';
     } else if (selectedPage === 'create-game') {
-        content = <CreateGame />;
+        content = <CreateGame onCancel={handleOpenHome} />;
         marqueeText = 'games';
     }
 

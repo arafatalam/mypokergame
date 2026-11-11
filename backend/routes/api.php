@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\Auth\SessionController;
+use App\Http\Controllers\GameSessionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserPasswordController;
 use App\Http\Controllers\UserPhotoController;
+use App\Models\GameSession;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -18,6 +20,14 @@ Route::middleware('auth:sanctum')->group(function (): void {
 
     Route::post('/logout', [SessionController::class, 'destroy'])
         ->name('api.v1.logout');
+
+    Route::get('/games/create-options', [GameSessionController::class, 'createOptions'])
+        ->can('create', GameSession::class)
+        ->name('api.v1.games.create-options');
+
+    Route::post('/games', [GameSessionController::class, 'store'])
+        ->can('create', GameSession::class)
+        ->name('api.v1.games.store');
 
     Route::prefix('users')->name('api.v1.users.')->group(function (): void {
         // Check list permission before the controller retrieves accounts.

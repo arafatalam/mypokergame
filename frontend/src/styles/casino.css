@@ -216,3 +216,8 @@ button:focus-visible {
 .casino-button:hover {
     filter: brightness(1.13);
 }
+
+/* The amount row shows focus while its input is editable. */
+.create-game-amount:read-write:focus-visible {
+    outline: none;
+}
