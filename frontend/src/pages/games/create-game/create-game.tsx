@@ -2,7 +2,8 @@ import cardFan from '../../../assets/casino/create-game-card-fan.png';
 import pokerFace from '../../../assets/casino/create-game-poker-face.png';
 import smugChip from '../../../assets/casino/create-game-smug-chip.png';
 import CasinoTicket from '../../../components/casino-ticket';
-import { useEffect, useState, type ChangeEvent } from 'react';
+import ConfirmationTicket from '../../../components/confirmation-ticket';
+import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { isAxiosError } from 'axios';
 import { saveGame } from './save-game';
 import { loadGameCreateOptions } from './load-game-create-options';
@@ -10,6 +11,7 @@ import { loadGameCreateOptions } from './load-game-create-options';
 
 type CreateGameProps = {
     onCancel: () => void;
+    onGameCreated: (gameId: number) => void;
 };
 
 function CreateGame(props: CreateGameProps) {
@@ -22,10 +24,14 @@ function CreateGame(props: CreateGameProps) {
     const [gameName, setGameName] = useState('—');
     const [gameDetails, setGameDetails] = useState('');
     const [isSaving, setIsSaving] = useState(false);
-    const [savedGameName, setSavedGameName] = useState('');
+    const [isReviewOpen, setIsReviewOpen] = useState(false);
     const [saveError, setSaveError] = useState('');
+    const saveInProgress = useRef(false);
+    const isScreenOpen = useRef(false);
 
     useEffect(function loadCreateGamePreview() {
+        isScreenOpen.current = true;
+
         async function requestGameName() {
             try {
                 const options = await loadGameCreateOptions();
@@ -52,6 +58,9 @@ function CreateGame(props: CreateGameProps) {
 
         // Load the game preview and house limits when the ticket opens.
         void requestGameName();
+        return function markScreenClosed() {
+            isScreenOpen.current = false;
+        };
     }, []);
 
     function handleCustomLimitsChange(event: ChangeEvent<HTMLInputElement>) {
@@ -95,17 +104,30 @@ function CreateGame(props: CreateGameProps) {
     }
 
     const amountsMissing = useCustomLimits && (minimumBuyIn === '' || maximumBuyIn === '');
-    // Wait for the preview and lock the ticket during and after a successful save.
-    const canSave = defaultLimits !== null && !amountsMissing && buyInError === '' && !isSaving && savedGameName === '';
+    const canSave = defaultLimits !== null && !amountsMissing && buyInError === '' && !isSaving;
 
-    async function handleCreateGame() {
-        if (!canSave) {
+    function handleReviewGame() {
+        if (canSave && !saveInProgress.current) {
+            setIsReviewOpen(true);
+        }
+    }
+
+    function handleBackToEdit() {
+        setIsReviewOpen(false);
+    }
+
+    async function handleConfirmCreateGame() {
+        if (!isReviewOpen || !canSave || saveInProgress.current) {
             return;
         }
 
+        // Lock immediately so a second confirmation cannot send another request.
+        saveInProgress.current = true;
+        setIsReviewOpen(false);
         setIsSaving(true);
         setSaveError('');
 
+        let gameId: number;
         try {
             const game = await saveGame({
                 game_name: gameName,
@@ -113,7 +135,7 @@ function CreateGame(props: CreateGameProps) {
                 min_buy_in: Number(minimumBuyIn),
                 max_buy_in: Number(maximumBuyIn),
             });
-            setSavedGameName(game.game_name);
+            gameId = game.id;
         } catch (error) {
             let message = 'Could not confirm the save. Reopen Create Game before trying again.';
 
@@ -126,8 +148,15 @@ function CreateGame(props: CreateGameProps) {
             }
 
             setSaveError(message);
+            return;
         } finally {
+            saveInProgress.current = false;
             setIsSaving(false);
+        }
+
+        // Keep the current destination if staff navigated away during the save.
+        if (isScreenOpen.current) {
+            props.onGameCreated(gameId);
         }
     }
 
@@ -166,7 +195,7 @@ function CreateGame(props: CreateGameProps) {
                                             inputMode="numeric"
                                             value={minimumBuyIn}
                                             onChange={handleMinimumBuyInChange}
-                                            readOnly={!useCustomLimits || isSaving || savedGameName !== ''}
+                                            readOnly={!useCustomLimits || isSaving}
                                         />
                                     </dd>
                                 </div>
@@ -180,7 +209,7 @@ function CreateGame(props: CreateGameProps) {
                                             inputMode="numeric"
                                             value={maximumBuyIn}
                                             onChange={handleMaximumBuyInChange}
-                                            readOnly={!useCustomLimits || isSaving || savedGameName !== ''}
+                                            readOnly={!useCustomLimits || isSaving}
                                         />
                                     </dd>
                                 </div>
@@ -189,7 +218,7 @@ function CreateGame(props: CreateGameProps) {
                                 {buyInError}
                             </p>
                             <label className="mt-3 flex items-center gap-2">
-                                <input type="checkbox" checked={useCustomLimits} disabled={defaultLimits === null || isSaving || savedGameName !== ''} onChange={handleCustomLimitsChange} />
+                                <input type="checkbox" checked={useCustomLimits} disabled={defaultLimits === null || isSaving} onChange={handleCustomLimitsChange} />
                                 Use custom limits
                             </label>
                         </section>
@@ -197,26 +226,40 @@ function CreateGame(props: CreateGameProps) {
 
                     <div>
                         <p hidden={saveError === ''} className="mb-2 text-sm font-semibold">{saveError}</p>
-                        <p hidden={savedGameName === ''} className="mb-2 text-sm font-semibold">
-                            {savedGameName} saved.
-                        </p>
                         <div className="grid gap-2 sm:grid-cols-[1fr_auto]">
                             <button
                                 type="button"
                                 disabled={!canSave}
-                                onClick={handleCreateGame}
+                                onClick={handleReviewGame}
                                 data-invalid={buyInError !== ''}
                                 className="casino-button min-h-11 rounded-full px-4 py-2 text-xl uppercase data-[invalid=true]:opacity-50"
                             >
                                 {isSaving ? 'Saving…' : 'Create Game'}
                             </button>
                             <button type="button" disabled={isSaving} onClick={props.onCancel} className="min-h-11 rounded-full border border-current px-5 py-2 font-semibold">
-                                {savedGameName === '' ? 'Cancel' : 'Done'}
+                                Cancel
                             </button>
                         </div>
                     </div>
                 </div>
             </CasinoTicket>
+
+            <ConfirmationTicket
+                isOpen={isReviewOpen}
+                title="Review Game"
+                message={(
+                    <>
+                        <strong className="block break-words">{gameName}</strong>
+                        <span className="block">{buyInHeading}</span>
+                        <span className="block">Minimum ${minimumBuyIn}</span>
+                        <span className="block">Maximum ${maximumBuyIn}</span>
+                    </>
+                )}
+                cancelLabel="Back to Edit"
+                confirmLabel="Confirm Create Game"
+                onCancel={handleBackToEdit}
+                onConfirm={handleConfirmCreateGame}
+            />
 
             {/* Keep the artwork in the space beside the ticket on wide screens. */}
             <img src={pokerFace} alt="" className="pointer-events-none absolute right-full top-0 mr-4 hidden w-[calc((100vw_-_37.5rem)*0.4344)] max-w-none xl:block" />

@@ -85,12 +85,22 @@ export function useRecordCashout() {
     }
 
     function handleEndingChipsChange(event: ChangeEvent<HTMLInputElement>) {
-        setEndingChips(event.target.value);
+        const value = event.target.value;
+
+        // Reject the entire edit so a paste cannot silently change the amount.
+        if (/[^0-9]/.test(value)) return;
+
+        setEndingChips(value);
         clearSaveFeedback();
     }
 
     function handleCashPaidChange(event: ChangeEvent<HTMLInputElement>) {
-        setCashPaid(event.target.value);
+        const value = event.target.value;
+
+        // Reject the entire edit so a paste cannot silently change the amount.
+        if (/[^0-9]/.test(value)) return;
+
+        setCashPaid(value);
         clearSaveFeedback();
     }
 

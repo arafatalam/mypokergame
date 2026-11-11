@@ -22,6 +22,7 @@ function SignedInLayout(props: SignedInLayoutProps) {
     const [isSigningOut, setIsSigningOut] = useState(false);
     const [signOutMessage, setSignOutMessage] = useState('');
     const [selectedUserId, setSelectedUserId] = useState<number>();
+    const [buyInGameId, setBuyInGameId] = useState<number>();
 
 
     function handleOpenUserList() {
@@ -35,6 +36,11 @@ function SignedInLayout(props: SignedInLayoutProps) {
 
     function handleOpenHome() {
         setSelectedPage('home');
+    }
+
+    function handleGameCreated(gameId: number) {
+        setBuyInGameId(gameId);
+        setSelectedPage('buy-in');
     }
 
     // Choose which screen appears below the shared navigation.
@@ -52,10 +58,10 @@ function SignedInLayout(props: SignedInLayoutProps) {
         content = <ShowUser key="my-account" userId={props.signedInUserId}/>;
         marqueeText = 'my account';
     } else if (selectedPage === 'create-game') {
-        content = <CreateGame onCancel={handleOpenHome} />;
+        content = <CreateGame onCancel={handleOpenHome} onGameCreated={handleGameCreated} />;
         marqueeText = 'games';
     } else if (selectedPage === 'buy-in') {
-        content = <RecordBuyIn onCancel={handleOpenHome} />;
+        content = <RecordBuyIn key={buyInGameId} initialGameId={buyInGameId} onCancel={handleOpenHome} />;
         marqueeText = 'games';
     } else if (selectedPage === 'cashout') {
         content = <RecordCashout onCancel={handleOpenHome} />;
@@ -71,6 +77,7 @@ function SignedInLayout(props: SignedInLayoutProps) {
         if (task === 'create') {
             setSelectedPage('create-game');
         } else if (task === 'buy-in') {
+            setBuyInGameId(undefined);
             setSelectedPage('buy-in');
         } else if (task === 'cashout') {
             setSelectedPage('cashout');

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type ChangeEvent, type SubmitEvent } from 
 import { isAxiosError } from 'axios';
 import { loadBuyInOptions, saveBuyIn, type BuyInOptions, type BuyInReceipt } from './record-buy-in-api';
 
-export function useRecordBuyIn() {
+export function useRecordBuyIn(initialGameId?: number) {
     const [options, setOptions] = useState<BuyInOptions | null>(null);
     const [loadFailed, setLoadFailed] = useState(false);
     const [gameId, setGameId] = useState('');
@@ -24,7 +24,13 @@ export function useRecordBuyIn() {
                 const loaded = await loadBuyInOptions();
                 if (ignoreResponse) return;
                 setOptions(loaded);
-                if (loaded.games.length === 1) {
+                // Select the saved game only if Laravel still lists it as open.
+                const initialGame = loaded.games.find(function matchesInitialGame(game) {
+                    return game.id === initialGameId;
+                });
+                if (initialGame) {
+                    setGameId(String(initialGame.id));
+                } else if (initialGameId === undefined && loaded.games.length === 1) {
                     setGameId(String(loaded.games[0].id));
                 }
             } catch {
@@ -35,7 +41,7 @@ export function useRecordBuyIn() {
         void requestOptions();
         // Ignore a late response after the user leaves this screen.
         return function ignoreOldOptions() { ignoreResponse = true; };
-    }, []);
+    }, [initialGameId]);
 
     const game = options?.games.find(function matchesGame(option) { return String(option.id) === gameId; });
     const player = options?.players.find(function matchesPlayer(option) { return String(option.id) === playerId; });
@@ -98,12 +104,22 @@ export function useRecordBuyIn() {
     }
 
     function handleCashChange(event: ChangeEvent<HTMLInputElement>) {
-        setCash(event.target.value);
+        const value = event.target.value;
+
+        // Reject the entire edit so a paste cannot silently change the amount.
+        if (/[^0-9]/.test(value)) return;
+
+        setCash(value);
         clearSaveFeedback();
     }
 
     function handleCreditChange(event: ChangeEvent<HTMLInputElement>) {
-        setCredit(event.target.value);
+        const value = event.target.value;
+
+        // Reject the entire edit so a paste cannot silently change the amount.
+        if (/[^0-9]/.test(value)) return;
+
+        setCredit(value);
         clearSaveFeedback();
     }
 

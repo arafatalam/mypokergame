@@ -7,10 +7,11 @@ import BuyInConfirmation from './buy-in-confirmation';
 
 type RecordBuyInProps = {
     onCancel: () => void;
+    initialGameId?: number;
 };
 
 function RecordBuyIn(props: RecordBuyInProps) {
-    const form = useRecordBuyIn();
+    const form = useRecordBuyIn(props.initialGameId);
     const gameOptions = [];
     for (const game of form.options?.games ?? []) {
         gameOptions.push(<option key={game.id} value={game.id}>{game.name}</option>);
