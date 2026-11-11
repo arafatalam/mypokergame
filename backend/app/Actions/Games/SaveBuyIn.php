@@ -4,6 +4,7 @@ namespace App\Actions\Games;
 
 use App\Enums\RoleCode;
 use App\Models\BuyIn;
+use App\Models\Cashout;
 use App\Models\GameSession;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -58,26 +59,42 @@ class SaveBuyIn
                 throw ValidationException::withMessages(['playerId' => $message]);
             }
 
-            $total = $cash + $credit;
-            if ($total < $game->min_buy_in) {
-                throw ValidationException::withMessages(['total' => 'The minimum buy-in is $'.$game->min_buy_in.'.']);
-            }
-            if ($total > $game->max_buy_in) {
-                throw ValidationException::withMessages(['total' => 'The maximum buy-in is $'.$game->max_buy_in.'.']);
-            }
-
             $visit = DB::table('player_game_visits')
                 ->where('player_id', $playerId)
                 ->where('game_session_id', $gameId)
                 ->latest('id')
+                ->lockForUpdate()
                 ->first(['id', 'closed_at']);
 
+            $minimum = $game->min_buy_in;
+            $maximum = $game->max_buy_in;
+            $total = $cash + $credit;
+
             if ($visit !== null && $visit->closed_at !== null) {
-                throw ValidationException::withMessages(['playerId' => 'This player has already cashed out of this game.']);
+                $cashout = Cashout::query()->where('player_game_visit_id', $visit->id)->first(['ending_chips']);
+                if ($cashout === null) {
+                    throw ValidationException::withMessages(['playerId' => 'This player has already cashed out of this game.']);
+                }
+
+                // A return must cover the previous ending chips, even above the house maximum.
+                $minimum = max($minimum, $cashout->ending_chips);
+                $maximum = max($maximum, $cashout->ending_chips);
+                if ($minimum === $maximum && $total !== $minimum) {
+                    throw ValidationException::withMessages(['total' => 'The return buy-in must be exactly $'.$minimum.'.']);
+                }
+
+                $visit = null;
+            }
+
+            if ($total < $minimum) {
+                throw ValidationException::withMessages(['total' => 'The minimum buy-in is $'.$minimum.'.']);
+            }
+            if ($total > $maximum) {
+                throw ValidationException::withMessages(['total' => 'The maximum buy-in is $'.$maximum.'.']);
             }
 
             $recordedAt = now();
-            // First buy-ins create a visit. Top-ups reuse the player's open visit.
+            // First buy-ins and returns create a visit. Top-ups reuse the open visit.
             $visitId = $visit?->id ?? DB::table('player_game_visits')->insertGetId([
                 'game_session_id' => $gameId,
                 'player_id' => $playerId,

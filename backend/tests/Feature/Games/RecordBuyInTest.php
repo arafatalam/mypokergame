@@ -70,9 +70,60 @@ it('returns only open games and active Players with their open game', function (
     $this->actingAs($staff, 'web')->getJson('/api/v1/games/buy-in-options')
         ->assertOk()->assertExactJson([
             'games' => [['id' => $game->id, 'name' => '11_NOV_2026_1', 'minimum' => 200, 'maximum' => 400]],
-            'players' => [['id' => $player->id, 'name' => 'Avery Test', 'openGameId' => $game->id]],
+            'players' => [['id' => $player->id, 'name' => 'Avery Test', 'openGameId' => $game->id, 'returnEndingChips' => null]],
         ]);
 });
+
+it('uses the latest cashout for a return and restores regular limits for top-ups', function (int $endingChips, int $returnTotal, int $tooLow, int $tooHigh): void {
+    $staff = User::factory()->create(['role' => RoleCode::MANAGER, 'is_active' => true, 'must_change_password' => false]);
+    $player = User::factory()->create(['role' => RoleCode::PLAYER, 'is_active' => true, 'poker_balance' => -20]);
+    $game = createBuyInGame($staff, 1);
+    $other = createBuyInGame($staff, 2);
+    $this->actingAs($staff, 'web');
+
+    $draft = [
+        'gameId' => $game->id, 'playerId' => $player->id, 'cash' => 200, 'credit' => 0,
+        'requestId' => (string) Str::uuid(),
+    ];
+    $firstVisit = $this->postJson('/api/v1/buy-ins', $draft)->assertOk()->json('visitId');
+    $this->postJson('/api/v1/cashouts', [
+        'gameId' => $game->id, 'playerId' => $player->id, 'visitId' => $firstVisit,
+        'endingChips' => $endingChips, 'cashPaid' => $endingChips, 'requestId' => (string) Str::uuid(),
+    ])->assertCreated();
+    $this->getJson('/api/v1/games/buy-in-options')->assertOk()
+        ->assertJsonPath('players.0.openGameId', $game->id)
+        ->assertJsonPath('players.0.returnEndingChips', $endingChips);
+
+    $draft['requestId'] = (string) Str::uuid();
+    $this->postJson('/api/v1/buy-ins', array_replace($draft, ['gameId' => $other->id]))
+        ->assertUnprocessable()->assertJsonValidationErrors('playerId');
+    foreach ([$tooLow, $tooHigh] as $invalidTotal) {
+        $this->postJson('/api/v1/buy-ins', array_replace($draft, ['cash' => $invalidTotal]))
+            ->assertUnprocessable()->assertJsonValidationErrors('total');
+    }
+
+    $draft['cash'] = $returnTotal - 100;
+    $draft['credit'] = 100;
+    $receipt = $this->postJson('/api/v1/buy-ins', $draft)->assertOk()
+        ->assertJsonPath('total', $returnTotal)->assertJsonPath('balance', -120);
+    $returnVisit = $receipt->json('visitId');
+    expect($returnVisit)->not->toBe($firstVisit);
+    $this->postJson('/api/v1/buy-ins', $draft)->assertOk()->assertExactJson($receipt->json());
+    $this->assertDatabaseHas('cashouts', ['player_game_visit_id' => $firstVisit, 'ending_chips' => $endingChips]);
+    expect(DB::table('player_game_visits')->where('id', $firstVisit)->value('closed_at'))->not->toBeNull();
+    $this->getJson('/api/v1/games/buy-in-options')->assertOk()->assertJsonPath('players.0.returnEndingChips', null);
+
+    $this->postJson('/api/v1/buy-ins', array_replace($draft, [
+        'cash' => 200, 'credit' => 0, 'requestId' => (string) Str::uuid(),
+    ]))->assertOk()->assertJsonPath('visitId', $returnVisit)->assertJsonPath('balance', -120);
+    $this->assertDatabaseCount('player_game_visits', 2);
+    $this->assertDatabaseCount('buy_ins', 3);
+    expect($player->refresh()->poker_balance)->toBe(-120);
+})->with([
+    'between house limits' => [300, 300, 299, 401],
+    'above house maximum' => [550, 550, 549, 551],
+    'below house minimum' => [0, 200, 199, 401],
+]);
 
 it('records a mixed first buy-in and a cash top-up on the same visit', function (): void {
     $staff = User::factory()->create(['role' => RoleCode::MANAGER, 'is_active' => true, 'must_change_password' => false]);

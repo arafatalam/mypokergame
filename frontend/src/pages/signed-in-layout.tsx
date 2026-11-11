@@ -1,9 +1,11 @@
 import casinoLogo from '../assets/casino/skanders-game-logo.png';
 import NavigationGroup from '../components/navigation-group';
 import CasinoMarquee from '../components/casino-marquee';
+import CloseGame from './games/close-game/close-game';
 import CreateGame from './games/create-game/create-game';
 import RecordBuyIn from './games/record-buy-in/record-buy-in';
 import RecordCashout from './games/record-cashout/record-cashout';
+import RecordGameTotals from './games/record-game-totals/record-game-totals';
 import './signed-in-layout.css';
 import Home from './home/home';
 import CreateUser from './users/create-user/create-user.tsx';
@@ -14,6 +16,7 @@ import ShowUser from './users/show-user/show-user';
 
 type SignedInLayoutProps = {
     signedInUserId: number;
+    canRecordGameTotals: boolean;
 };
 
 function SignedInLayout(props: SignedInLayoutProps) {
@@ -66,6 +69,12 @@ function SignedInLayout(props: SignedInLayoutProps) {
     } else if (selectedPage === 'cashout') {
         content = <RecordCashout onCancel={handleOpenHome} />;
         marqueeText = 'games';
+    } else if (selectedPage === 'game-totals') {
+        content = <RecordGameTotals />;
+        marqueeText = 'games';
+    } else if (selectedPage === 'close-game') {
+        content = <CloseGame />;
+        marqueeText = 'games';
     }
 
     function handleUserSelection(task: string) {
@@ -81,6 +90,10 @@ function SignedInLayout(props: SignedInLayoutProps) {
             setSelectedPage('buy-in');
         } else if (task === 'cashout') {
             setSelectedPage('cashout');
+        } else if (task === 'game-totals' && props.canRecordGameTotals) {
+            setSelectedPage('game-totals');
+        } else if (task === 'close-game' && props.canRecordGameTotals) {
+            setSelectedPage('close-game');
         }
     }
 
@@ -105,6 +118,18 @@ function SignedInLayout(props: SignedInLayoutProps) {
         }
     }
 
+    const gameTasks = [
+        { task: 'create', label: 'Create Game' },
+        { task: 'list', label: 'Game List' },
+        { task: 'buy-in', label: 'Record Buy-in' },
+        { task: 'cashout', label: 'Record Cashout' },
+    ];
+    if (props.canRecordGameTotals) {
+        gameTasks.push({ task: 'game-totals', label: 'Record Game Totals' });
+        gameTasks.push({ task: 'close-game', label: 'Close Game' });
+    }
+    gameTasks.push({ task: 'settings', label: 'Game Settings' });
+
     return (
         <div className="home-viewport overflow-x-clip">
             <div className="home-screen relative min-h-screen w-full">
@@ -127,13 +152,7 @@ function SignedInLayout(props: SignedInLayoutProps) {
                                 { task: 'list', label: 'User List' },
                             ]}
                         />
-                        <NavigationGroup label="Games" view="games" onSelect={handleGameSelection} items={[
-                            { task: 'create', label: 'Create Game' },
-                            { task: 'list', label: 'Game List' },
-                            { task: 'buy-in', label: 'Record Buy-in' },
-                            { task: 'cashout', label: 'Record Cashout' },
-                            { task: 'settings', label: 'Game Settings' },
-                        ]} />
+                        <NavigationGroup label="Games" view="games" onSelect={handleGameSelection} items={gameTasks} />
                         <NavigationGroup label="Players" view="players" items={[
                             { task: 'list', label: 'Player List' },
                             { task: 'balances', label: 'Balances' },

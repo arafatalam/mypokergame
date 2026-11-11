@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 type GameOption = { id: number; name: string; minimum: number; maximum: number };
-type PlayerOption = { id: number; name: string; openGameId: number | null };
+type PlayerOption = { id: number; name: string; openGameId: number | null; returnEndingChips: number | null };
 export type BuyInOptions = { games: GameOption[]; players: PlayerOption[] };
 export type BuyInDraft = { gameId: number; playerId: number; cash: number; credit: number; requestId: string };
 export type BuyInReceipt = {

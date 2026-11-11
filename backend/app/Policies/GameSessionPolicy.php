@@ -22,6 +22,16 @@ class GameSessionPolicy
         return $this->canManageGames($user);
     }
 
+    public function recordTotals(User $user): bool
+    {
+        return $this->canManageGames($user);
+    }
+
+    public function close(User $user): bool
+    {
+        return $this->canManageGames($user);
+    }
+
     private function canManageGames(User $user): bool
     {
         $canManageGames = in_array($user->role, [

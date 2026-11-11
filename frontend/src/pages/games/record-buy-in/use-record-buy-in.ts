@@ -47,6 +47,14 @@ export function useRecordBuyIn(initialGameId?: number) {
     const player = options?.players.find(function matchesPlayer(option) { return String(option.id) === playerId; });
     const originalGame = options?.games.find(function matchesOriginalGame(option) { return option.id === player?.openGameId; });
 
+    let returnEndingChips = null;
+    if (game && player?.openGameId === game.id) {
+        returnEndingChips = player.returnEndingChips ?? null;
+    }
+    const isReturning = returnEndingChips !== null;
+    const minimum = Math.max(game?.minimum ?? 0, returnEndingChips ?? 0);
+    const maximum = Math.max(game?.maximum ?? 0, returnEndingChips ?? 0);
+
     let conflict = '';
     if (game && player && originalGame && originalGame.id !== game.id) {
         conflict = player.name + ' is already in ' + originalGame.name + '.';
@@ -61,8 +69,11 @@ export function useRecordBuyIn(initialGameId?: number) {
     if (!validAmounts) {
         amountError = 'Enter non-negative whole-dollar amounts.';
     } else if (game && (cash !== '' || credit !== '')) {
-        if (total < game.minimum) amountError = 'The minimum buy-in is $' + game.minimum + '.';
-        if (total > game.maximum) amountError = 'The maximum buy-in is $' + game.maximum + '.';
+        if (total < minimum) amountError = 'The minimum buy-in is $' + minimum + '.';
+        if (total > maximum) amountError = 'The maximum buy-in is $' + maximum + '.';
+        if (isReturning && minimum === maximum && total !== minimum) {
+            amountError = 'The return buy-in must be exactly $' + minimum + '.';
+        }
     }
 
     let optionsMessage = '';
@@ -160,7 +171,7 @@ export function useRecordBuyIn(initialGameId?: number) {
             const refreshedPlayers = [];
             for (const option of options?.players ?? []) {
                 if (option.id === player.id) {
-                    refreshedPlayers.push({ id: option.id, name: option.name, openGameId: game.id });
+                    refreshedPlayers.push({ ...option, openGameId: game.id, returnEndingChips: null });
                 } else {
                     refreshedPlayers.push(option);
                 }
@@ -180,7 +191,7 @@ export function useRecordBuyIn(initialGameId?: number) {
 
     return {
         options, optionsMessage, game, player, gameId, playerId, cash, credit, total, validAmounts,
-        conflict, amountError, saveError, locked, canSave, saving, receipt,
+        conflict, amountError, saveError, locked, canSave, saving, receipt, isReturning, minimum, maximum,
         isReviewOpen, handleBackToEdit, handleConfirmBuyIn,
         handleGameChange, handlePlayerChange, handleCashChange, handleCreditChange, handleRecordAnother, handleSubmit,
     };

@@ -29,7 +29,13 @@ function RecordBuyIn(props: RecordBuyInProps) {
     if (!totalHint) {
         totalHint = 'Choose a game to see its limits.';
         if (form.game) {
-            totalHint = 'Allowed $' + form.game.minimum + '–$' + form.game.maximum;
+            totalHint = 'Allowed $' + form.minimum + '–$' + form.maximum;
+            if (form.isReturning && form.minimum === form.maximum) {
+                totalHint = 'Exactly $' + form.minimum;
+            }
+            if (form.isReturning) {
+                totalHint = 'Returning player · ' + totalHint;
+            }
         }
     }
 

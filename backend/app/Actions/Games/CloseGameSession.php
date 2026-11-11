@@ -9,9 +9,10 @@ use Illuminate\Support\Facades\DB;
 
 class CloseGameSession
 {
-    public function close(GameSession $game, User $staff): GameSession
+    /** @param array{dealerTips: int, gameCosts: int}|null $amounts */
+    public function close(GameSession $game, User $staff, ?array $amounts = null): GameSession
     {
-        return DB::transaction(function () use ($game, $staff): GameSession {
+        return DB::transaction(function () use ($game, $staff, $amounts): GameSession {
             // This lock excludes Buy-in and manual Cashout until closing commits.
             $current = GameSession::query()->lockForUpdate()->findOrFail($game->id);
             if ($current->status === 'closed') {
@@ -38,6 +39,12 @@ class CloseGameSession
             }
 
             DB::table('player_game_visits')->whereIn('id', $visits->pluck('id'))->update(['closed_at' => $closedAt]);
+            // Save the reviewed amounts with the cashouts and the closed status.
+            if ($amounts !== null) {
+                $current->dealer_tips = $amounts['dealerTips'];
+                $current->game_costs = $amounts['gameCosts'];
+            }
+
             $current->status = 'closed';
             $current->closed_by = $staff->id;
             $current->closed_at = $closedAt;

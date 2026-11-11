@@ -3,7 +3,9 @@
 use App\Http\Controllers\Auth\SessionController;
 use App\Http\Controllers\BuyInController;
 use App\Http\Controllers\CashoutController;
+use App\Http\Controllers\CloseGameController;
 use App\Http\Controllers\GameSessionController;
+use App\Http\Controllers\GameTotalsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserPasswordController;
 use App\Http\Controllers\UserPhotoController;
@@ -47,6 +49,34 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::post('/cashouts', [CashoutController::class, 'store'])
         ->can('recordCashout', GameSession::class)
         ->name('api.v1.cashouts.store');
+
+    Route::get('/games/totals-options', [GameTotalsController::class, 'options'])
+        ->can('recordTotals', GameSession::class)
+        ->name('api.v1.games.totals-options');
+
+    Route::get('/games/{game}/totals', [GameTotalsController::class, 'show'])
+        ->whereNumber('game')
+        ->can('recordTotals', GameSession::class)
+        ->name('api.v1.games.totals.show');
+
+    Route::patch('/games/{game}/totals', [GameTotalsController::class, 'update'])
+        ->whereNumber('game')
+        ->can('recordTotals', GameSession::class)
+        ->name('api.v1.games.totals.update');
+
+    Route::get('/games/close-options', [CloseGameController::class, 'options'])
+        ->can('close', GameSession::class)
+        ->name('api.v1.games.close-options');
+
+    Route::get('/games/{game}/close', [CloseGameController::class, 'show'])
+        ->whereNumber('game')
+        ->can('close', GameSession::class)
+        ->name('api.v1.games.close.show');
+
+    Route::post('/games/{game}/close', [CloseGameController::class, 'store'])
+        ->whereNumber('game')
+        ->can('close', GameSession::class)
+        ->name('api.v1.games.close.store');
 
     Route::prefix('users')->name('api.v1.users.')->group(function (): void {
         // Check list permission before the controller retrieves accounts.
