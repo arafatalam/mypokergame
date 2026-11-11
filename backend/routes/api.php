@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\SessionController;
 use App\Http\Controllers\BuyInController;
+use App\Http\Controllers\CashoutController;
 use App\Http\Controllers\GameSessionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserPasswordController;
@@ -38,6 +39,14 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::post('/buy-ins', [BuyInController::class, 'store'])
         ->can('recordBuyIn', GameSession::class)
         ->name('api.v1.buy-ins.store');
+
+    Route::get('/games/cashout-options', [CashoutController::class, 'options'])
+        ->can('recordCashout', GameSession::class)
+        ->name('api.v1.games.cashout-options');
+
+    Route::post('/cashouts', [CashoutController::class, 'store'])
+        ->can('recordCashout', GameSession::class)
+        ->name('api.v1.cashouts.store');
 
     Route::prefix('users')->name('api.v1.users.')->group(function (): void {
         // Check list permission before the controller retrieves accounts.

@@ -3,6 +3,7 @@
 namespace App\Actions\Games;
 
 use App\Enums\RoleCode;
+use App\Models\BuyIn;
 use App\Models\GameSession;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -25,7 +26,7 @@ class SaveBuyIn
                 throw ValidationException::withMessages(['gameId' => 'Choose an open game.']);
             }
 
-            $previousBuyIn = DB::table('buy_ins')
+            $previousBuyIn = BuyIn::query()
                 ->join('player_game_visits', 'player_game_visits.id', '=', 'buy_ins.player_game_visit_id')
                 ->where('player_game_visits.player_id', $playerId)
                 ->where('player_game_visits.game_session_id', $gameId)
@@ -84,7 +85,7 @@ class SaveBuyIn
             ]);
 
             $balance = $player->poker_balance - $credit;
-            DB::table('buy_ins')->insert([
+            BuyIn::query()->create([
                 'player_game_visit_id' => $visitId,
                 'created_by' => $staff->id,
                 'cash' => $cash,

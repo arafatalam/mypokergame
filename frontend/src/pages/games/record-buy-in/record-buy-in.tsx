@@ -23,11 +23,19 @@ function RecordBuyIn(props: RecordBuyInProps) {
     let totalLabel = '—';
     if (form.validAmounts) totalLabel = '$' + form.total;
 
+    // Keep one line under the total as loading gives way to the game limits.
+    let totalHint = form.optionsMessage;
+    if (!totalHint) {
+        totalHint = 'Choose a game to see its limits.';
+        if (form.game) {
+            totalHint = 'Allowed $' + form.game.minimum + '–$' + form.game.maximum;
+        }
+    }
+
     const ticket = (
         <CasinoTicket compactEdges className="w-full min-w-0 p-6 text-[#620b19] sm:p-8">
             <h2 className="casino-heading casino-title-band px-2 py-3 text-center text-3xl uppercase">Record Buy-in</h2>
             <form className="mt-5 grid gap-4" onSubmit={form.handleSubmit}>
-                {form.optionsMessage && <p className="text-sm font-semibold">{form.optionsMessage}</p>}
                 <label className="grid gap-1 font-semibold">
                     Game
                     <select className="min-w-0 rounded-lg border border-current bg-white/40 px-3 py-2" value={form.gameId} onChange={form.handleGameChange} disabled={form.locked || gameOptions.length === 0}>
@@ -54,7 +62,7 @@ function RecordBuyIn(props: RecordBuyInProps) {
                 </div>
                 <div className="grid gap-1 border-t border-[#620b19]/25 pt-3 text-center">
                     <p className="casino-heading text-2xl">Total buy-in {totalLabel}</p>
-                    {form.game && <p className="text-sm font-semibold">Allowed ${form.game.minimum}–${form.game.maximum}</p>}
+                    <p className="text-sm font-semibold">{totalHint}</p>
                 </div>
                 {form.conflict && <p className="text-sm font-semibold">{form.conflict}</p>}
                 {form.amountError && <p className="text-sm font-semibold">{form.amountError}</p>}

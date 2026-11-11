@@ -1,0 +1,51 @@
+.cashout-artwork,
+.cashout-suitcase { display: none; }
+
+@media (min-width: 768px) {
+    .cashout-artwork {
+        display: block;
+        container-type: size;
+        margin-bottom: calc(-1 * var(--content-side-spacing));
+        overflow: clip;
+    }
+
+    .cashout-artwork > img {
+        /* Trim the transparent bottom margin at the artwork's displayed scale. */
+        position: absolute;
+        left: 50%;
+        bottom: calc(-0.052 * min(100cqh, 120cqw));
+        width: min(100cqw, 100cqh / 1.2);
+        max-height: none;
+        transform: translateX(-50%);
+    }
+}
+
+@media (min-width: 1200px) {
+    .cashout-suitcase {
+        position: absolute;
+        display: block;
+        bottom: 0;
+        left: 19.5rem;
+        /* Use the grid's right padding while keeping the gap beside the receipt. */
+        width: min(16rem, calc(100% - 18rem));
+        margin: 0;
+    }
+}
+
+/* Pair the selectors and tighten the ticket on short desktop screens. */
+@media (min-width: 768px) and (max-height: 830px) {
+    .cashout-ticket { padding: 20px 24px; }
+    .cashout-ticket > .casino-title-band { padding-block: 8px; }
+
+    .cashout-fields {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 12px;
+    }
+
+    .cashout-fields > div { grid-column: 1 / -1; }
+
+    .cashout-receipt > section { gap: 7px; }
+    .cashout-receipt .player-tab-balance { padding-block: 8px; }
+    .cashout-receipt dl > div { padding-block: 6px; }
+}
