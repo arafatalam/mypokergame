@@ -1,7 +1,7 @@
 import casinoLogo from '../assets/casino/skanders-game-logo.png';
 import NavigationGroup from '../components/navigation-group';
 import CasinoMarquee from '../components/casino-marquee';
-import PasswordTicket from './users/shared-resources/password-ticket';
+import CreateGame from './games/create-game';
 import './signed-in-layout.css';
 import Home from './home/home';
 import CreateUser from './users/create-user/create-user.tsx';
@@ -49,10 +49,9 @@ function SignedInLayout(props: SignedInLayoutProps) {
     } else if (selectedPage === 'my-account') {
         content = <ShowUser key="my-account" userId={props.signedInUserId}/>;
         marqueeText = 'my account';
-    } else if (selectedPage === 'password-ticket-preview') {
-        // The visual preview uses a sample ID and never loads an account.
-        content = <PasswordTicket userId={0} />;
-        marqueeText = 'accounts';
+    } else if (selectedPage === 'create-game') {
+        content = <CreateGame />;
+        marqueeText = 'games';
     }
 
     function handleUserSelection(task: string) {
@@ -61,9 +60,8 @@ function SignedInLayout(props: SignedInLayoutProps) {
     }
 
     function handleGameSelection(task: string) {
-        // Use Create Game as a temporary entry point for the layout preview.
         if (task === 'create') {
-            setSelectedPage('password-ticket-preview');
+            setSelectedPage('create-game');
         }
     }
 
