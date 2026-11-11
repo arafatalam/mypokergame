@@ -20,13 +20,14 @@ use Illuminate\Support\Carbon;
  * @property string|null $phone
  * @property RoleCode $role
  * @property bool $is_active
+ * @property int $poker_balance
  * @property bool $must_change_password
  * @property string $password
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Hidden(['password', 'remember_token'])]
+#[Hidden(['password', 'remember_token', 'poker_balance'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
@@ -53,6 +54,7 @@ class User extends Authenticatable
             'is_active' => 'boolean',
             'must_change_password' => 'boolean',
             'password' => 'hashed',
+            'poker_balance' => 'integer',
         ];
     }
 }

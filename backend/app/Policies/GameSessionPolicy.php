@@ -9,12 +9,22 @@ class GameSessionPolicy
 {
     public function create(User $user): bool
     {
-        $canCreateGames = in_array($user->role, [
+        return $this->canManageGames($user);
+    }
+
+    public function recordBuyIn(User $user): bool
+    {
+        return $this->canManageGames($user);
+    }
+
+    private function canManageGames(User $user): bool
+    {
+        $canManageGames = in_array($user->role, [
             RoleCode::SUPERADMIN,
             RoleCode::ADMIN,
             RoleCode::MANAGER,
         ], true);
 
-        return $canCreateGames && $user->is_active && ! $user->must_change_password;
+        return $canManageGames && $user->is_active && ! $user->must_change_password;
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\SessionController;
+use App\Http\Controllers\BuyInController;
 use App\Http\Controllers\GameSessionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserPasswordController;
@@ -28,6 +29,15 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::post('/games', [GameSessionController::class, 'store'])
         ->can('create', GameSession::class)
         ->name('api.v1.games.store');
+
+    // Authorize both reading the private options and recording a buy-in.
+    Route::get('/games/buy-in-options', [BuyInController::class, 'options'])
+        ->can('recordBuyIn', GameSession::class)
+        ->name('api.v1.games.buy-in-options');
+
+    Route::post('/buy-ins', [BuyInController::class, 'store'])
+        ->can('recordBuyIn', GameSession::class)
+        ->name('api.v1.buy-ins.store');
 
     Route::prefix('users')->name('api.v1.users.')->group(function (): void {
         // Check list permission before the controller retrieves accounts.

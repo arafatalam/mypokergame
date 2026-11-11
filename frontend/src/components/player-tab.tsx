@@ -9,7 +9,7 @@ function PlayerTab() {
     return (
         <CasinoTicket compactEdges borderInset={12} className="player-tab relative">
             {/* Keep this preview static until player selection is connected. */}
-            <section aria-labelledby={headingId} className="flex flex-col gap-5">
+            <section aria-labelledby={headingId} className="flex flex-col gap-4">
                 <h3 id={headingId}>Player’s Tab</h3>
 
                 {/* Each parent controls the spacing between its related details. */}

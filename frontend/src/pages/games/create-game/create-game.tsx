@@ -1,7 +1,7 @@
-import cardFan from '../../assets/casino/create-game-card-fan.png';
-import pokerFace from '../../assets/casino/create-game-poker-face.png';
-import smugChip from '../../assets/casino/create-game-smug-chip.png';
-import CasinoTicket from '../../components/casino-ticket';
+import cardFan from '../../../assets/casino/create-game-card-fan.png';
+import pokerFace from '../../../assets/casino/create-game-poker-face.png';
+import smugChip from '../../../assets/casino/create-game-smug-chip.png';
+import CasinoTicket from '../../../components/casino-ticket';
 import { useEffect, useState, type ChangeEvent } from 'react';
 import { isAxiosError } from 'axios';
 import { saveGame } from './save-game';

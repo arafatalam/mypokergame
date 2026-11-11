@@ -1,7 +1,8 @@
 import casinoLogo from '../assets/casino/skanders-game-logo.png';
 import NavigationGroup from '../components/navigation-group';
 import CasinoMarquee from '../components/casino-marquee';
-import CreateGame from './games/create-game';
+import CreateGame from './games/create-game/create-game';
+import RecordBuyIn from './games/record-buy-in/record-buy-in';
 import './signed-in-layout.css';
 import Home from './home/home';
 import CreateUser from './users/create-user/create-user.tsx';
@@ -52,6 +53,9 @@ function SignedInLayout(props: SignedInLayoutProps) {
     } else if (selectedPage === 'create-game') {
         content = <CreateGame onCancel={handleOpenHome} />;
         marqueeText = 'games';
+    } else if (selectedPage === 'buy-in') {
+        content = <RecordBuyIn onCancel={handleOpenHome} />;
+        marqueeText = 'games';
     }
 
     function handleUserSelection(task: string) {
@@ -62,6 +66,8 @@ function SignedInLayout(props: SignedInLayoutProps) {
     function handleGameSelection(task: string) {
         if (task === 'create') {
             setSelectedPage('create-game');
+        } else if (task === 'buy-in') {
+            setSelectedPage('buy-in');
         }
     }
 

@@ -1,12 +1,13 @@
 import { useLayoutEffect, useRef } from 'react';
-import type { SyntheticEvent } from 'react';
+import type { ReactNode, SyntheticEvent } from 'react';
 import CasinoTicket from './casino-ticket';
 import './confirmation-ticket.css';
 
 type ConfirmationTicketProps = {
     isOpen: boolean;
     title: string;
-    message: string;
+    message: ReactNode;
+    cancelLabel?: string;
     confirmLabel: string;
     onCancel: () => void;
     onConfirm: () => void;
@@ -56,7 +57,7 @@ export default function ConfirmationTicket(props: ConfirmationTicketProps) {
                         onClick={props.onCancel}
                         className="casino-heading min-h-11 rounded-full border px-4 py-2 text-lg uppercase"
                     >
-                        Cancel
+                        {props.cancelLabel ?? 'Cancel'}
                     </button>
                     <button
                         type="button"

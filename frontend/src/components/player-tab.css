@@ -6,7 +6,7 @@
 }
 
 /* Keep the approved turquoise finish independent of the screen using this card. */
-.player-tab { --casino-ticket-edge-fill: #6cada0; --casino-ticket-edge-texture-opacity: 0.35; padding: 16px; color: #fff0cf; }
+.player-tab { --casino-ticket-edge-fill: #6cada0; --casino-ticket-edge-texture-opacity: 0.35; padding: 20px 20px 24px; color: #fff0cf; }
 .player-tab .casino-ticket-surface {
     background-color: #075152;
     background-image: url('../assets/casino/home-turquoise-paper.png');
