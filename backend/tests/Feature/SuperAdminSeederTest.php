@@ -25,10 +25,10 @@ class SuperAdminSeederTest extends TestCase
 
         $this->assertDatabaseCount('users', 1);
         $this->assertDatabaseHas('users', [
-            'first_name' => 'Super',
-            'last_name' => 'Admin',
-            'email' => 'super.admin@example.test',
-            'username' => 'super.admin',
+            'first_name' => 'Arafat',
+            'last_name' => 'Alam',
+            'email' => 'arafat.alam@example.test',
+            'username' => 'arafat.alam',
             'profile_image_path' => 'images/avatars/super_admin.png',
             'role' => 'super_admin',
             'is_active' => true,
@@ -175,7 +175,7 @@ class SuperAdminSeederTest extends TestCase
 
         $this->assertDatabaseCount('users', 2);
         $this->assertDatabaseHas('users', [
-            'email' => 'super.admin@example.test',
+            'email' => 'arafat.alam@example.test',
             'role' => 'super_admin',
         ]);
         $this->assertSame($original, $existingUser->fresh()->getAttributes());

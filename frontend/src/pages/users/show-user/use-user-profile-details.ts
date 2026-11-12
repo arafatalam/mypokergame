@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useState, type ChangeEvent } from 'react';
 
+import { formatPhoneNumber } from '../create-user/format-phone-number';
 import type { UserProfile } from './load-user-profile';
 
 type ProfileDetailsField = 'first_name' | 'last_name' | 'email' | 'phone';
@@ -93,7 +94,7 @@ export default function useUserProfileDetails(
     }
 
     function handlePhoneChange(event: ChangeEvent<HTMLInputElement>) {
-        setPhoneDraft(event.currentTarget.value);
+        setPhoneDraft(formatPhoneNumber(event.currentTarget.value));
     }
 
     // Keep the inputs read-only during Save so later keystrokes cannot be lost.

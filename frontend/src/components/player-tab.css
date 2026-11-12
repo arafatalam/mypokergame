@@ -5,14 +5,21 @@
     font-display: swap;
 }
 
-/* Keep the approved turquoise finish independent of the screen using this card. */
-.player-tab { --casino-ticket-edge-fill: #6cada0; --casino-ticket-edge-texture-opacity: 0.35; padding: 20px 20px 24px; color: #fff0cf; }
-.player-tab .casino-ticket-surface {
+.buy-in-history-row {
     background-color: #075152;
     background-image: url('../assets/casino/home-turquoise-paper.png');
     background-size: cover;
 }
-.player-tab .casino-ticket-border { stroke: #244c45; }
+.buy-in-history-row {
+    color: #fff0cf;
+}
+.buy-in-history-table {
+    border: 1px solid #6cada0;
+}
+.buy-in-history-table thead {
+    background-color: #6cada0;
+    color: #102f2a;
+}
 .player-tab h3 { margin: 0; padding: 10px 6px; border-radius: 5px; background: url('../assets/casino/ticket-paper.png') center / cover; color: var(--vegas-wine); font: 600 22px/1.2 'House UI', sans-serif; text-align: center; text-transform: uppercase; }
 /* Cut inward at the top to echo the ticket outline; keep the bottom corners rounded. */
 .player-tab h3 {
@@ -32,7 +39,16 @@
 .player-tab-balance { padding: 16px 0; border-top: 1px dashed #fff0cf80; border-bottom: 1px dashed #fff0cf80; text-align: center; }
 .player-tab-balance p { margin: 0; font: 400 18px/1.2 'House UI', sans-serif; }
 .player-tab-balance strong { color: #ffe6b1; font: 600 48px/1 'House UI', sans-serif; }
-.player-tab .player-tab-payment { background: url('../assets/casino/ticket-paper.png') center / cover; color: #075152; border-color: #ffe6b1; outline: none; box-shadow: none; font: 22px/1.2 'House Display', sans-serif; text-transform: uppercase; }
+.player-tab .player-tab-payment,
+.buy-in-history-table .casino-button,
+.game-summary-ticket .game-records-button { background: url('../assets/casino/ticket-paper.png') center / cover; color: #075152; border-color: #ffe6b1; outline: none; box-shadow: none; font: 22px/1.2 'House Display', sans-serif; text-transform: uppercase; }
+.buy-in-history-table .casino-button { border-radius: 8px; font-size: 16px; }
+.buy-in-history-table .casino-button:focus-visible { outline: 3px solid var(--vegas-focus); outline-offset: -3px; }
+.game-summary-ticket .game-records-button--cancel {
+    background-image: linear-gradient(#a42b391f, #a42b391f), url('../assets/casino/ticket-paper.png');
+    color: #620b19;
+}
+.game-summary-ticket .game-records-button:disabled { opacity: 0.55; cursor: default; }
 /* Button decoration and future keyboard focus stay inside the shared content boundary. */
 .player-tab button:focus-visible { outline: 3px solid var(--vegas-focus); outline-offset: -3px; }
 .player-tab-history { border: 0; background: transparent; color: #fff0cf; font: 18px/1.2 'House UI', sans-serif; text-decoration: underline; text-underline-offset: 3px; }

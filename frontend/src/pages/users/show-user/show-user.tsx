@@ -1,3 +1,5 @@
+import UserGameHistory from './user-game-history';
+import UserPaymentHistory from './user-payment-history';
 import UserProfileActions from './user-profile-actions';
 import UserProfileDetails from './user-profile-details';
 import useLoadedUserProfile from './use-loaded-user-profile';
@@ -9,6 +11,7 @@ import PasswordTicket from '../shared-resources/password-ticket';
 type ShowUserProps = {
     userId?: number;
     viewOnly?: boolean;
+    showSideArtwork?: boolean;
 };
 
 function ShowUser(props: ShowUserProps) {
@@ -61,8 +64,30 @@ function ShowUser(props: ShowUserProps) {
         displayedTicket = <PasswordTicket key={'password-' + profile.id} userId={profile.id} />;
     }
 
+    let paymentHistory = null;
+    if (!props.showSideArtwork && profile?.can_view_payment_history === true) {
+        // Reset pagination when switching players and keep the key distinct from the photo controls.
+        paymentHistory = <UserPaymentHistory key={'payment-history-' + profile.id} playerId={profile.id} />;
+    }
+
+    let gameHistory = null;
+    if (!props.showSideArtwork && profile?.can_view_game_history === true) {
+        gameHistory = <UserGameHistory key={'game-history-' + profile.id} playerId={profile.id} />;
+    }
+
+    let layoutClassName = 'show-user-layout mx-auto grid w-full max-w-[800px] gap-4 px-4';
+    if (paymentHistory !== null) {
+        layoutClassName += ' show-user-layout-with-history';
+    }
+    if (gameHistory !== null) {
+        layoutClassName += ' show-user-layout-with-game-history';
+    }
+    if (props.showSideArtwork) {
+        layoutClassName += ' show-user-layout-with-artwork';
+    }
+
     return (
-        <div className="show-user-layout mx-auto grid w-full max-w-[800px] gap-4 px-4">
+        <div className={layoutClassName}>
             {/* Reset an unsaved photo preview when the selected account changes. */}
             <UserProfileActions
                 key={userId}
@@ -78,6 +103,16 @@ function ShowUser(props: ShowUserProps) {
 
             {/* Details ticket or password ticket */}
             {displayedTicket}
+            {paymentHistory !== null && (
+                <div className="show-user-history-card show-user-payment-history min-w-0">
+                    {paymentHistory}
+                </div>
+            )}
+            {gameHistory !== null && (
+                <div className="show-user-history-card show-user-game-history min-w-0">
+                    {gameHistory}
+                </div>
+            )}
 
         </div>
     );

@@ -22,6 +22,6 @@ it('returns the first game name to an admin', function (): void {
             'game_date' => '2026-11-11',
             'game_number' => 1,
             'default_min_buy_in' => 100,
-            'default_max_buy_in' => 500,
+            'default_max_buy_in' => 400,
         ]);
 });

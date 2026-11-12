@@ -113,12 +113,21 @@
 .user-list-screen :is(.user-list-search-field, .user-list-role-filter select) { margin-top: calc(.4 * var(--account-unit, 1cqw)); }
 .user-list-screen .user-list-search-field input { display: block; }
 .user-list-screen .user-list-role-filter select { display: block; font: 400 calc(2.2 * var(--account-unit, 1cqw)) 'House UI', sans-serif; padding: calc(.2 * var(--account-unit, 1cqw)) calc(1.1 * var(--account-unit, 1cqw)); color: #501622; }
+/* Date controls need room for the date and calendar icon. Clear uses the same button sizing. */
+.user-list-screen .game-list-date { width: max(15%, 8.5rem); }
 @supports (appearance: base-select) {
     .user-list-screen .user-list-role-filter select.casino-select { display: flex; align-items: center; }
 }
-.user-list-create { color: #fff0c7; border: 2px solid #fff1c9; outline: 1px solid #99240e; background: var(--vegas-button-fill); box-shadow: inset 0 0 0 1px #f9a96e, 0 3px 2px #52220866; }
-.user-list-screen .user-list-create { flex: 0 0 auto; margin-inline-start: auto; white-space: nowrap; border-radius: calc(4 * var(--account-unit, 1cqw)); min-height: calc(4.8 * var(--account-unit, 1cqw)); padding: calc(.5 * var(--account-unit, 1cqw)) calc(2.2 * var(--account-unit, 1cqw)); font: 400 calc(2.7 * var(--account-unit, 1cqw))/1 'House Display', sans-serif; text-transform: uppercase; }
+.user-list-screen .user-list-create { flex: 0 0 auto; margin-inline-start: auto; white-space: nowrap; min-height: calc(4.8 * var(--account-unit, 1cqw)); padding: calc(.5 * var(--account-unit, 1cqw)) calc(2.2 * var(--account-unit, 1cqw)); }
+.user-list-screen .game-list-actions .user-list-create:not(.game-list-create) { margin-inline-start: 0; }
+.user-list-screen .game-list-clear { border-color: #275b55; outline-color: transparent; background: linear-gradient(110deg, #fae4ba77, #fff0cfbb); color: #501622; box-shadow: none; }
 :is(.sample-accounts, .user-list-layout) button:disabled, :is(.sample-accounts, .user-list-layout) input:disabled, :is(.sample-accounts, .user-list-layout) select:disabled { opacity: 1; cursor: default; -webkit-text-fill-color: currentColor; }
+/* Disabled buttons can still match the shared casino hover rule. */
+.user-list-screen .user-list-player-sidebar .player-tab-payment:disabled {
+    opacity: 0.55;
+    filter: none;
+    cursor: default;
+}
 .sample-account-scroll:focus-visible { outline: 3px solid var(--vegas-focus); outline-offset: 4px; }
 .user-list-screen .sample-account-table { border-collapse: separate; border-spacing: 0; font: 500 calc(2.6 * var(--account-unit, 1cqw))/1.25 'House UI', sans-serif; }
 .user-list-screen .sample-account-table thead { background: var(--vegas-gold-fill); clip-path: inset(0 round calc(1 * var(--account-unit, 1cqw))); }
@@ -147,6 +156,10 @@
 .user-list-layout.user-list-screen .user-list-table td:last-child > div { justify-content: center; }
 
 @media (max-width: 650px) {
+    .user-list-screen .game-list-filters { gap: 8px 12px; }
+    .game-list-actions { flex-basis: 100%; }
+    .game-list-filters .user-list-role-filter select { min-height: 40px; font-size: 16px; }
+    .game-list-filters .user-list-create { min-height: 40px; }
     .user-list-screen :is(.user-list-search, .user-list-role-filter) { font-size: 16px; }
     .user-list-filters { flex-wrap: wrap; gap: 12px; }
     .user-list-search { width: 100%; }
@@ -154,7 +167,7 @@
     .user-list-search svg { width: 21px; height: 21px; left: 10px; }
     .user-list-role-filter { width: 24%; font-size: 16px; }
     .user-list-role-filter select { min-height: 40px; font-size: 16px; }
-    .user-list-create { font-size: 20px; min-height: 40px; }
+    .user-list-create { min-height: 40px; }
     .sample-account-table { min-width: 650px; font-size: 18px; }
     .sample-account-table th { font-size: 18px; padding: 8px; }
     .sample-account-table td { padding: 12px 8px; }

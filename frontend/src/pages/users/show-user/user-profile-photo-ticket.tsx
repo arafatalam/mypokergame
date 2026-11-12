@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useState } from 'react';
 import samplePortrait from '../../../assets/casino/sample-account-portrait.png';
-import CasinoTicket from '../../../components/casino-ticket';
+import TurquoisePaperTicket from '../../../components/turquoise-paper-ticket';
 import useProfilePhoto from '../shared-resources/use-profile-photo';
 import { removeUserProfilePhoto, saveUserProfilePhoto, type SavedPhoto } from './user-profile-photo-api';
 
@@ -105,7 +105,7 @@ export default function UserProfilePhotoTicket(props: UserProfilePhotoTicketProp
     }
 
     return (
-        <CasinoTicket compactEdges className="show-user-portrait-ticket p-6">
+        <TurquoisePaperTicket>
             <div className="grid justify-items-center gap-3 text-center">
                 <div className="grid justify-items-center">
                     <img
@@ -140,6 +140,6 @@ export default function UserProfilePhotoTicket(props: UserProfilePhotoTicketProp
                 <p hidden={saveFeedback === ''}>{saveFeedback}</p>
                 {previewActions}
             </div>
-        </CasinoTicket>
+        </TurquoisePaperTicket>
     );
 }

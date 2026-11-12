@@ -1,0 +1,104 @@
+.casino-calendar-trigger {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.4rem 0.75rem;
+    border: 1px solid #275b55;
+    border-radius: 0.5rem;
+    background: linear-gradient(110deg, #fae4ba77, #fff0cfbb);
+    color: #501622;
+    font: 400 1rem/1.25 'House UI', sans-serif;
+    text-align: left;
+}
+
+.casino-calendar-trigger svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex: none;
+}
+
+.casino-calendar-dialog {
+    width: min(22rem, calc(100% - 2rem));
+    max-height: calc(100dvh - 2rem);
+    margin: auto;
+    padding: 0;
+    overflow: auto;
+    border: 1px solid var(--vegas-wine);
+    border-radius: 12px;
+    background: #fff0cf;
+    color: var(--vegas-wine);
+    font: 400 1rem/1.3 var(--vegas-body);
+    box-shadow: 0 6px 14px #38060940;
+}
+
+.casino-calendar-dialog::backdrop {
+    background: #25030a66;
+}
+
+.casino-calendar-panel {
+    padding: 1rem;
+}
+
+.casino-calendar-panel h3 {
+    margin: 0 0 0.5rem;
+    text-align: center;
+}
+
+.casino-calendar-month,
+.casino-calendar-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.casino-calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 2px;
+    margin: 0.5rem 0;
+    text-align: center;
+}
+
+.casino-calendar-panel button {
+    min-height: 2.25rem;
+    padding: 0.25rem;
+    border-radius: 6px;
+}
+
+.casino-calendar-month button {
+    min-width: 2.25rem;
+}
+
+.casino-calendar-panel button:enabled:hover,
+.casino-calendar-panel .casino-calendar-selected {
+    background: var(--vegas-gold-fill);
+}
+
+.casino-calendar-dialog .casino-calendar-panel button:disabled,
+.casino-calendar-trigger:disabled {
+    opacity: 0.45;
+    cursor: default;
+}
+
+.casino-calendar-actions {
+    justify-content: flex-end;
+}
+
+.game-list-date .casino-calendar-trigger {
+    margin-top: calc(0.4 * var(--account-unit, 1cqw));
+}
+
+.casino-calendar-months {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.casino-calendar-anchored {
+    position: fixed;
+    inset: auto;
+    margin: 0;
+}

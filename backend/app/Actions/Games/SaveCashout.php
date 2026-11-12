@@ -2,12 +2,14 @@
 
 namespace App\Actions\Games;
 
+use App\Actions\RecordCorrectionAudit;
 use App\Enums\RoleCode;
 use App\Models\BuyIn;
 use App\Models\Cashout;
 use App\Models\GameSession;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class SaveCashout
@@ -38,6 +40,14 @@ class SaveCashout
                 ->first(['cashouts.*']);
 
             if ($previous !== null) {
+                // A correction edits current amounts. Recover the original cashout receipt from its first audit entry.
+                $firstCorrection = DB::table('correction_history')->where('cashout_id', $previous->id)->oldest('id')->first();
+                if ($firstCorrection !== null) {
+                    $original = RecordCorrectionAudit::values($firstCorrection, 'cashout', 'before');
+                    $previous->ending_chips = $original['endingChips'];
+                    $previous->cash_paid = $original['cashPaid'];
+                }
+
                 if ($previous->ending_chips !== $endingChips || $previous->cash_paid !== $cashPaid) {
                     throw ValidationException::withMessages(['requestId' => 'This request already recorded different amounts.']);
                 }
@@ -84,6 +94,22 @@ class SaveCashout
                 'request_id' => $requestId,
                 'created_at' => $recordedAt,
             ]);
+
+            if ($cashPaid > 0) {
+                // The cashout balance already includes the payout. Record it without applying it again.
+                DB::table('payments')->insert([
+                    'cashout_id' => $cashout->id,
+                    'player_id' => $player->id,
+                    'created_by' => $staff->id,
+                    'amount' => $cashPaid,
+                    'direction' => 'house_pays_player',
+                    'paid_at' => $recordedAt->copy()->setTimezone(config('payments.timezone'))->toDateString(),
+                    'note' => 'Paid at cashout',
+                    'balance_after' => $balance,
+                    'request_id' => (string) Str::uuid(),
+                    'created_at' => $recordedAt,
+                ]);
+            }
 
             $player->poker_balance = $balance;
             $player->save();

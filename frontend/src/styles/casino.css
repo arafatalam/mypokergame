@@ -23,12 +23,8 @@
     );
     /*--vegas-focus: #2ad7c9;*/
     --vegas-focus: #b52514;
-    --vegas-button-fill: linear-gradient(
-        #e74b22 0%,
-        #bc210e 30%,
-        #970c06 68%,
-        #5d0a08 100%
-    );
+    --vegas-button-fill: #620b19;
+    --vegas-button-text: #fff0cf;
 }
 
 body {
@@ -74,11 +70,21 @@ textarea {
     backdrop-filter: blur(2px);
 }
 
-.casino-button {
+/* Staff Home's To collect style is shared by the burgundy actions. */
+.casino-button,
+.user-list-create,
+.casino-pagination button:enabled {
+    border: 0;
+    border-radius: 4px;
     background: var(--vegas-button-fill);
-    color: var(--vegas-background);
-    border: 2px solid var(--vegas-background);
-    outline: 2px solid var(--vegas-red);
+    color: var(--vegas-button-text);
+    font: 700 0.875rem/1.25 var(--vegas-body);
+    text-transform: none;
+}
+
+button.casino-button:enabled,
+.user-list-create:enabled,
+.casino-pagination button:enabled {
     cursor: pointer;
 }
 
@@ -141,6 +147,11 @@ textarea {
     }
 }
 
+/* Clip the table header as a single rounded banner. */
+thead.casino-title-band {
+    clip-path: inset(0 round var(--vegas-title-radius));
+}
+
 .casino-title-band {
     background: var(--vegas-gold-fill);
     border-radius: var(--vegas-title-radius);
@@ -153,11 +164,30 @@ textarea {
     box-shadow: inset 0 1px 2px #7f633b26;
 }
 
+/* Use the User List Role field's finish on every select. */
+.casino-select {
+    min-height: 2.75rem;
+    padding: 0.4rem 0.75rem;
+    border: 1px solid #275b55;
+    border-radius: 0.5rem;
+    background: linear-gradient(110deg, #fae4ba77, #fff0cfbb);
+    color: #501622;
+    font: 400 1rem/1.25 'House UI', sans-serif;
+}
+
+.casino-select:disabled {
+    opacity: 0.6;
+}
+
 /* Style the real browser picker where supported; other browsers keep their native menu. */
 @supports (appearance: base-select) {
     .casino-select,
     .casino-select::picker(select) {
         appearance: base-select;
+    }
+
+    .casino-select {
+        align-items: center;
     }
 
     .casino-select::picker(select) {
@@ -213,7 +243,9 @@ button:focus-visible {
     outline-offset: 4px;
 }
 
-.casino-button:hover {
+.casino-button:enabled:hover,
+.user-list-create:enabled:hover,
+.casino-pagination button:enabled:hover {
     filter: brightness(1.13);
 }
 

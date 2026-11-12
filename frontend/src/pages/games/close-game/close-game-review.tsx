@@ -9,6 +9,7 @@ type CloseGameReviewProps = {
     projectedIncome: number;
     closing: boolean;
     closeError: boolean;
+    backLabel?: string;
     onBackToEdit: () => void;
     onConfirmClose: () => void;
 };
@@ -35,7 +36,7 @@ export default function CloseGameReview(props: CloseGameReviewProps) {
             </dl>
             {props.closeError && <p className="font-semibold">Couldn’t confirm the close. Try again.</p>}
             <div className="grid gap-2 sm:grid-cols-2">
-                <button type="button" className="min-h-11 rounded-full border border-current px-4 font-semibold disabled:opacity-50" onClick={props.onBackToEdit} disabled={props.closing}>Back to Edit</button>
+                <button type="button" className="min-h-11 rounded-full border border-current px-4 font-semibold disabled:opacity-50" onClick={props.onBackToEdit} disabled={props.closing}>{props.backLabel ?? 'Back to Edit'}</button>
                 <button type="button" className="casino-button min-h-11 rounded-full px-4 py-2 font-semibold" onClick={props.onConfirmClose} disabled={props.closing}>{confirmLabel}</button>
             </div>
         </div>

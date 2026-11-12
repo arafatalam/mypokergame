@@ -31,8 +31,9 @@
 
 .casino-marquee h2 {
     position: absolute;
-    left: 27%;
-    right: 27%;
+    /* Center the title between the inner edges of the spade and heart in the artwork. */
+    left: 28%;
+    right: 26%;
     top: 44%;
     height: 36%;
     display: flex;

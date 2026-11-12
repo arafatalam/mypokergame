@@ -144,7 +144,31 @@
     margin-top: auto;
 }
 
+/* Keep the top of these screens fixed as their tables change height. */
+.home-content > .casino-marquee + :has(> .game-details),
+.home-content > .casino-marquee + .outstanding-balances-content {
+    margin-top: 0;
+}
+
+/* Fill the ticket title row directly above each Home table. */
+.home-preview div:has(> h2):has(+ table) {
+    background: var(--vegas-gold-fill);
+    border-radius: var(--vegas-title-radius);
+    padding-inline: 4px;
+}
+
+@media (min-width: 1024px) and (min-height: 760px) {
+    /* Give the Home table rows extra space on taller desktops. */
+    .home-detail-tickets :is(th, td) { padding-block: 3px; }
+}
+
 @media (min-width: 768px) and (max-height: 700px) {
+    /* Give the Home tickets more vertical space on short desktop windows. */
+    .home-content:has(> .home-preview) > .casino-marquee {
+        width: clamp(320px, calc(120svh - 370px), 500px);
+        margin-bottom: 8px;
+    }
+
     .home-content:has(> .cashout-preview) > .casino-marquee {
         width: clamp(240px, 52svh, 360px);
         margin-bottom: 8px;

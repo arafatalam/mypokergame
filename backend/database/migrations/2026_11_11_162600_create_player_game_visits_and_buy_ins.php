@@ -8,11 +8,6 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table): void {
-            // A negative balance means the player owes the house.
-            $table->bigInteger('poker_balance')->default(0);
-        });
-
         Schema::create('player_game_visits', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('game_session_id')->constrained()->restrictOnDelete();
@@ -41,9 +36,5 @@ return new class extends Migration
     {
         Schema::dropIfExists('buy_ins');
         Schema::dropIfExists('player_game_visits');
-
-        Schema::table('users', function (Blueprint $table): void {
-            $table->dropColumn('poker_balance');
-        });
     }
 };

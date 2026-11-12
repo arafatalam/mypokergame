@@ -79,6 +79,16 @@ class UserPolicy
         return $this->view($user, $model)->allowed();
     }
 
+    public function recordPayment(User $user): bool
+    {
+        return $this->viewAny($user) && $user->is_active && ! $user->must_change_password;
+    }
+
+    public function viewGameHistory(User $user, User $player): bool
+    {
+        return $player->role === RoleCode::PLAYER && $this->recordPayment($user);
+    }
+
     public function updatePhoto(User $user, User $model): bool
     {
         return $user->is($model) || $this->update($user, $model);

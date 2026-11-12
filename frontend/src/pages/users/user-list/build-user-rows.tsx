@@ -1,14 +1,26 @@
+import type { MouseEvent } from 'react';
 import type { UserListItem } from './load-users';
 
-type UserRowAction = 'edit' | 'game_history' | 'transactions';
+type UserRowAction = 'edit';
 
 export function buildUserRows(
     users: UserListItem[],
     onOpenUserProfile: (userId: number) => void,
+    onSelectRow: (user: UserListItem) => void,
+    onViewHistory?: (player: UserListItem) => void,
 ) {
     const userRows = [];
 
     for (const user of users) {
+
+        function handleSelectRow(event: MouseEvent<HTMLTableRowElement>) {
+            // Actions in the row have their own behavior.
+            if (event.target instanceof Element && event.target.closest('button')) {
+                return;
+            }
+
+            onSelectRow(user);
+        }
 
         function handleClick(action: UserRowAction) {
             if (action === 'edit') {
@@ -16,8 +28,12 @@ export function buildUserRows(
             }
         }
 
+        function handleViewTransactions() {
+            onViewHistory?.(user);
+        }
+
         userRows.push(
-            <tr key={user.id}>
+            <tr key={user.id} onClick={handleSelectRow} className={user.role.value === 'player' ? 'cursor-pointer' : undefined}>
                 <td>
                     <div className="user-list-person flex items-center gap-3">
                         <img
@@ -35,8 +51,9 @@ export function buildUserRows(
                         <button type="button" className="user-list-action" onClick={() => handleClick('edit')}>
                             Edit
                         </button>
-                        <button type="button" className="user-list-action" disabled>Game history</button>
-                        <button type="button" className="user-list-action" disabled>Transactions</button>
+                        {user.role.value === 'player' && onViewHistory && (
+                            <button type="button" className="user-list-action" onClick={handleViewTransactions}>Transactions</button>
+                        )}
                     </div>
                 </td>
             </tr>

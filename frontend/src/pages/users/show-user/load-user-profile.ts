@@ -10,6 +10,8 @@ export type UserProfile = {
     photo_url: string;
     can_change_photo: boolean;
     can_change_password: boolean;
+    can_view_game_history?: boolean;
+    can_view_payment_history?: boolean;
     has_uploaded_photo: boolean;
 };
 

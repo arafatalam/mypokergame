@@ -8,6 +8,7 @@ export type UserListItem = {
     phone: string | null;
     photo_url: string;
     role: {
+        value: string;
         label: string;
     };
 };
@@ -48,4 +49,17 @@ export async function loadUsers(
     });
 
     return response.data;
+}
+
+export type PlayerTabDetails = {
+    player_since: string;
+    balance: number;
+    can_record_payment: boolean;
+    last_payment: { amount: number; paid_at: string } | null;
+    last_game: { game_name: string; game_date: string } | null;
+};
+
+export async function loadPlayerTab(userId: number, signal: AbortSignal): Promise<PlayerTabDetails> {
+    const response = await axios.get<{ data: PlayerTabDetails }>('/api/v1/users/' + userId + '/player-tab', { signal });
+    return response.data.data;
 }

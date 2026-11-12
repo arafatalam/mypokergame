@@ -6,6 +6,7 @@ use App\Models\Cashout;
 use App\Models\GameSession;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -109,6 +110,8 @@ it('shows game buy-ins, records one cashout, and rejects stale and repeated save
     $this->assertDatabaseCount('cashouts', 0);
     expect($player->refresh()->poker_balance)->toBe(-70);
 
+    config(['payments.timezone' => 'America/Moncton']);
+    $this->travelTo(Carbon::parse('2026-11-12 01:00:00 UTC'));
     $receipt = $this->postJson('/api/v1/cashouts', $draft)->assertCreated()->assertExactJson(['data' => [
         'game' => $game->game_name, 'player' => 'Avery Test', 'endingChips' => 200, 'cashPaid' => 150, 'balance' => -20,
     ]]);
@@ -131,6 +134,16 @@ it('shows game buy-ins, records one cashout, and rejects stale and repeated save
         'player_game_visit_id' => $visitId, 'created_by' => $staff->id, 'ending_chips' => 200,
         'cash_paid' => 150, 'balance_after' => -20, 'automatic' => false, 'request_id' => $draft['requestId'],
     ]);
+    $this->assertDatabaseCount('payments', 1);
+    $this->assertDatabaseHas('payments', [
+        'cashout_id' => Cashout::query()->where('player_game_visit_id', $visitId)->value('id'),
+        'player_id' => $player->id, 'created_by' => $staff->id,
+        'amount' => 150, 'direction' => 'house_pays_player', 'paid_at' => '2026-11-11',
+        'note' => 'Paid at cashout', 'balance_after' => -20,
+    ]);
+    $this->getJson('/api/v1/payments')->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.note', 'Paid at cashout');
     expect($player->refresh()->poker_balance)->toBe(-20);
     expect(DB::table('player_game_visits')->where('id', $visitId)->value('closed_at'))->not->toBeNull();
 });

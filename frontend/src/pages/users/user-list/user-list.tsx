@@ -13,10 +13,15 @@ import type { ChangeEvent } from 'react';
 
 type UserListProps = {
     onOpenUserProfile: (userId: number) => void;
+    onCreateUser?: () => void;
+    onViewHistory?: (player: UserListItem) => void;
+    onRecordPayment?: (playerId: number) => void;
+    suspendPlayerTab?: boolean;
 };
 
 function UserList(props: UserListProps) {
 
+    const [selectedPlayer, setSelectedPlayer] = useState<UserListItem | null>(null);
     const [users, setUsers] = useState<UserListItem[]>([]);
 
     const [searchText, setSearchText] = useState('');
@@ -82,21 +87,37 @@ function UserList(props: UserListProps) {
 
     }, [requestedPage, selectedRole, searchText]);
 
+    function handleSelectRow(user: UserListItem) {
+        if (isLoadingUsers) {
+            return;
+        }
+
+        if (user.role.value === 'player') {
+            setSelectedPlayer(user);
+        } else {
+            setSelectedPlayer(null);
+        }
+    }
+
     function handleSearchChange(event: ChangeEvent<HTMLInputElement>) {
+        setSelectedPlayer(null);
         setSearchText(event.currentTarget.value);
         setRequestedPage(1);
     }
 
     function handleRoleChange(event: ChangeEvent<HTMLSelectElement>) {
+        setSelectedPlayer(null);
         setSelectedRole(event.currentTarget.value);
         setRequestedPage(1);
     }
 
     async function handleNext() {
+        setSelectedPlayer(null);
         setRequestedPage(currentPage + 1);
     }
 
     async function handlePrevious() {
+        setSelectedPlayer(null);
         setRequestedPage(currentPage - 1);
     }
 
@@ -104,8 +125,8 @@ function UserList(props: UserListProps) {
     return (
         <section className="user-list-layout user-list-screen w-full" aria-labelledby="user-list-title">
             {/* Let the taller ticket set the row height and stretch both tickets to match. */}
-            <div className="grid grid-cols-6 items-stretch gap-4">
-                <CasinoTicket compactEdges className="user-list-ticket relative col-span-5 min-w-0">
+            <div className="grid items-stretch gap-4 lg:grid-cols-6">
+                <CasinoTicket compactEdges className="user-list-ticket relative min-w-0 lg:col-span-5">
                     <div className="user-list-filters flex items-end col-span-12">
                         <label className="user-list-search">
                             Search Player
@@ -128,7 +149,9 @@ function UserList(props: UserListProps) {
                                 {buildRoleOptions(roleOptions)}
                             </select>
                         </label>
-                        <button className="user-list-create" type="button" disabled>Create Account</button>
+                        {props.onCreateUser && (
+                            <button className="user-list-create" type="button" onClick={props.onCreateUser}>Create Account</button>
+                        )}
                     </div>
 
                     {/* Keep wide columns scrollable inside the ticket. */}
@@ -144,7 +167,7 @@ function UserList(props: UserListProps) {
                             </thead>
 
                             <tbody>
-                                {buildUserRows(users, props.onOpenUserProfile)}
+                                {buildUserRows(users, props.onOpenUserProfile, handleSelectRow, props.onViewHistory)}
                             </tbody>
 
                         </table>
@@ -171,10 +194,11 @@ function UserList(props: UserListProps) {
                         </button>
                     </div>
                 </CasinoTicket>
-                {/* Reuse the existing sample card until player selection is connected. */}
-                <aside className="user-list-player-sidebar flex min-w-0 flex-col [&>.player-tab]:flex-1" aria-label="Player details">
-                    <PlayerTab />
-                </aside>
+                {selectedPlayer && !props.suspendPlayerTab && (
+                    <aside className="user-list-player-sidebar flex min-w-0 flex-col [&>.player-tab]:flex-1" aria-label="Player details">
+                        <PlayerTab key={selectedPlayer.id} player={selectedPlayer} onRecordPayment={props.onRecordPayment} onViewHistory={props.onViewHistory} />
+                    </aside>
+                )}
             </div>
         </section>
     );

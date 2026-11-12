@@ -33,14 +33,14 @@ export default function RecordCashout(props: RecordCashoutProps) {
                 <form className="cashout-fields mt-5 grid gap-4" onSubmit={form.handleSubmit}>
                     <label className="grid gap-1 font-semibold">
                         Game
-                        <select className={fieldClass} value={form.gameId} onChange={form.handleGameChange} disabled={form.locked || gameOptions.length === 0}>
+                        <select className="casino-select w-full min-w-0" value={form.gameId} onChange={form.handleGameChange} disabled={form.locked || gameOptions.length === 0}>
                             <option value="" disabled>Select a game</option>
                             {gameOptions}
                         </select>
                     </label>
                     <label className="grid gap-1 font-semibold">
                         Player
-                        <select className={fieldClass} value={form.visitId} onChange={form.handlePlayerChange} disabled={form.locked || playerOptions.length === 0}>
+                        <select className="casino-select w-full min-w-0" value={form.visitId} onChange={form.handlePlayerChange} disabled={form.locked || playerOptions.length === 0}>
                             <option value="" disabled>Select a player</option>
                             {playerOptions}
                         </select>

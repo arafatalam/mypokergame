@@ -6,6 +6,12 @@ use App\Http\Controllers\CashoutController;
 use App\Http\Controllers\CloseGameController;
 use App\Http\Controllers\GameSessionController;
 use App\Http\Controllers\GameTotalsController;
+use App\Http\Controllers\HomeSummaryController;
+use App\Http\Controllers\HouseIncomeController;
+use App\Http\Controllers\LeaderboardController;
+use App\Http\Controllers\OutstandingBalancesController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\RecordCorrectionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserPasswordController;
 use App\Http\Controllers\UserPhotoController;
@@ -25,9 +31,34 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::post('/logout', [SessionController::class, 'destroy'])
         ->name('api.v1.logout');
 
+    Route::get('/leaderboard', LeaderboardController::class)
+        ->can('viewAny', GameSession::class)
+        ->name('api.v1.leaderboard.index');
+
+    Route::get('/house-income', HouseIncomeController::class)
+        ->can('viewAny', GameSession::class)
+        ->name('api.v1.house-income.index');
+
+    Route::get('/home/summary', HomeSummaryController::class)
+        ->can('viewAny', GameSession::class)
+        ->name('api.v1.home.summary');
+
+    Route::get('/outstanding-balances', OutstandingBalancesController::class)
+        ->can('viewAny', GameSession::class)
+        ->name('api.v1.outstanding-balances.index');
+
     Route::get('/games/create-options', [GameSessionController::class, 'createOptions'])
         ->can('create', GameSession::class)
         ->name('api.v1.games.create-options');
+
+    Route::get('/games', [GameSessionController::class, 'index'])
+        ->can('viewAny', GameSession::class)
+        ->name('api.v1.games.index');
+
+    Route::get('/games/{game}', [GameSessionController::class, 'show'])
+        ->whereNumber('game')
+        ->can('viewAny', GameSession::class)
+        ->name('api.v1.games.show');
 
     Route::post('/games', [GameSessionController::class, 'store'])
         ->can('create', GameSession::class)
@@ -78,6 +109,42 @@ Route::middleware('auth:sanctum')->group(function (): void {
         ->can('close', GameSession::class)
         ->name('api.v1.games.close.store');
 
+    Route::get('/corrections', [RecordCorrectionController::class, 'history'])
+        ->can('recordTotals', GameSession::class)
+        ->name('api.v1.corrections.index');
+
+    Route::patch('/games/{game}/totals/correction', [RecordCorrectionController::class, 'gameTotals'])
+        ->whereNumber('game')
+        ->can('recordTotals', GameSession::class)
+        ->name('api.v1.games.totals.correction');
+
+    Route::get('/cashouts/{cashout}/correction', [RecordCorrectionController::class, 'showCashout'])
+        ->whereNumber('cashout')
+        ->can('recordCashout', GameSession::class)
+        ->name('api.v1.cashouts.correction.show');
+
+    Route::patch('/cashouts/{cashout}/correction', [RecordCorrectionController::class, 'cashout'])
+        ->whereNumber('cashout')
+        ->can('recordCashout', GameSession::class)
+        ->name('api.v1.cashouts.correction.update');
+
+    Route::patch('/payments/{payment}/correction', [RecordCorrectionController::class, 'payment'])
+        ->whereNumber('payment')
+        ->can('recordPayment', User::class)
+        ->name('api.v1.payments.correction');
+
+    Route::get('/payments', [PaymentController::class, 'index'])
+        ->can('recordPayment', User::class)
+        ->name('api.v1.payments.index');
+
+    Route::get('/payments/options', [PaymentController::class, 'options'])
+        ->can('recordPayment', User::class)
+        ->name('api.v1.payments.options');
+
+    Route::post('/payments', [PaymentController::class, 'store'])
+        ->can('recordPayment', User::class)
+        ->name('api.v1.payments.store');
+
     Route::prefix('users')->name('api.v1.users.')->group(function (): void {
         // Check list permission before the controller retrieves accounts.
         Route::get('/', [UserController::class, 'index'])
@@ -99,6 +166,17 @@ Route::middleware('auth:sanctum')->group(function (): void {
             ->whereNumber('user')
             ->can('view', 'user')
             ->name('show');
+
+        Route::get('/{user}/game-history', [UserController::class, 'gameHistory'])
+            ->whereNumber('user')
+            ->can('viewGameHistory', 'user')
+            ->name('game-history');
+
+        Route::get('/{user}/player-tab', [UserController::class, 'playerTab'])
+            ->whereNumber('user')
+            ->can('viewAny', User::class)
+            ->can('view', 'user')
+            ->name('player-tab');
 
         Route::patch('/{user}', [UserController::class, 'update'])
             ->whereNumber('user')

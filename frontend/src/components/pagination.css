@@ -21,6 +21,9 @@
 }
 
 .casino-pagination button {
+    inline-size: 6rem;
+    min-block-size: 2rem;
+    text-align: center;
     padding: calc(.4 * var(--pagination-unit)) calc(1.6 * var(--pagination-unit));
     border-radius: calc(.8 * var(--pagination-unit));
     font: 400 calc(2.5 * var(--pagination-unit)) 'House UI', sans-serif;
@@ -28,21 +31,13 @@
 }
 
 /* React supplies the disabled state; CSS gives that state its appearance. */
-.casino-pagination button:enabled {
-    color: #fff0c7;
-    border: 2px solid #fff1c9;
-    outline: 1px solid #99240e;
-    background: var(--vegas-button-fill);
-    box-shadow: inset 0 0 0 1px #f9a96e, 0 3px 2px #52220866;
-    cursor: pointer;
-}
-
 .casino-pagination button:disabled {
-    border: 1px solid #b48c60;
+    font: 700 0.875rem/1.25 var(--vegas-body);
+    border-radius: 4px;
+    box-shadow: inset 0 0 0 1px #b48c60;
     background: #fce3b6;
     color: #9b815f;
     outline: none;
-    box-shadow: none;
     opacity: 1;
     cursor: default;
     -webkit-text-fill-color: currentColor;

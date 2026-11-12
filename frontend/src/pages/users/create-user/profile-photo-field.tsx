@@ -1,4 +1,4 @@
-import CasinoTicket from '../../../components/casino-ticket';
+import TurquoisePaperTicket from '../../../components/turquoise-paper-ticket';
 import useProfilePhoto from '../shared-resources/use-profile-photo';
 
 type ProfilePhotoFieldProps = {
@@ -24,7 +24,7 @@ export default function ProfilePhotoField(props: ProfilePhotoFieldProps) {
 
     return (
         // Photo ticket
-        <CasinoTicket compactEdges borderInset={12} className="player-tab">
+        <TurquoisePaperTicket className="player-tab">
             <section className="flex flex-col items-center gap-4 p-2 text-center">
 
                 <img src={profilePhoto.photoPreview} alt={photoDescription} className="aspect-square w-full max-w-40 rounded-full border-4 border-[#ffe9b8] object-cover" />
@@ -50,6 +50,6 @@ export default function ProfilePhotoField(props: ProfilePhotoFieldProps) {
                 <p className="max-w-full break-words text-sm">{photoLabel}</p>
 
             </section>
-        </CasinoTicket>
+        </TurquoisePaperTicket>
     );
 }

@@ -1,5 +1,5 @@
 import cashoutSuitcaseArtwork from '../../../assets/casino/cashout-chip-king-suitcase.webp';
-import CasinoTicket from '../../../components/casino-ticket';
+import TurquoisePaperTicket from '../../../components/turquoise-paper-ticket';
 import '../../../components/player-tab.css';
 import type { CashoutReceipt } from './record-cashout-api';
 
@@ -16,7 +16,7 @@ export default function CashoutConfirmation(props: CashoutConfirmationProps) {
 
     return (
         <div className="relative min-w-0 md:col-start-3">
-            <CasinoTicket compactEdges className="cashout-receipt player-tab relative mx-auto w-full min-w-0 max-w-[19rem] md:mx-0">
+            <TurquoisePaperTicket className="cashout-receipt player-tab relative mx-auto w-full min-w-0 max-w-[19rem] md:mx-0">
                 <section className="grid grid-cols-[minmax(0,1fr)] gap-[14px]">
                     <h3>Cashout recorded</h3>
                     <h4 className="player-tab-name">{receipt.player}</h4>
@@ -33,7 +33,7 @@ export default function CashoutConfirmation(props: CashoutConfirmationProps) {
                         Record Another Cashout
                     </button>
                 </section>
-            </CasinoTicket>
+            </TurquoisePaperTicket>
             {/* Use the space beside the receipt without adding height on desktop. */}
             <img src={cashoutSuitcaseArtwork} alt="The laughing Chip King hauls away a suitcase overflowing with cash." className="cashout-suitcase mx-auto mt-4 block w-48" />
         </div>

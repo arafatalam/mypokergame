@@ -1,0 +1,50 @@
+/* Keep the Payment List ticket and header while fitting two narrower tables. */
+.record-correction.user-list-screen .user-list-table {
+    min-width: 520px;
+    font-size: 16px;
+}
+
+.record-correction.user-list-screen .user-list-table th,
+.record-correction.user-list-screen .user-list-table td {
+    padding-inline: 8px;
+}
+
+.record-correction.user-list-screen .user-list-table th {
+    font-size: 16px;
+}
+
+/* Keep controls on one line and let narrow tickets scroll their toolbar. */
+.record-correction.user-list-screen .user-list-filters {
+    flex-wrap: nowrap;
+    zoom: 0.8;
+    overflow-x: auto;
+    /* Leave room for outlines and shadows inside the scroll area. */
+    padding: 0.15em 0.15em 0.4em;
+    white-space: nowrap;
+}
+
+.record-correction .user-list-filters > * {
+    flex-shrink: 0;
+}
+
+.record-correction.user-list-screen .user-list-filters .user-list-role-filter {
+    width: auto;
+    min-width: 5rem;
+}
+
+.record-correction.user-list-screen .user-list-filters .user-list-role-filter.min-w-40 {
+    min-width: 10rem;
+}
+
+.record-correction .user-list-filters .user-list-search {
+    width: clamp(10rem, 37%, 16rem);
+}
+
+.record-correction.user-list-screen .user-list-filters .user-list-create {
+    margin-inline-start: 0;
+}
+
+.record-correction .correction-table-heading {
+    background: var(--vegas-gold-fill);
+    border-radius: var(--vegas-title-radius);
+}

@@ -1,4 +1,4 @@
-import CasinoTicket from '../../../components/casino-ticket';
+import TurquoisePaperTicket from '../../../components/turquoise-paper-ticket';
 import type { BuyInReceipt } from './record-buy-in-api';
 import '../../../components/player-tab.css';
 
@@ -14,7 +14,7 @@ export default function BuyInConfirmation(props: BuyInConfirmationProps) {
     if (receipt.balance > 0) balanceLabel = 'House owes';
 
     return (
-        <CasinoTicket compactEdges className="player-tab relative w-full min-w-0">
+        <TurquoisePaperTicket className="player-tab relative w-full min-w-0">
             <section className="grid grid-cols-[minmax(0,1fr)] gap-[14px]">
                 <h3>Buy-in recorded</h3>
                 <h4 className="player-tab-name">{receipt.player}</h4>
@@ -32,6 +32,6 @@ export default function BuyInConfirmation(props: BuyInConfirmationProps) {
                     Record Another Buy-in
                 </button>
             </section>
-        </CasinoTicket>
+        </TurquoisePaperTicket>
     );
 }

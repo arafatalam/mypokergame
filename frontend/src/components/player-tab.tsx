@@ -1,49 +1,98 @@
-import { useId } from 'react';
-import CasinoTicket from './casino-ticket';
-import './player-tab.css';
+import { useEffect, useState } from 'react';
+import { loadPlayerTab } from '../pages/users/user-list/load-users';
+import type { PlayerTabDetails, UserListItem } from '../pages/users/user-list/load-users';
+import PlayerTabCard, { PlayerTabBalance } from './player-tab-card';
 
-function PlayerTab() {
-    // Each copy gets its own heading ID, even when two tabs share a screen.
-    const headingId = useId();
+type PlayerTabProps = {
+    player: UserListItem;
+    onViewHistory?: (player: UserListItem) => void;
+    onRecordPayment?: (playerId: number) => void;
+};
+
+const monthFormat = new Intl.DateTimeFormat('en-CA', { month: 'short', year: 'numeric', timeZone: 'UTC' });
+const dateFormat = new Intl.DateTimeFormat('en-CA', { dateStyle: 'medium', timeZone: 'UTC' });
+const moneyFormat = new Intl.NumberFormat('en-CA', { maximumFractionDigits: 0 });
+
+function formatMoney(amount: number) {
+    return '$' + moneyFormat.format(amount);
+}
+
+function PlayerTab(props: PlayerTabProps) {
+    const playerId = props.player.id;
+    const [details, setDetails] = useState<PlayerTabDetails | null>(null);
+    const [failed, setFailed] = useState(false);
+
+    useEffect(function fetchPlayerDetails() {
+        const request = new AbortController();
+
+        async function fetchDetails() {
+            try {
+                const result = await loadPlayerTab(playerId, request.signal);
+                if (!request.signal.aborted) {
+                    setDetails(result);
+                }
+            } catch {
+                if (!request.signal.aborted) {
+                    setFailed(true);
+                }
+            }
+        }
+
+        void fetchDetails();
+        // A selection change or dismissal makes this request obsolete.
+        return function cancelRequest() {
+            request.abort();
+        };
+    }, [playerId]);
+
+    const canRecordPayment = details !== null && details.can_record_payment;
+
+    function handleRecordPayment() {
+        if (canRecordPayment) {
+            props.onRecordPayment?.(playerId);
+        }
+    }
+
+    function handleViewHistory() {
+        props.onViewHistory?.(props.player);
+    }
+
+    let subtitle = '';
+    if (details) {
+        subtitle = 'Player since ' + monthFormat.format(new Date(details.player_since));
+    }
 
     return (
-        <CasinoTicket compactEdges borderInset={12} className="player-tab relative">
-            {/* Keep this preview static until player selection is connected. */}
-            <section aria-labelledby={headingId} className="flex flex-col gap-4">
-                <h3 id={headingId}>Player’s Tab</h3>
-
-                {/* Each parent controls the spacing between its related details. */}
-                <div className="flex flex-col gap-3">
-                    <span className="player-tab-portrait self-center" aria-hidden="true" />
-                    <div className="flex flex-col gap-1.5">
-                        <h4 className="player-tab-name">Alex Morgan</h4>
-                        <p className="player-tab-since">Player since Nov 2026</p>
-                    </div>
-                </div>
-
-                {/* A single direction makes the outstanding balance easy to read. */}
+        <PlayerTabCard title="Player’s Tab" name={props.player.first_name + ' ' + props.player.last_name}
+            photoUrl={props.player.photo_url} subtitle={subtitle}>
+            {!details && <p>{failed ? 'Could not load player details. Select another row and reopen this card to retry.' : 'Loading player details…'}</p>}
+            {details && (
+                /* Keep the balance and recent activity together. */
                 <div className="flex flex-col gap-4">
                     <div>
-                        <div className="player-tab-balance flex flex-col gap-1.5">
-                            <p>Owes the house</p>
-                            <strong>$120</strong>
-                        </div>
+                        <PlayerTabBalance balance={details.balance} />
                         <dl>
-                            <div><dt>Last payment</dt><dd>$50</dd></div>
-                            <div><dt>Last played</dt><dd>Friday Night</dd></div>
+                            <div>
+                                <dt>Last payment</dt>
+                                <dd>{details.last_payment ? formatMoney(details.last_payment.amount) + ' · ' + dateFormat.format(new Date(details.last_payment.paid_at)) : 'No payments yet'}</dd>
+                            </div>
+                            <div>
+                                <dt>Last played</dt>
+                                <dd>{details.last_game?.game_name ?? 'No games played yet'}</dd>
+                            </div>
                         </dl>
                     </div>
 
-                    {/* Payments and history remain disabled in this sample. */}
                     <div className="flex flex-col gap-3">
-                        <button type="button" className="casino-button player-tab-payment w-full rounded-lg px-3 py-2" disabled>
+                        <button type="button" className="casino-button player-tab-payment w-full rounded-lg px-3 py-2"
+                            onClick={handleRecordPayment} disabled={!canRecordPayment || !props.onRecordPayment}>
                             Record Payment
                         </button>
-                        <button type="button" className="player-tab-history w-full" disabled>View History</button>
+                        <button type="button" className="player-tab-history w-full" onClick={handleViewHistory} disabled={!props.onViewHistory}>View History</button>
                     </div>
                 </div>
-            </section>
-        </CasinoTicket>
+            )}
+        </PlayerTabCard>
     );
 }
 

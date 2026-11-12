@@ -1,0 +1,15 @@
+.turquoise-paper-ticket {
+    --casino-ticket-edge-fill: #6cada0;
+    --casino-ticket-edge-texture-opacity: 0.35;
+    color: #fff0cf;
+    /* The outline is 12px in from the box, leaving 8px of content clearance along straight edges. */
+    padding: 20px;
+}
+
+.turquoise-paper-ticket .casino-ticket-surface {
+    background: #075152 url('../assets/casino/home-turquoise-paper.png') center / cover;
+}
+
+.turquoise-paper-ticket .casino-ticket-border {
+    stroke: #244c45;
+}

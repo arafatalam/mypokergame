@@ -1,0 +1,26 @@
+.correction-history.user-list-screen .user-list-table {
+    min-width: 0;
+}
+
+.correction-history .user-list-table td {
+    overflow-wrap: anywhere;
+}
+
+.correction-history .user-list-table tr[data-selected='true'] td {
+    background-color: rgb(193 144 50 / 20%);
+}
+
+@media (min-width: 1024px) {
+    .correction-history {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
+    /* Keep two columns available for the details ticket before a row is selected. */
+    .correction-history > :first-child {
+        grid-column: span 3;
+    }
+
+    .correction-history > :nth-child(2) {
+        grid-column: span 2;
+    }
+}

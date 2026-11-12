@@ -7,6 +7,11 @@ use App\Models\User;
 
 class GameSessionPolicy
 {
+    public function viewAny(User $user): bool
+    {
+        return $this->canManageGames($user);
+    }
+
     public function create(User $user): bool
     {
         return $this->canManageGames($user);

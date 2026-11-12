@@ -28,7 +28,7 @@ it('saves house limits and offers the next number for that date', function (): v
         'created_by' => $admin->id,
         'status' => 'open',
         'min_buy_in' => 100,
-        'max_buy_in' => 500,
+        'max_buy_in' => 400,
     ]);
 
     $this->getJson('/api/v1/games/create-options')->assertOk()->assertJsonPath('game_number', 2);

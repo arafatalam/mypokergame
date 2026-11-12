@@ -49,7 +49,7 @@ export default function RecordGameTotals() {
                 <form className="mt-5 grid gap-4" onSubmit={form.handleSubmit}>
                     <label className="grid gap-1 font-semibold">
                         Game
-                        <select className={fieldClass} value={form.gameId ?? ''} onChange={form.handleGameChange} disabled={form.games.length === 0 || form.saving}>
+                        <select className="casino-select w-full min-w-0" value={form.gameId ?? ''} onChange={form.handleGameChange} disabled={form.games.length === 0 || form.saving}>
                             {form.games.length === 0 && <option value="">{gamePlaceholder}</option>}
                             {gameOptions}
                         </select>

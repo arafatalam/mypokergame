@@ -54,7 +54,7 @@ export default function CloseGame() {
             <form className="mt-5 grid gap-4" onSubmit={form.handleReview}>
                 <label className="grid gap-1 font-semibold">
                     Game
-                    <select className={fieldClass} value={form.gameId ?? ''} onChange={form.handleGameChange}>{gameOptions}</select>
+                    <select className="casino-select w-full min-w-0" value={form.gameId ?? ''} onChange={form.handleGameChange}>{gameOptions}</select>
                 </label>
                 {form.detailsStatus === 'loading' && <p>Loading game totals…</p>}
                 {form.detailsStatus === 'error' && (

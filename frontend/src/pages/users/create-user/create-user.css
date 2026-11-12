@@ -16,12 +16,6 @@
     border-radius: 0.5rem;
 }
 
-@supports (appearance: base-select) {
-    .create-user-form .casino-select {
-        align-items: center;
-    }
-}
-
 .create-user-photo-button {
     background: url('../../../assets/casino/ticket-paper.png') center / cover;
     color: #075152;

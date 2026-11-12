@@ -23,7 +23,7 @@ This is the Player’s Tab appearance retained on 8 November 2026 after revertin
 - Warm cream text, including the balance amount.
 - Cream paper heading with burgundy lettering.
 - Heading top corners curve inward to echo the ticket's inset outline, following the Sign In banner shape. Bottom corners retain their 5px outward rounding; heading colour stays cream. Applied 8 November 2026; developer visual acceptance pending.
-- Card owns fixed 16px padding on all four sides. Heading and full-width sections share that content boundary; no extra heading side margin. The 12px inset outline leaves 4px straight-edge gaps around the heading. Payment button has no outward outline or shadow; keyboard focus draws inside the button. Vertical spacing between sections remains separate from the card padding.
+- Use `TurquoisePaperTicket` for turquoise cards. It owns 8px of content clearance from the straight inset outline (20px from the rectangular edge). The outline curves inward at the cutouts. Keep the heading and full-width sections on the shared content boundary. Screen layouts own placement and gaps between tickets.
 - Internal vertical spacing belongs to parent Tailwind flex layouts: `gap-5` between major sections, `gap-3` between portrait/identity and between buttons, `gap-1.5` between name/date and balance label/amount, and `gap-4` before actions. Portrait centring uses `self-center`; no individual spacing margins. Fixed card padding accepted by developer on 8 November 2026; gap refactor awaits visual check.
 - User List only: its grid uses `items-stretch`, and its sidebar uses a column flex layout with `[&>.player-tab]:flex-1`. Both tickets match the taller one's natural height without a fixed height. PlayerTab's shared sizing and internal gaps are unchanged; other screens do not inherit this equal-height layout. Active Brave desktop visually checked on 8 November 2026; developer acceptance pending.
 - User List's `.user-list-player-sidebar` also stretches the card's section and lower details/actions group. `justify-content: space-between` places spare height above the actions, retaining the existing minimum gap and 12px gap between buttons. View History's box ends at the fixed bottom padding; no spacing margins added. Equal ticket heights accepted by developer; this action-placement refinement awaits acceptance.
@@ -35,10 +35,10 @@ This is the Player’s Tab appearance retained on 8 November 2026 after revertin
 
 - Turquoise texture: `frontend/src/assets/casino/home-turquoise-paper.png`.
 - Cream texture for heading/button: `frontend/src/assets/casino/ticket-paper.png`.
-- Shape component: `frontend/src/components/casino-ticket.tsx`.
+- Shared turquoise component: `frontend/src/components/turquoise-paper-ticket.tsx`. It uses the shared `CasinoTicket` shape.
 - Current example: `../frontend/src/pages/users/user-list/user-list.tsx`, Player’s Tab only.
 - Reusable component: `frontend/src/components/player-tab.tsx`, rendered with `<PlayerTab />` after importing it. The component currently retains Alex’s static sample content and disabled actions; configurable player data is a later step.
-- Styling source: `frontend/src/components/player-tab.css`, `.player-tab` and associated rules. Its texture, portrait sprite and font are included independently of User List styles. User List owns only sidebar placement and responsive stacking.
+- Shared texture, outline and padding: `frontend/src/components/turquoise-paper-ticket.css`. Player’s Tab content styles live in `frontend/src/components/player-tab.css`. User List owns sidebar placement and responsive stacking.
 - Original visual reference: `../asset_samples`, turquoise portrait ticket on the profile screen.
 
 The turquoise surface uses `background-color: #075152`, the existing turquoise image, and `background-size: cover`. The filled 12px outer band uses mint `#6cada0`, sampled from the reference band; the thin inset outline uses dark teal `#244c45`, sampled from its outline on 8 November 2026. PlayerTab explicitly uses the same 12px inset as the shared default. The developer accepted the band colour on 8 November 2026; the added paper texture awaits visual acceptance. Body text is `#fff0cf`, with `#ffe6b1` for the balance and activity values. Heading lettering uses the shared burgundy `--vegas-wine`; button lettering is `#075152`.
@@ -56,3 +56,7 @@ Instructor visually inspected the active Player’s Tab in Brave on 8 November 2
 On 8 November 2026, the instructor inspected the active magnified Brave view: subtle paper grain was visible on the mint band and the dark teal outline remained distinct. Normal-size developer acceptance of this texture is pending. This was not a responsive audit; no build, lint or tests were run for this checkpoint.
 
 8 November 2026: developer rejected the earlier three-colour edge. Instructor observed the corrected single mint band in active Brave after removing the rim stripe and matching the inside paper grain. Developer acceptance pending; no build, lint, tests or responsive audit.
+
+## To collect button
+
+Use Staff Home’s **To collect** as the shared style for burgundy actions. Use a solid burgundy fill, bold cream text in normal case, and small rounded corners. Keep each screen’s button size and spacing. Use the shared `casino-button` class for new burgundy actions.

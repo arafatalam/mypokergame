@@ -292,7 +292,7 @@ function CreateUser(props: CreateUserProps) {
                             value={selectedRole}
                             onChange={handleRoleChange}
                             disabled={isLoadingRoles || isCreationLocked}
-                            className="casino-input casino-select"
+                            className="casino-select w-full min-w-0"
                         >
                             {buildRoleOptions(roleOptions)}
                         </select>

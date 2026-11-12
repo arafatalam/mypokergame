@@ -26,6 +26,8 @@ return new class extends Migration
             $table->foreignId('closed_by')->nullable()->constrained('users')->restrictOnDelete();
             $table->timestamp('closed_at')->nullable();
             $table->timestamps();
+            $table->unsignedInteger('dealer_tips')->default(0);
+            $table->unsignedInteger('game_costs')->default(0);
 
             // Each date has its own sequence.
             $table->unique(['game_date', 'game_number']);

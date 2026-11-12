@@ -1,11 +1,25 @@
+import CorrectionHistory from './records/correction-history/correction-history';
+import RecordCorrection from './records/record-correction/record-correction';
+import type { GameFilters, GameListItem } from './games/game-list/load-games';
 import casinoLogo from '../assets/casino/skanders-game-logo.png';
+import jackpotCatPodium from '../assets/casino/leaderboard-jackpot-cat-podium.webp';
+import chipKingTrophy from '../assets/casino/leaderboard-chip-king-trophy.webp';
 import NavigationGroup from '../components/navigation-group';
 import CasinoMarquee from '../components/casino-marquee';
 import CloseGame from './games/close-game/close-game';
 import CreateGame from './games/create-game/create-game';
+import GameDetails from './games/game-details/game-details';
+import HouseIncome from './games/house-income/house-income';
+import Leaderboard from './games/leaderboard/leaderboard';
+import GameList from './games/game-list/game-list';
 import RecordBuyIn from './games/record-buy-in/record-buy-in';
 import RecordCashout from './games/record-cashout/record-cashout';
 import RecordGameTotals from './games/record-game-totals/record-game-totals';
+import type { UserListItem } from './users/user-list/load-users';
+import PaymentList from './players/payment-list/payment-list';
+import OutstandingBalances from './players/outstanding-balances/outstanding-balances';
+import RecordPayment from './players/record-payment/record-payment';
+import type { PaymentDirection } from './players/record-payment/record-payment-api';
 import './signed-in-layout.css';
 import Home from './home/home';
 import CreateUser from './users/create-user/create-user.tsx';
@@ -14,9 +28,12 @@ import { useState } from 'react';
 import UserList from "./users/user-list/user-list.tsx";
 import ShowUser from './users/show-user/show-user';
 
+const monthlyReportGrid = 'grid min-w-0 lg:grid-cols-7';
+
 type SignedInLayoutProps = {
     signedInUserId: number;
     canRecordGameTotals: boolean;
+    canCreateUser: boolean;
 };
 
 function SignedInLayout(props: SignedInLayoutProps) {
@@ -25,11 +42,39 @@ function SignedInLayout(props: SignedInLayoutProps) {
     const [isSigningOut, setIsSigningOut] = useState(false);
     const [signOutMessage, setSignOutMessage] = useState('');
     const [selectedUserId, setSelectedUserId] = useState<number>();
+    const [selectedGame, setSelectedGame] = useState<GameListItem>();
+    const [initialGameFilters, setInitialGameFilters] = useState<GameFilters>();
+    const [totalsRevision, setTotalsRevision] = useState(0);
+    const [historyPlayer, setHistoryPlayer] = useState<UserListItem>();
+    const [paymentPlayerId, setPaymentPlayerId] = useState<number>();
+    const [balancePayment, setBalancePayment] = useState<{ playerId: number; direction: PaymentDirection }>();
     const [buyInGameId, setBuyInGameId] = useState<number>();
 
 
+    function handleOpenCreateUser() {
+        setSelectedPage('create');
+    }
+
     function handleOpenUserList() {
         setSelectedPage('list');
+    }
+
+    function handleOpenPlayerPayment(playerId: number) {
+        setPaymentPlayerId(playerId);
+        setSelectedPage('payment-from-list');
+    }
+
+    function handleOpenPlayerPaymentHistory(player: UserListItem) {
+        setHistoryPlayer(player);
+        setSelectedPage('payment-list');
+    }
+
+    function handleOpenPaymentFromPaymentList() {
+        setSelectedPage('payment-from-payment-list');
+    }
+
+    function handleReturnToPaymentList() {
+        setSelectedPage('payment-list');
     }
 
     function handleOpenUserProfile(userId: number) {
@@ -37,8 +82,69 @@ function SignedInLayout(props: SignedInLayoutProps) {
         setSelectedPage('user-profile');
     }
 
+    function handleOpenHouseIncome() {
+        setSelectedPage('house-income');
+    }
+
+    function handleOpenOutstandingBalances() {
+        setSelectedPage('outstanding-balances');
+    }
+
+    function handleOpenBalancePayment(playerId: number, direction: PaymentDirection) {
+        setBalancePayment({ playerId, direction });
+        setSelectedPage('payment-from-balances');
+    }
+
+    function handleOpenIncomeMonth(month: string) {
+        const fromDate = month + '-01';
+        const lastDay = new Date(fromDate + 'T00:00:00Z');
+        // Day zero of the next month is the last day of the selected month.
+        lastDay.setUTCMonth(lastDay.getUTCMonth() + 1, 0);
+        setInitialGameFilters({ fromDate, toDate: lastDay.toISOString().slice(0, 10), status: 'all' });
+        setSelectedPage('game-list');
+    }
+
+    function handleOpenLeaderboard() {
+        setSelectedPage('leaderboard');
+    }
+
+    function handleOpenRankedPlayer(userId: number) {
+        setSelectedUserId(userId);
+        setSelectedPage('leaderboard-user');
+    }
+
     function handleOpenHome() {
         setSelectedPage('home');
+    }
+
+    function handleOpenGame(_gameName: string, game: GameListItem) {
+        setSelectedGame(game);
+        setSelectedPage('game-details');
+    }
+
+    function handleOpenCreateGame() {
+        setSelectedPage('create-game');
+    }
+
+    function handleOpenBuyIn() {
+        // A standalone buy-in starts without a preselected game.
+        setBuyInGameId(undefined);
+        setSelectedPage('buy-in');
+    }
+
+    function handleOpenCashout() {
+        setSelectedPage('cashout');
+    }
+
+    function handleOpenPayment() {
+        handlePlayerSelection('payment');
+    }
+
+    function handleGameTotalsSaved() {
+        // Reload the same list request so its filters and page survive the edit.
+        setTotalsRevision(function nextRevision(previous) {
+            return previous + 1;
+        });
     }
 
     function handleGameCreated(gameId: number) {
@@ -47,34 +153,149 @@ function SignedInLayout(props: SignedInLayoutProps) {
     }
 
     // Choose which screen appears below the shared navigation.
-    let content = <Home />;
-    let marqueeText = 'users';
+    let content = (
+        <Home
+            canViewSummary={props.canRecordGameTotals}
+            onOpenCreateGame={handleOpenCreateGame}
+            onOpenBuyIn={handleOpenBuyIn}
+            onOpenCashout={handleOpenCashout}
+            onOpenPayment={props.canRecordGameTotals ? handleOpenPayment : undefined}
+            onOpenHouseIncome={props.canRecordGameTotals ? handleOpenHouseIncome : undefined}
+            onOpenLeaderboard={props.canRecordGameTotals ? handleOpenLeaderboard : undefined}
+            onOpenOutstandingBalances={props.canRecordGameTotals ? handleOpenOutstandingBalances : undefined}
+        />
+    );
+    let marqueeText = 'home';
 
-    if (selectedPage === 'create') {
+    if (selectedPage === 'create' && props.canCreateUser) {
         content = <CreateUser onOpenUserList={handleOpenUserList} />;
-    } else if (selectedPage === 'list') {
-        content = <UserList onOpenUserProfile={handleOpenUserProfile} />;
+        marqueeText = 'create user';
+    } else if (selectedPage === 'list' || (selectedPage === 'payment-from-list' && props.canRecordGameTotals)) {
+        const showingPayment = selectedPage === 'payment-from-list';
+        // Keep the list mounted so Cancel restores its filters, page and selected Player.
+        content = (
+            <div className="w-full min-w-0">
+                <div hidden={showingPayment}>
+                    <UserList onOpenUserProfile={handleOpenUserProfile}
+                        onCreateUser={props.canCreateUser ? handleOpenCreateUser : undefined}
+                        onRecordPayment={props.canRecordGameTotals ? handleOpenPlayerPayment : undefined}
+                        onViewHistory={props.canRecordGameTotals ? handleOpenPlayerPaymentHistory : undefined}
+                        suspendPlayerTab={showingPayment} />
+                </div>
+                {showingPayment && <RecordPayment initialPlayerId={paymentPlayerId} onCancel={handleOpenUserList} />}
+            </div>
+        );
+        marqueeText = 'user list';
+        if (showingPayment) {
+            marqueeText = 'record payment';
+        }
     } else if (selectedPage === 'user-profile') {
         content = <ShowUser userId={selectedUserId} />;
         marqueeText = 'user profile';
+    } else if (props.canRecordGameTotals && (selectedPage === 'outstanding-balances' || selectedPage === 'payment-from-balances')) {
+        const showingPayment = selectedPage === 'payment-from-balances';
+        content = (
+            <div className={showingPayment ? 'w-full min-w-0' : 'outstanding-balances-content w-full min-w-0'}>
+                <div hidden={showingPayment}>
+                    <OutstandingBalances onMakePayment={handleOpenBalancePayment} showingPayment={showingPayment} />
+                </div>
+                {showingPayment && balancePayment && (
+                    <RecordPayment
+                        initialPlayerId={balancePayment.playerId}
+                        initialDirection={balancePayment.direction}
+                        onCancel={handleOpenOutstandingBalances}
+                    />
+                )}
+            </div>
+        );
+        marqueeText = showingPayment ? 'record payment' : 'outstanding balances';
+    } else if (props.canRecordGameTotals && selectedPage === 'house-income') {
+        content = <div className="w-full min-w-0"><div className={monthlyReportGrid}><HouseIncome onOpenMonth={handleOpenIncomeMonth} /></div></div>;
+        marqueeText = 'house income';
+    } else if (props.canRecordGameTotals && (selectedPage === 'leaderboard' || selectedPage === 'leaderboard-user')) {
+        const showingPlayer = selectedPage === 'leaderboard-user';
+        // Keep the applied month range, page and draft filters when opening a profile.
+        content = (
+            <div className="w-full min-w-0">
+                <div hidden={showingPlayer}>
+                    {/* Let the ticket set the row height so taller artwork stays bottom-aligned. */}
+                    <div className={monthlyReportGrid}>
+                        <div className="relative hidden lg:col-span-2 lg:col-start-1 lg:row-start-1 lg:block">
+                            <img src={jackpotCatPodium} alt="" className="absolute right-0 bottom-0 h-[min(100%,33vw,480px)] w-full max-w-[440px] object-fill" />
+                        </div>
+                        <Leaderboard onOpenPlayer={handleOpenRankedPlayer} />
+                        <div className="relative hidden lg:col-span-2 lg:col-start-6 lg:row-start-1 lg:block">
+                            <img src={chipKingTrophy} alt="" className="absolute bottom-0 left-0 h-[min(100%,33vw,480px)] w-full max-w-[440px] object-fill" />
+                        </div>
+                    </div>
+                </div>
+                {showingPlayer && (
+                    <>
+                        <div className="mx-auto mb-3 w-full max-w-[800px] px-4">
+                            <button className="casino-button" type="button" onClick={handleOpenLeaderboard}>Back to Leaderboard</button>
+                        </div>
+                        <ShowUser key={selectedUserId} userId={selectedUserId} />
+                    </>
+                )}
+            </div>
+        );
+        marqueeText = showingPlayer ? 'user profile' : 'leaderboard';
     } else if (selectedPage === 'my-account') {
-        content = <ShowUser key="my-account" userId={props.signedInUserId}/>;
+        content = <ShowUser key="my-account" userId={props.signedInUserId} showSideArtwork />;
         marqueeText = 'my account';
+    } else if (props.canRecordGameTotals && (selectedPage === 'game-list' || selectedPage === 'game-details')) {
+        const showingDetails = selectedPage === 'game-details';
+        // Keep the list mounted so returning restores its filters and page.
+        content = (
+            <div className="w-full min-w-0">
+                <div hidden={showingDetails}>
+                    <GameList key={initialGameFilters?.fromDate} initialFilters={initialGameFilters} onOpenGame={handleOpenGame} onCreateGame={handleOpenCreateGame} totalsRevision={totalsRevision} />
+                </div>
+                {showingDetails && selectedGame && (
+                    <GameDetails key={selectedGame.id} game={selectedGame} onTotalsSaved={handleGameTotalsSaved} />
+                )}
+            </div>
+        );
+        marqueeText = 'games';
+        if (showingDetails) {
+            marqueeText = 'game details';
+        }
     } else if (selectedPage === 'create-game') {
         content = <CreateGame onCancel={handleOpenHome} onGameCreated={handleGameCreated} />;
-        marqueeText = 'games';
+        marqueeText = 'create game';
     } else if (selectedPage === 'buy-in') {
         content = <RecordBuyIn key={buyInGameId} initialGameId={buyInGameId} onCancel={handleOpenHome} />;
-        marqueeText = 'games';
+        marqueeText = 'buy in';
     } else if (selectedPage === 'cashout') {
         content = <RecordCashout onCancel={handleOpenHome} />;
-        marqueeText = 'games';
+        marqueeText = 'cashout';
     } else if (selectedPage === 'game-totals') {
         content = <RecordGameTotals />;
-        marqueeText = 'games';
+        marqueeText = 'game totals';
     } else if (selectedPage === 'close-game') {
         content = <CloseGame />;
-        marqueeText = 'games';
+        marqueeText = 'close game';
+    } else if (props.canRecordGameTotals && (selectedPage === 'payment-list' || selectedPage === 'payment-from-payment-list')) {
+        const showingPayment = selectedPage === 'payment-from-payment-list';
+        // Keep the list mounted so Cancel restores its current filters and page.
+        content = (
+            <div className="w-full min-w-0">
+                <div hidden={showingPayment}>
+                    <PaymentList key={historyPlayer?.id} initialPlayer={historyPlayer} onRecordPayment={handleOpenPaymentFromPaymentList} />
+                </div>
+                {showingPayment && <RecordPayment onCancel={handleReturnToPaymentList} />}
+            </div>
+        );
+        marqueeText = showingPayment ? 'record payment' : 'payments';
+    } else if (selectedPage === 'correction-history' && props.canRecordGameTotals) {
+        content = <CorrectionHistory />;
+        marqueeText = 'correction history';
+    } else if (selectedPage === 'correction' && props.canRecordGameTotals) {
+        content = <RecordCorrection />;
+        marqueeText = 'record correction';
+    } else if (selectedPage === 'payment' && props.canRecordGameTotals) {
+        content = <RecordPayment onCancel={handleOpenHome} />;
+        marqueeText = 'record payment';
     }
 
     function handleUserSelection(task: string) {
@@ -84,16 +305,31 @@ function SignedInLayout(props: SignedInLayoutProps) {
 
     function handleGameSelection(task: string) {
         if (task === 'create') {
-            setSelectedPage('create-game');
+            handleOpenCreateGame();
+        } else if (task === 'list' && props.canRecordGameTotals) {
+            setInitialGameFilters(undefined);
+            setSelectedPage('game-list');
         } else if (task === 'buy-in') {
-            setBuyInGameId(undefined);
-            setSelectedPage('buy-in');
+            handleOpenBuyIn();
         } else if (task === 'cashout') {
-            setSelectedPage('cashout');
+            handleOpenCashout();
         } else if (task === 'game-totals' && props.canRecordGameTotals) {
             setSelectedPage('game-totals');
         } else if (task === 'close-game' && props.canRecordGameTotals) {
             setSelectedPage('close-game');
+        }
+    }
+
+    function handlePlayerSelection(task: string) {
+        if (props.canRecordGameTotals && (task === 'payment' || task === 'payment-list')) {
+            setHistoryPlayer(undefined);
+            setSelectedPage(task);
+        }
+    }
+
+    function handleRecordSelection(task: string) {
+        if ((task === 'correction' || task === 'correction-history') && props.canRecordGameTotals) {
+            setSelectedPage(task);
         }
     }
 
@@ -120,15 +356,23 @@ function SignedInLayout(props: SignedInLayoutProps) {
 
     const gameTasks = [
         { task: 'create', label: 'Create Game' },
-        { task: 'list', label: 'Game List' },
         { task: 'buy-in', label: 'Record Buy-in' },
         { task: 'cashout', label: 'Record Cashout' },
     ];
     if (props.canRecordGameTotals) {
+        gameTasks.splice(1, 0, { task: 'list', label: 'Game List' });
         gameTasks.push({ task: 'game-totals', label: 'Record Game Totals' });
         gameTasks.push({ task: 'close-game', label: 'Close Game' });
     }
-    gameTasks.push({ task: 'settings', label: 'Game Settings' });
+    const playerTasks = [
+        { task: 'payment', label: 'Record Payment' },
+        { task: 'payment-list', label: 'Payment List' },
+    ];
+
+    const recordTasks = [
+        { task: 'correction', label: 'Record Correction' },
+        { task: 'correction-history', label: 'Correction History' },
+    ];
 
     return (
         <div className="home-viewport overflow-x-clip">
@@ -148,22 +392,17 @@ function SignedInLayout(props: SignedInLayoutProps) {
                             view="users"
                             onSelect={handleUserSelection}
                             items={[
-                                { task: 'create', label: 'Create User' },
+                                ...(props.canCreateUser ? [{ task: 'create', label: 'Create User' }] : []),
                                 { task: 'list', label: 'User List' },
                             ]}
                         />
                         <NavigationGroup label="Games" view="games" onSelect={handleGameSelection} items={gameTasks} />
-                        <NavigationGroup label="Players" view="players" items={[
-                            { task: 'list', label: 'Player List' },
-                            { task: 'balances', label: 'Balances' },
-                            { task: 'history', label: 'Player History' },
-                            { task: 'payment', label: 'Record Payment' },
-                        ]} />
-                        <NavigationGroup label="Records" view="records" items={[
-                            { task: 'correction', label: 'Record Correction' },
-                            { task: 'missing', label: 'Missing Activity' },
-                            { task: 'history', label: 'Correction History' },
-                        ]} />
+                        {props.canRecordGameTotals && (
+                            <>
+                                <NavigationGroup label="Payments" view="players" onSelect={handlePlayerSelection} items={playerTasks} />
+                                <NavigationGroup label="Records" view="records" onSelect={handleRecordSelection} items={recordTasks} />
+                            </>
+                        )}
                         <NavigationGroup label="Accounts" view="my-account" onSelect={handleAccountSelection} items={[
                             { task: 'profile', label: 'My Account' },
                             { task: 'sign-out', label: 'Sign Out' },

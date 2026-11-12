@@ -29,6 +29,9 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+
+            // A negative balance means the player owes the house.
+            $table->bigInteger('poker_balance')->default(0);
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

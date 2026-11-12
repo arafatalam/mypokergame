@@ -1,0 +1,59 @@
+.leaderboard.user-list-screen .user-list-table {
+    min-width: 0;
+}
+
+.leaderboard.user-list-screen .user-list-table tbody td {
+    padding-block: 6px;
+}
+
+.leaderboard.user-list-screen .user-list-table th:first-child {
+    width: 46%;
+}
+
+.leaderboard.user-list-screen .user-list-table th:last-child {
+    width: 20%;
+}
+
+.leaderboard-filters {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) auto auto;
+    align-items: end;
+    gap: clamp(4px, 1.4cqw, 10px);
+    margin-bottom: 12px;
+    font-size: clamp(11px, 3cqw, 14px);
+    font-weight: 700;
+}
+
+.leaderboard-month {
+    min-width: 0;
+}
+
+.leaderboard-month .casino-month-trigger {
+    gap: 2px;
+    min-height: 34px;
+    padding-inline: 4px;
+    font: inherit;
+}
+
+.leaderboard-month .casino-month-trigger svg {
+    width: 14px;
+    height: 14px;
+}
+
+.leaderboard-filter-button {
+    min-height: 34px;
+    padding-inline: clamp(4px, 1.6cqw, 8px);
+    font-size: inherit;
+    white-space: nowrap;
+}
+
+.leaderboard .leaderboard-filter-button:disabled {
+    opacity: .55;
+}
+
+@media (max-width: 650px) {
+    .leaderboard.user-list-screen .user-list-table :is(th, td) {
+        padding-inline: 4px;
+        font-size: 16px;
+    }
+}
