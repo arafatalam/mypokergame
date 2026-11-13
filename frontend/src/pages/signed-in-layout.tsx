@@ -4,6 +4,8 @@ import type { GameFilters, GameListItem } from './games/game-list/load-games';
 import casinoLogo from '../assets/casino/skanders-game-logo.png';
 import jackpotCatPodium from '../assets/casino/leaderboard-jackpot-cat-podium.webp';
 import chipKingTrophy from '../assets/casino/leaderboard-chip-king-trophy.webp';
+import houseIncomeAccountant from '../assets/casino/house-income-accountant.webp';
+import houseIncomeCat from '../assets/casino/house-income-cat.webp';
 import NavigationGroup from '../components/navigation-group';
 import CasinoMarquee from '../components/casino-marquee';
 import CloseGame from './games/close-game/close-game';
@@ -210,7 +212,18 @@ function SignedInLayout(props: SignedInLayoutProps) {
         );
         marqueeText = showingPayment ? 'record payment' : 'outstanding balances';
     } else if (props.canRecordGameTotals && selectedPage === 'house-income') {
-        content = <div className="w-full min-w-0"><div className={monthlyReportGrid}><HouseIncome onOpenMonth={handleOpenIncomeMonth} /></div></div>;
+        content = (
+            <div className={monthlyReportGrid + ' w-full'}>
+                {/* The ticket sets the row height, so the illustrations follow its bottom edge. */}
+                <div className="relative hidden lg:col-span-2 lg:col-start-1 lg:row-start-1 lg:block">
+                    <img src={houseIncomeAccountant} alt="" className="absolute inset-0 h-full w-full object-contain object-right-bottom" />
+                </div>
+                <HouseIncome onOpenMonth={handleOpenIncomeMonth} />
+                <div className="relative hidden lg:col-span-2 lg:col-start-6 lg:row-start-1 lg:block">
+                    <img src={houseIncomeCat} alt="" className="absolute inset-0 h-full w-full object-contain object-left-bottom" />
+                </div>
+            </div>
+        );
         marqueeText = 'house income';
     } else if (props.canRecordGameTotals && (selectedPage === 'leaderboard' || selectedPage === 'leaderboard-user')) {
         const showingPlayer = selectedPage === 'leaderboard-user';
