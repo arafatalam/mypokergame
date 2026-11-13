@@ -9,8 +9,8 @@ type SessionStatus = 'checking' | 'signed-in' | 'guest' | 'error';
 function App() {
 
     const [sessionStatus, setSessionStatus] = useState<SessionStatus>('checking');
-    const [canCreateUser, setCanCreateUser] = useState(false);
-    const [canRecordGameTotals, setCanRecordGameTotals] = useState(false);
+    const [isStaff, setIsStaff] = useState(false);
+    const [canManageGames, setCanManageGames] = useState(false);
     const [signedInUserId, setSignedInUserId] = useState<number | null>(null);
 
     // Observe React's current state without changing the displayed screen.
@@ -29,9 +29,9 @@ function App() {
 
                 const user = response.data;
                 const gameStaffRoles = ['super_admin', 'admin', 'manager'];
-                const isStaff = gameStaffRoles.includes(user.role);
-                setCanCreateUser(isStaff);
-                setCanRecordGameTotals(isStaff && user.is_active && !user.must_change_password);
+                const hasStaffRole = gameStaffRoles.includes(user.role);
+                setIsStaff(hasStaffRole);
+                setCanManageGames(hasStaffRole && user.is_active && !user.must_change_password);
                 setSignedInUserId(user.id);
                 setSessionStatus('signed-in');
             } catch (error) {
@@ -72,7 +72,7 @@ function App() {
     let content = <p role="status">Checking your session…</p>;
 
     if (sessionStatus === 'signed-in' && signedInUserId !== null) {
-        content = <SignedInLayout signedInUserId={signedInUserId} canRecordGameTotals={canRecordGameTotals} canCreateUser={canCreateUser} />;
+        content = <SignedInLayout signedInUserId={signedInUserId} canManageGames={canManageGames} isStaff={isStaff} />;
     }
 
     if (sessionStatus === 'guest') {

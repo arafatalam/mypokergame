@@ -34,8 +34,8 @@ const monthlyReportGrid = 'grid min-w-0 lg:grid-cols-7';
 
 type SignedInLayoutProps = {
     signedInUserId: number;
-    canRecordGameTotals: boolean;
-    canCreateUser: boolean;
+    canManageGames: boolean;
+    isStaff: boolean;
 };
 
 function SignedInLayout(props: SignedInLayoutProps) {
@@ -157,31 +157,31 @@ function SignedInLayout(props: SignedInLayoutProps) {
     // Choose which screen appears below the shared navigation.
     let content = (
         <Home
-            canViewSummary={props.canRecordGameTotals}
-            onOpenCreateGame={handleOpenCreateGame}
-            onOpenBuyIn={handleOpenBuyIn}
-            onOpenCashout={handleOpenCashout}
-            onOpenPayment={props.canRecordGameTotals ? handleOpenPayment : undefined}
-            onOpenHouseIncome={props.canRecordGameTotals ? handleOpenHouseIncome : undefined}
-            onOpenLeaderboard={props.canRecordGameTotals ? handleOpenLeaderboard : undefined}
-            onOpenOutstandingBalances={props.canRecordGameTotals ? handleOpenOutstandingBalances : undefined}
+            canViewSummary={props.canManageGames}
+            onOpenCreateGame={props.canManageGames ? handleOpenCreateGame : undefined}
+            onOpenBuyIn={props.canManageGames ? handleOpenBuyIn : undefined}
+            onOpenCashout={props.canManageGames ? handleOpenCashout : undefined}
+            onOpenPayment={props.canManageGames ? handleOpenPayment : undefined}
+            onOpenHouseIncome={props.canManageGames ? handleOpenHouseIncome : undefined}
+            onOpenLeaderboard={props.canManageGames ? handleOpenLeaderboard : undefined}
+            onOpenOutstandingBalances={props.canManageGames ? handleOpenOutstandingBalances : undefined}
         />
     );
     let marqueeText = 'home';
 
-    if (selectedPage === 'create' && props.canCreateUser) {
+    if (selectedPage === 'create' && props.isStaff) {
         content = <CreateUser onOpenUserList={handleOpenUserList} />;
         marqueeText = 'create user';
-    } else if (selectedPage === 'list' || (selectedPage === 'payment-from-list' && props.canRecordGameTotals)) {
+    } else if (props.isStaff && (selectedPage === 'list' || (selectedPage === 'payment-from-list' && props.canManageGames))) {
         const showingPayment = selectedPage === 'payment-from-list';
         // Keep the list mounted so Cancel restores its filters, page and selected Player.
         content = (
             <div className="w-full min-w-0">
                 <div hidden={showingPayment}>
                     <UserList onOpenUserProfile={handleOpenUserProfile}
-                        onCreateUser={props.canCreateUser ? handleOpenCreateUser : undefined}
-                        onRecordPayment={props.canRecordGameTotals ? handleOpenPlayerPayment : undefined}
-                        onViewHistory={props.canRecordGameTotals ? handleOpenPlayerPaymentHistory : undefined}
+                        onCreateUser={handleOpenCreateUser}
+                        onRecordPayment={props.canManageGames ? handleOpenPlayerPayment : undefined}
+                        onViewHistory={props.canManageGames ? handleOpenPlayerPaymentHistory : undefined}
                         suspendPlayerTab={showingPayment} />
                 </div>
                 {showingPayment && <RecordPayment initialPlayerId={paymentPlayerId} onCancel={handleOpenUserList} />}
@@ -191,10 +191,10 @@ function SignedInLayout(props: SignedInLayoutProps) {
         if (showingPayment) {
             marqueeText = 'record payment';
         }
-    } else if (selectedPage === 'user-profile') {
+    } else if (props.isStaff && selectedPage === 'user-profile') {
         content = <ShowUser userId={selectedUserId} />;
         marqueeText = 'user profile';
-    } else if (props.canRecordGameTotals && (selectedPage === 'outstanding-balances' || selectedPage === 'payment-from-balances')) {
+    } else if (props.canManageGames && (selectedPage === 'outstanding-balances' || selectedPage === 'payment-from-balances')) {
         const showingPayment = selectedPage === 'payment-from-balances';
         content = (
             <div className={showingPayment ? 'w-full min-w-0' : 'outstanding-balances-content w-full min-w-0'}>
@@ -211,7 +211,7 @@ function SignedInLayout(props: SignedInLayoutProps) {
             </div>
         );
         marqueeText = showingPayment ? 'record payment' : 'outstanding balances';
-    } else if (props.canRecordGameTotals && selectedPage === 'house-income') {
+    } else if (props.canManageGames && selectedPage === 'house-income') {
         content = (
             <div className={monthlyReportGrid + ' w-full'}>
                 {/* The ticket sets the row height, so the illustrations follow its bottom edge. */}
@@ -225,7 +225,7 @@ function SignedInLayout(props: SignedInLayoutProps) {
             </div>
         );
         marqueeText = 'house income';
-    } else if (props.canRecordGameTotals && (selectedPage === 'leaderboard' || selectedPage === 'leaderboard-user')) {
+    } else if (props.canManageGames && (selectedPage === 'leaderboard' || selectedPage === 'leaderboard-user')) {
         const showingPlayer = selectedPage === 'leaderboard-user';
         // Keep the applied month range, page and draft filters when opening a profile.
         content = (
@@ -256,7 +256,7 @@ function SignedInLayout(props: SignedInLayoutProps) {
     } else if (selectedPage === 'my-account') {
         content = <ShowUser key="my-account" userId={props.signedInUserId} showSideArtwork />;
         marqueeText = 'my account';
-    } else if (props.canRecordGameTotals && (selectedPage === 'game-list' || selectedPage === 'game-details')) {
+    } else if (props.canManageGames && (selectedPage === 'game-list' || selectedPage === 'game-details')) {
         const showingDetails = selectedPage === 'game-details';
         // Keep the list mounted so returning restores its filters and page.
         content = (
@@ -273,22 +273,22 @@ function SignedInLayout(props: SignedInLayoutProps) {
         if (showingDetails) {
             marqueeText = 'game details';
         }
-    } else if (selectedPage === 'create-game') {
+    } else if (props.canManageGames && selectedPage === 'create-game') {
         content = <CreateGame onCancel={handleOpenHome} onGameCreated={handleGameCreated} />;
         marqueeText = 'create game';
-    } else if (selectedPage === 'buy-in') {
+    } else if (props.canManageGames && selectedPage === 'buy-in') {
         content = <RecordBuyIn key={buyInGameId} initialGameId={buyInGameId} onCancel={handleOpenHome} />;
         marqueeText = 'buy in';
-    } else if (selectedPage === 'cashout') {
+    } else if (props.canManageGames && selectedPage === 'cashout') {
         content = <RecordCashout onCancel={handleOpenHome} />;
         marqueeText = 'cashout';
-    } else if (selectedPage === 'game-totals') {
+    } else if (props.canManageGames && selectedPage === 'game-totals') {
         content = <RecordGameTotals />;
         marqueeText = 'game totals';
-    } else if (selectedPage === 'close-game') {
+    } else if (props.canManageGames && selectedPage === 'close-game') {
         content = <CloseGame />;
         marqueeText = 'close game';
-    } else if (props.canRecordGameTotals && (selectedPage === 'payment-list' || selectedPage === 'payment-from-payment-list')) {
+    } else if (props.canManageGames && (selectedPage === 'payment-list' || selectedPage === 'payment-from-payment-list')) {
         const showingPayment = selectedPage === 'payment-from-payment-list';
         // Keep the list mounted so Cancel restores its current filters and page.
         content = (
@@ -300,48 +300,53 @@ function SignedInLayout(props: SignedInLayoutProps) {
             </div>
         );
         marqueeText = showingPayment ? 'record payment' : 'payments';
-    } else if (selectedPage === 'correction-history' && props.canRecordGameTotals) {
+    } else if (selectedPage === 'correction-history' && props.canManageGames) {
         content = <CorrectionHistory />;
         marqueeText = 'correction history';
-    } else if (selectedPage === 'correction' && props.canRecordGameTotals) {
+    } else if (selectedPage === 'correction' && props.canManageGames) {
         content = <RecordCorrection />;
         marqueeText = 'record correction';
-    } else if (selectedPage === 'payment' && props.canRecordGameTotals) {
+    } else if (selectedPage === 'payment' && props.canManageGames) {
         content = <RecordPayment onCancel={handleOpenHome} />;
         marqueeText = 'record payment';
     }
 
     function handleUserSelection(task: string) {
-        setSelectedPage(task);
-
+        if (props.isStaff && (task === 'create' || task === 'list')) {
+            setSelectedPage(task);
+        }
     }
 
     function handleGameSelection(task: string) {
+        if (!props.canManageGames) {
+            return;
+        }
+
         if (task === 'create') {
             handleOpenCreateGame();
-        } else if (task === 'list' && props.canRecordGameTotals) {
+        } else if (task === 'list') {
             setInitialGameFilters(undefined);
             setSelectedPage('game-list');
         } else if (task === 'buy-in') {
             handleOpenBuyIn();
         } else if (task === 'cashout') {
             handleOpenCashout();
-        } else if (task === 'game-totals' && props.canRecordGameTotals) {
+        } else if (task === 'game-totals') {
             setSelectedPage('game-totals');
-        } else if (task === 'close-game' && props.canRecordGameTotals) {
+        } else if (task === 'close-game') {
             setSelectedPage('close-game');
         }
     }
 
     function handlePlayerSelection(task: string) {
-        if (props.canRecordGameTotals && (task === 'payment' || task === 'payment-list')) {
+        if (props.canManageGames && (task === 'payment' || task === 'payment-list')) {
             setHistoryPlayer(undefined);
             setSelectedPage(task);
         }
     }
 
     function handleRecordSelection(task: string) {
-        if ((task === 'correction' || task === 'correction-history') && props.canRecordGameTotals) {
+        if ((task === 'correction' || task === 'correction-history') && props.canManageGames) {
             setSelectedPage(task);
         }
     }
@@ -369,14 +374,12 @@ function SignedInLayout(props: SignedInLayoutProps) {
 
     const gameTasks = [
         { task: 'create', label: 'Create Game' },
+        { task: 'list', label: 'Game List' },
         { task: 'buy-in', label: 'Record Buy-in' },
         { task: 'cashout', label: 'Record Cashout' },
+        { task: 'game-totals', label: 'Record Game Totals' },
+        { task: 'close-game', label: 'Close Game' },
     ];
-    if (props.canRecordGameTotals) {
-        gameTasks.splice(1, 0, { task: 'list', label: 'Game List' });
-        gameTasks.push({ task: 'game-totals', label: 'Record Game Totals' });
-        gameTasks.push({ task: 'close-game', label: 'Close Game' });
-    }
     const playerTasks = [
         { task: 'payment', label: 'Record Payment' },
         { task: 'payment-list', label: 'Payment List' },
@@ -400,18 +403,20 @@ function SignedInLayout(props: SignedInLayoutProps) {
                     </h1>
                     <nav className="home-navigation flex min-w-0 flex-1 items-center" aria-label="Main tasks">
                         <button type="button" className="home-link" onClick={handleOpenHome}><span>Home</span></button>
-                        <NavigationGroup
-                            label="Users"
-                            view="users"
-                            onSelect={handleUserSelection}
-                            items={[
-                                ...(props.canCreateUser ? [{ task: 'create', label: 'Create User' }] : []),
-                                { task: 'list', label: 'User List' },
-                            ]}
-                        />
-                        <NavigationGroup label="Games" view="games" onSelect={handleGameSelection} items={gameTasks} />
-                        {props.canRecordGameTotals && (
+                        {props.isStaff && (
+                            <NavigationGroup
+                                label="Users"
+                                view="users"
+                                onSelect={handleUserSelection}
+                                items={[
+                                    { task: 'create', label: 'Create User' },
+                                    { task: 'list', label: 'User List' },
+                                ]}
+                            />
+                        )}
+                        {props.canManageGames && (
                             <>
+                                <NavigationGroup label="Games" view="games" onSelect={handleGameSelection} items={gameTasks} />
                                 <NavigationGroup label="Payments" view="players" onSelect={handlePlayerSelection} items={playerTasks} />
                                 <NavigationGroup label="Records" view="records" onSelect={handleRecordSelection} items={recordTasks} />
                             </>

@@ -8,9 +8,9 @@ import { useHomeSummary } from './use-home-summary';
 
 type HomeProps = {
     canViewSummary: boolean;
-    onOpenCreateGame: () => void;
-    onOpenBuyIn: () => void;
-    onOpenCashout: () => void;
+    onOpenCreateGame?: () => void;
+    onOpenBuyIn?: () => void;
+    onOpenCashout?: () => void;
     onOpenPayment?: () => void;
     onOpenHouseIncome?: () => void;
     onOpenLeaderboard?: () => void;
@@ -40,16 +40,24 @@ export default function Home(props: HomeProps) {
                 )}
                 {/* Keep the shortcut column narrower than the two tables on desktop. */}
                 <div className="home-detail-tickets grid gap-x-4 gap-y-3 md:col-span-3 md:grid-cols-2 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.65fr)_minmax(0,1.45fr)] xl:grid-cols-[minmax(0,1fr)_minmax(0,1.45fr)_minmax(0,1.45fr)]">
-                    <CasinoTicket compactEdges className="flex w-full min-w-0 max-w-[440px] flex-col px-8 py-[22px] text-left text-[#620b19]">
-                        <div className="flex flex-1 flex-col justify-evenly gap-2 [&>button]:min-h-8 [&>button]:px-2">
-                            <button type="button" className="casino-button" onClick={props.onOpenCreateGame}>Create Game</button>
-                            <button type="button" className="casino-button" onClick={props.onOpenBuyIn}>Record Buy-in</button>
-                            <button type="button" className="casino-button" onClick={props.onOpenCashout}>Record Cashout</button>
-                            {props.onOpenPayment && (
-                                <button type="button" className="casino-button" onClick={props.onOpenPayment}>Record Payment</button>
-                            )}
-                        </div>
-                    </CasinoTicket>
+                    {(props.onOpenCreateGame || props.onOpenBuyIn || props.onOpenCashout || props.onOpenPayment) && (
+                        <CasinoTicket compactEdges className="flex w-full min-w-0 max-w-[440px] flex-col px-8 py-[22px] text-left text-[#620b19]">
+                            <div className="flex flex-1 flex-col justify-evenly gap-2 [&>button]:min-h-8 [&>button]:px-2">
+                                {props.onOpenCreateGame && (
+                                    <button type="button" className="casino-button" onClick={props.onOpenCreateGame}>Create Game</button>
+                                )}
+                                {props.onOpenBuyIn && (
+                                    <button type="button" className="casino-button" onClick={props.onOpenBuyIn}>Record Buy-in</button>
+                                )}
+                                {props.onOpenCashout && (
+                                    <button type="button" className="casino-button" onClick={props.onOpenCashout}>Record Cashout</button>
+                                )}
+                                {props.onOpenPayment && (
+                                    <button type="button" className="casino-button" onClick={props.onOpenPayment}>Record Payment</button>
+                                )}
+                            </div>
+                        </CasinoTicket>
+                    )}
                     {props.canViewSummary && (
                         <OutstandingBalancesTicket summary={summary} hasFailed={hasFailed} onRetry={handleRetry} onOpenAll={props.onOpenOutstandingBalances} />
                     )}
